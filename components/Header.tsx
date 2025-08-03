@@ -2,12 +2,13 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useState, useRef, useEffect } from 'react';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const links = [
   { href: '/about', label: '🙋‍♂️ About' },
   { href: '/favorites/music', label: '🎧 Music' },
-  { href: '/favorites/books', label: '📚 Books' },
-  { href: '/favorites/movies', label: '🎬 Movies' },
+  // { href: '/favorites/books', label: '📚 Books' },
+  // { href: '/favorites/movies', label: '🎬 Movies' },
 ];
 
 export default function Header({ locale }: { locale: string }) {
@@ -52,24 +53,22 @@ export default function Header({ locale }: { locale: string }) {
           </Link>
 
           <button
-            className="sm:hidden w-10 h-10 relative text-gray-800 dark:text-white focus:outline-hidden"
+            className="sm:hidden w-10 h-10 relative text-gray-800 dark:text-white"
             onClick={() => setMenuOpen((prev) => !prev)}
             aria-label="Toggle menu"
           >
-            <span
-              className={`absolute inset-0 flex items-center justify-center text-xl transition-opacity duration-300 ${
+            {/* Hamburger Icon */}
+            <Bars3Icon
+              className={`absolute inset-0 w-6 h-6 m-auto transition-opacity duration-300 ${
                 menuOpen ? 'opacity-0' : 'opacity-100'
               }`}
-            >
-              ☰
-            </span>
-            <span
-              className={`absolute inset-0 flex items-center justify-center text-xl transition-opacity duration-300 ${
+            />
+            {/* X Icon */}
+            <XMarkIcon
+              className={`absolute inset-0 w-6 h-6 m-auto transition-opacity duration-300 ${
                 menuOpen ? 'opacity-100' : 'opacity-0'
               }`}
-            >
-              ✖️
-            </span>
+            />
           </button>
 
           {/* Desktop nav */}

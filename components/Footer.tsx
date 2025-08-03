@@ -8,7 +8,7 @@ export default function Footer() {
     <footer className="text-center text-sm text-gray-500 dark:text-gray-400 mt-8 space-y-2">
       <div className="flex justify-center gap-4 mb-2">
         <a
-          href="https://github.com/yourusername"
+          href="https://github.com/acp9191"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="GitHub"
@@ -17,7 +17,7 @@ export default function Footer() {
           <img src="/icons/github.svg" alt="GitHub" className="w-5 h-5 dark:invert" />
         </a>
         <a
-          href="https://twitter.com/yourusername"
+          href="https://open.spotify.com/user/acp9191"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Twitter"
@@ -26,7 +26,7 @@ export default function Footer() {
           <img src="/icons/spotify.svg" alt="Spotify" className="w-5 h-5" />
         </a>
         <a
-          href="https://linkedin.com/in/yourusername"
+          href="https://linkedin.com/in/acp"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="LinkedIn"
@@ -35,7 +35,7 @@ export default function Footer() {
           <img src="/icons/linkedin.png" alt="LinkedIn" className="w-5 h-5" />
         </a>
         <a
-          href="https://linkedin.com/in/yourusername"
+          href="https://www.instagram.com/acp.jpg"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Instagram"

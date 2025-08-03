@@ -7,4 +7,4 @@ genres: ['Soul', 'Funk', 'R&B']
 spotify: 'https://open.spotify.com/album/6YUCc2RiY5uDDuxrHPQoyk'
 ---
 
-An epic, joyful masterpiece bursting with creativity, humanity, and timeless grooves.
+An epic, joyful masterpiece bursting with humanity and timeless grooves.

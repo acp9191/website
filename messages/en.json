@@ -19,5 +19,8 @@
   "Newsletter": {
     "title": "Newsletter",
     "description": "Sign up to get occasional updates and interesting links."
+  },
+  "About": {
+    "title": "🙋‍♂️ About Me"
   }
 }

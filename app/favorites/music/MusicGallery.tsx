@@ -1,7 +1,7 @@
-// app/favorites/music/MusicGallery.tsx
 'use client';
 
 import { useState } from 'react';
+import clsx from 'clsx'; // Optional, for cleaner conditional classes
 
 type Album = {
   title: string;
@@ -16,6 +16,8 @@ type Album = {
 export default function MusicGallery({ albums }: { albums: Album[] }) {
   const [selectedGenre, setSelectedGenre] = useState('All');
   const [selectedYear, setSelectedYear] = useState<number | 'All'>('All');
+  const [modalImage, setModalImage] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   const allGenres = Array.from(new Set(albums.flatMap((a) => a.genres))).sort();
   const allYears = Array.from(new Set(albums.map((a) => a.year))).sort((a, b) => b - a);
@@ -25,6 +27,16 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
     const yearMatch = selectedYear === 'All' || album.year === selectedYear;
     return genreMatch && yearMatch;
   });
+
+  const openModal = (cover: string) => {
+    setModalImage(cover);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setTimeout(() => setModalImage(null), 300); // Wait for fade-out
+  };
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
@@ -68,7 +80,10 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
             className="rounded-lg bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow overflow-hidden"
           >
             <div className="p-4">
-              <div className="w-full aspect-square overflow-hidden rounded-md">
+              <div
+                className="w-full aspect-square overflow-hidden rounded-md cursor-pointer"
+                onClick={() => openModal(album.cover)}
+              >
                 <img src={album.cover} alt={album.title} className="w-full h-full object-cover" />
               </div>
             </div>
@@ -82,7 +97,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
                   </span>
                 ))}
               </div>
-              <p className="text-sm text-gray-700 dark:text-gray-300 mt-2 line-clamp-3">
+              <p className="text-sm text-gray-700 dark:text-gray-300 mt-2 line-clamp-4">
                 {album.description}
               </p>
               {album.spotify && (
@@ -101,6 +116,26 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
           </div>
         ))}
       </div>
+
+      {/* Modal */}
+      {modalImage && (
+        <div
+          onClick={closeModal}
+          className={clsx(
+            'fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/40 transition-opacity duration-300',
+            {
+              'opacity-100': showModal,
+              'opacity-0 pointer-events-none': !showModal,
+            }
+          )}
+        >
+          <img
+            src={modalImage}
+            alt="Album cover full size"
+            className="max-w-xl rounded-lg shadow-xl transition-transform duration-300 scale-100"
+          />
+        </div>
+      )}
     </div>
   );
 }
