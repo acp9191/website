@@ -8,7 +8,7 @@ const links = [
   { href: '/about', label: '🙋‍♂️ About' },
   { href: '/favorites/music', label: '🎧 Music' },
   // { href: '/favorites/books', label: '📚 Books' },
-  // { href: '/favorites/movies', label: '🎬 Movies' },
+  { href: '/favorites/movies', label: '🎬 Movies' },
 ];
 
 export default function Header({ locale }: { locale: string }) {

@@ -7,14 +7,16 @@ export default function AboutPage() {
 
   return (
     <section className="space-y-6 px-4">
-      <Image
-        src="https://res.cloudinary.com/acp/image/upload/v1754157313/acp_headshot_nhlged.jpg"
-        alt="Avery Peterson headshot"
-        width={400}
-        height={400}
-        className="rounded-xl shadow-md w-full h-auto"
-        priority={true}
-      />
+      <div className="mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md">
+        <Image
+          src="https://res.cloudinary.com/acp/image/upload/v1754157313/acp_headshot_nhlged.jpg"
+          alt="Avery Peterson headshot"
+          width={400}
+          height={400}
+          className="rounded-xl shadow-md w-full h-auto"
+          priority={true}
+        />
+      </div>
       <h1 className="text-4xl font-bold text-center">{t('title')}</h1>
       <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed text-center">
         I'm Avery Peterson — a software engineer based in NYC who cares about building thoughtful,

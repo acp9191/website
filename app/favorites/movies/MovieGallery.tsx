@@ -4,33 +4,33 @@ import { useState } from 'react';
 import clsx from 'clsx';
 import Image from 'next/image';
 
-type Album = {
+type Movie = {
   title: string;
-  artist: string;
-  cover: string;
+  director: string;
+  poster: string;
   description: string;
   year: number;
   genres: string[];
-  spotify?: string;
+  trailer?: string;
 };
 
-export default function MusicGallery({ albums }: { albums: Album[] }) {
+export default function MovieGallery({ movies }: { movies: Movie[] }) {
   const [selectedGenre, setSelectedGenre] = useState('All');
   const [selectedYear, setSelectedYear] = useState<number | 'All'>('All');
   const [modalImage, setModalImage] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  const allGenres = Array.from(new Set(albums.flatMap((a) => a.genres))).sort();
-  const allYears = Array.from(new Set(albums.map((a) => a.year))).sort((a, b) => b - a);
+  const allGenres = Array.from(new Set(movies.flatMap((m) => m.genres))).sort();
+  const allYears = Array.from(new Set(movies.map((m) => m.year))).sort((a, b) => b - a);
 
-  const filtered = albums.filter((album) => {
-    const genreMatch = selectedGenre === 'All' || album.genres.includes(selectedGenre);
-    const yearMatch = selectedYear === 'All' || album.year === selectedYear;
+  const filtered = movies.filter((movie) => {
+    const genreMatch = selectedGenre === 'All' || movie.genres.includes(selectedGenre);
+    const yearMatch = selectedYear === 'All' || movie.year === selectedYear;
     return genreMatch && yearMatch;
   });
 
-  const openModal = (cover: string) => {
-    setModalImage(cover);
+  const openModal = (poster: string) => {
+    setModalImage(poster);
     setShowModal(true);
   };
 
@@ -41,7 +41,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">🎧 Favorite Albums</h1>
+      <h1 className="text-3xl font-bold mb-6">🎬 Favorite Movies</h1>
 
       <div className="flex flex-wrap gap-4 mb-8">
         <select
@@ -75,29 +75,30 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-        {filtered.map((album, i) => (
+        {filtered.map((movie, i) => (
           <div
             key={i}
             className="rounded-lg bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow overflow-hidden"
           >
             <div className="p-4">
               <div
-                className="relative w-full aspect-square overflow-hidden rounded-md cursor-pointer"
-                onClick={() => openModal(album.cover)}
+                className="relative w-full aspect-[2/3] overflow-hidden rounded-md cursor-pointer"
+                onClick={() => openModal(movie.poster)}
               >
                 <Image
-                  src={album.cover}
-                  alt={album.title}
+                  src={movie.poster}
+                  alt={movie.title}
                   fill
-                  className="object-cover rounded-md"
+                  className="object-cover rounded-md transition-opacity duration-300 hover:opacity-90"
                 />
               </div>
             </div>
+
             <div className="p-4">
-              <h3 className="text-lg font-semibold mb-1">{album.title}</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{album.artist}</p>
+              <h3 className="text-lg font-semibold mb-1">{movie.title}</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{movie.director}</p>
               <div className="mt-2 flex flex-wrap gap-1 text-xs">
-                {album.genres.map((g) => (
+                {movie.genres.map((g) => (
                   <span
                     key={g}
                     className="px-2 py-0.5 rounded-full bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-white"
@@ -107,24 +108,24 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
                 ))}
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300 mt-2 line-clamp-4">
-                {album.description}
+                {movie.description}
               </p>
-              {album.spotify && (
+              {movie.trailer && (
                 <div className="mt-3">
                   <a
-                    href={album.spotify}
+                    href={movie.trailer}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-green-600 hover:underline text-sm"
+                    className="inline-flex items-center gap-2 text-[#FF0000] hover:underline text-sm font-medium"
                   >
                     <Image
-                      src="/icons/spotify.svg"
+                      src="/icons/youtube.svg"
                       alt="YouTube icon"
                       width={20}
                       height={20}
                       className="inline-block"
                     />
-                    Listen on Spotify
+                    Watch Trailer
                   </a>
                 </div>
               )}
@@ -144,10 +145,10 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
             }
           )}
         >
-          <div className="relative w-[90vw] max-w-xl aspect-square">
+          <div className="relative w-[100vw] max-w-2xl aspect-square">
             <Image
               src={modalImage}
-              alt="Album cover full size"
+              alt="Movie poster full size"
               fill
               className="rounded-lg object-contain shadow-xl transition-transform duration-300"
             />
