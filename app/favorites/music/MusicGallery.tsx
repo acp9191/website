@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import clsx from 'clsx'; // Optional, for cleaner conditional classes
+import clsx from 'clsx';
+import Image from 'next/image';
 
 type Album = {
   title: string;
@@ -35,7 +36,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
 
   const closeModal = () => {
     setShowModal(false);
-    setTimeout(() => setModalImage(null), 300); // Wait for fade-out
+    setTimeout(() => setModalImage(null), 300);
   };
 
   return (
@@ -81,10 +82,15 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
           >
             <div className="p-4">
               <div
-                className="w-full aspect-square overflow-hidden rounded-md cursor-pointer"
+                className="relative w-full aspect-square overflow-hidden rounded-md cursor-pointer"
                 onClick={() => openModal(album.cover)}
               >
-                <img src={album.cover} alt={album.title} className="w-full h-full object-cover" />
+                <Image
+                  src={album.cover}
+                  alt={album.title}
+                  fill
+                  className="object-cover rounded-md"
+                />
               </div>
             </div>
             <div className="p-4">
@@ -117,7 +123,6 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
         ))}
       </div>
 
-      {/* Modal */}
       {modalImage && (
         <div
           onClick={closeModal}
@@ -129,11 +134,14 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
             }
           )}
         >
-          <img
-            src={modalImage}
-            alt="Album cover full size"
-            className="max-w-xl rounded-lg shadow-xl transition-transform duration-300 scale-100"
-          />
+          <div className="relative w-[90vw] max-w-xl aspect-square">
+            <Image
+              src={modalImage}
+              alt="Album cover full size"
+              fill
+              className="rounded-lg object-contain shadow-xl transition-transform duration-300"
+            />
+          </div>
         </div>
       )}
     </div>
