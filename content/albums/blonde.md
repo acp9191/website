@@ -7,4 +7,4 @@ spotify: 'https://open.spotify.com/album/3mH6qwIy9crq0I9YQbOuDf'
 genres: ['R&B', 'Alternative', 'Neo-Soul']
 ---
 
-One of my favorite albums ever. Dreamy, melancholy, perfect.
+A hazy, intimate portrait of love, identity, and memory. Vulnerable, genre-defying, and timeless.
