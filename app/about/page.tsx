@@ -1,15 +1,19 @@
 'use client';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 
 export default function AboutPage() {
   const t = useTranslations('About');
 
   return (
     <section className="space-y-6 px-4">
-      <img
+      <Image
         src="https://res.cloudinary.com/acp/image/upload/v1754157313/acp_headshot_nhlged.jpg"
         alt="Avery Peterson headshot"
-        className="mx-auto shadow-md rounded-xl w-full max-w-xs sm:max-w-sm md:max-w-md"
+        width={400}
+        height={400}
+        className="rounded-xl shadow-md w-full h-auto"
+        priority={true}
       />
       <h1 className="text-4xl font-bold text-center">{t('title')}</h1>
       <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed text-center">
