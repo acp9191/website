@@ -96,9 +96,12 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
             <div className="p-4">
               <h3 className="text-lg font-semibold mb-1">{album.title}</h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">{album.artist}</p>
-              <div className="mt-2 flex flex-wrap gap-1 text-xs text-gray-500 dark:text-gray-400">
+              <div className="mt-2 flex flex-wrap gap-1 text-xs">
                 {album.genres.map((g) => (
-                  <span key={g} className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-full">
+                  <span
+                    key={g}
+                    className="px-2 py-0.5 rounded-full bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-white"
+                  >
                     {g}
                   </span>
                 ))}
