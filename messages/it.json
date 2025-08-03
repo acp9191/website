@@ -1,0 +1,23 @@
+{
+  "Home": {
+    "title": "Ciao 👋 sono Avery Peterson",
+    "description": "Sono un ingegnere del software che ama i buoni strumenti, la buona musica e il codice pulito."
+  },
+  "Header": {
+    "Home": "Home",
+    "About": "Chi sono",
+    "Projects": "Progetti",
+    "Albums": "Album",
+    "Tools": "Strumenti",
+    "Newsletter": "Newsletter",
+    "light": "Chiaro",
+    "dark": "Scuro"
+  },
+  "Footer": {
+    "copyright": "\u00a9 {year} Avery Peterson. Tutti i diritti riservati."
+  },
+  "Newsletter": {
+    "title": "Newsletter",
+    "description": "Iscriviti per ricevere aggiornamenti occasionali e link interessanti."
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "Home": {
+    "title": "Hi 👋 I'm Avery Peterson",
+    "description": "I'm a software engineer who loves good tools, good music, and clean code."
+  },
+  "Header": {
+    "Home": "Home",
+    "About": "About",
+    "Projects": "Projects",
+    "Albums": "Albums",
+    "Tools": "Tools",
+    "Newsletter": "Newsletter",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "Footer": {
+    "copyright": "\u00a9 {year} Avery Peterson. All rights reserved."
+  },
+  "Newsletter": {
+    "title": "Newsletter",
+    "description": "Sign up to get occasional updates and interesting links."
+  }
+}
