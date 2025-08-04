@@ -9,6 +9,7 @@ export default function Header() {
   const t = useTranslations('Header');
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [mounted, setMounted] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const links = [
@@ -18,14 +19,19 @@ export default function Header() {
     { href: '/favorites/movies', label: t('movies') },
   ];
 
-  // On mount, set theme from localStorage or system preference
+  // Only run on client side after hydration
   useEffect(() => {
-    const saved = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initial: 'light' | 'dark' =
-      saved === 'light' || saved === 'dark' ? saved : prefersDark ? 'dark' : 'light';
-    setTheme(initial);
-    document.documentElement.classList.toggle('dark', initial === 'dark');
+    setMounted(true);
+    // Read theme from localStorage first, then from DOM as fallback
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || savedTheme === 'light') {
+      setTheme(savedTheme);
+      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+    } else {
+      // Fallback to system preference or DOM state
+      const isDark = document.documentElement.classList.contains('dark');
+      setTheme(isDark ? 'dark' : 'light');
+    }
   }, []);
 
   const toggleTheme = () => {
@@ -83,12 +89,14 @@ export default function Header() {
                 {label}
               </Link>
             ))}
-            <button
-              onClick={toggleTheme}
-              className="px-3 py-1 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 cursor-pointer"
-            >
-              {theme === 'dark' ? t('lightMode') : t('darkMode')}
-            </button>
+            {mounted && (
+              <button
+                onClick={toggleTheme}
+                className="px-3 py-1 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 cursor-pointer"
+              >
+                {theme === 'dark' ? t('lightMode') : t('darkMode')}
+              </button>
+            )}
 
             <LocaleSwitcher />
           </nav>
@@ -112,12 +120,14 @@ export default function Header() {
                 {label}
               </Link>
             ))}
-            <button
-              onClick={toggleTheme}
-              className="block w-full px-4 py-2 rounded-md text-left text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
-            >
-              {theme === 'dark' ? t('lightMode') : t('darkMode')}
-            </button>
+            {mounted && (
+              <button
+                onClick={toggleTheme}
+                className="block w-full px-4 py-2 rounded-md text-left text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
+              >
+                {theme === 'dark' ? t('lightMode') : t('darkMode')}
+              </button>
+            )}
 
             {/* Mobile-specific locale switcher wrapper */}
             <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-md">
