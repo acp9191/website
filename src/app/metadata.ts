@@ -40,6 +40,7 @@ export const metadata: Metadata = {
       es: '/es',
       fr: '/fr',
       it: '/it',
+      de: '/de',
     },
   },
 };

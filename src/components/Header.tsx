@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useState, useRef, useEffect } from 'react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import LocaleSwitcher from './LocaleSwitcher';
 
 const links = [
   { href: '/about', label: '🙋‍♂️ About' },
@@ -11,8 +12,7 @@ const links = [
   { href: '/favorites/movies', label: '🎬 Movies' },
 ];
 
-export default function Header({ locale }: { locale: string }) {
-  const t = useTranslations('Header');
+export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const menuRef = useRef<HTMLDivElement>(null);
@@ -88,6 +88,8 @@ export default function Header({ locale }: { locale: string }) {
             >
               {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
             </button>
+
+            <LocaleSwitcher />
           </nav>
         </div>
 
@@ -115,6 +117,16 @@ export default function Header({ locale }: { locale: string }) {
             >
               {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
             </button>
+
+            {/* Mobile-specific locale switcher wrapper */}
+            <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-md">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-700 dark:text-gray-200 text-sm font-medium">
+                  🌐 Language
+                </span>
+                <LocaleSwitcher isMobile onLocaleChange={() => setMenuOpen(false)} />
+              </div>
+            </div>
           </nav>
         </div>
       </div>

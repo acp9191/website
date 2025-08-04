@@ -1,0 +1,26 @@
+{
+  "Home": {
+    "title": "Hallo 👋 Ich bin Avery Peterson",
+    "description": "Ich bin ein Softwareentwickler, der gute Tools, gute Musik und sauberen Code liebt."
+  },
+  "Header": {
+    "Home": "Startseite",
+    "About": "Über mich",
+    "Projects": "Projekte",
+    "Albums": "Alben",
+    "Tools": "Werkzeuge",
+    "Newsletter": "Newsletter",
+    "light": "Hell",
+    "dark": "Dunkel"
+  },
+  "Footer": {
+    "copyright": "© {year} Avery Peterson. Alle Rechte vorbehalten."
+  },
+  "Newsletter": {
+    "title": "Newsletter",
+    "description": "Melde dich an, um gelegentliche Updates und interessante Links zu erhalten."
+  },
+  "About": {
+    "title": "🙋‍♂️ Über mich"
+  }
+}
