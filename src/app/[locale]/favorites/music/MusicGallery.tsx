@@ -89,6 +89,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
                   src={album.cover}
                   alt={album.title}
                   fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                   className="object-cover rounded-md"
                 />
               </div>
@@ -119,7 +120,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
                   >
                     <Image
                       src="/icons/spotify.svg"
-                      alt="YouTube icon"
+                      alt="Spotify icon"
                       width={20}
                       height={20}
                       className="inline-block"
@@ -149,6 +150,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
               src={modalImage}
               alt="Album cover full size"
               fill
+              sizes="90vw"
               className="rounded-lg object-contain shadow-xl transition-transform duration-300"
             />
           </div>

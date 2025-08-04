@@ -89,6 +89,7 @@ export default function MovieGallery({ movies }: { movies: Movie[] }) {
                   src={movie.poster}
                   alt={movie.title}
                   fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                   className="object-cover rounded-md transition-opacity duration-300 hover:opacity-90"
                 />
               </div>
@@ -145,11 +146,12 @@ export default function MovieGallery({ movies }: { movies: Movie[] }) {
             }
           )}
         >
-          <div className="relative w-[100vw] max-w-2xl aspect-square">
+          <div className="relative w-[90vw] max-w-lg aspect-[2/3]">
             <Image
               src={modalImage}
               alt="Movie poster full size"
               fill
+              sizes="90vw"
               className="rounded-lg object-contain shadow-xl transition-transform duration-300"
             />
           </div>
