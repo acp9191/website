@@ -5,17 +5,18 @@ import { useState, useRef, useEffect } from 'react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import LocaleSwitcher from './LocaleSwitcher';
 
-const links = [
-  { href: '/about', label: '🙋‍♂️ About' },
-  { href: '/favorites/music', label: '🎧 Music' },
-  // { href: '/favorites/books', label: '📚 Books' },
-  { href: '/favorites/movies', label: '🎬 Movies' },
-];
-
 export default function Header() {
+  const t = useTranslations('Header');
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const links = [
+    { href: '/about', label: t('about') },
+    { href: '/favorites/music', label: t('music') },
+    // { href: '/favorites/books', label: t('books') },
+    { href: '/favorites/movies', label: t('movies') },
+  ];
 
   // On mount, set theme from localStorage or system preference
   useEffect(() => {
@@ -49,13 +50,13 @@ export default function Header() {
             href="/"
             className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white transition-transform hover:scale-105 active:scale-95"
           >
-            Avery Peterson
+            {t('title')}
           </Link>
 
           <button
             className="sm:hidden w-10 h-10 relative text-gray-800 dark:text-white"
             onClick={() => setMenuOpen((prev) => !prev)}
-            aria-label="Toggle menu"
+            aria-label={t('toggleMenu')}
           >
             {/* Hamburger Icon */}
             <Bars3Icon
@@ -86,7 +87,7 @@ export default function Header() {
               onClick={toggleTheme}
               className="px-3 py-1 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 cursor-pointer"
             >
-              {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
+              {theme === 'dark' ? t('lightMode') : t('darkMode')}
             </button>
 
             <LocaleSwitcher />
@@ -115,14 +116,14 @@ export default function Header() {
               onClick={toggleTheme}
               className="block w-full px-4 py-2 rounded-md text-left text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
             >
-              {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
+              {theme === 'dark' ? t('lightMode') : t('darkMode')}
             </button>
 
             {/* Mobile-specific locale switcher wrapper */}
             <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-md">
               <div className="flex items-center justify-between">
                 <span className="text-gray-700 dark:text-gray-200 text-sm font-medium">
-                  🌐 Language
+                  {t('language')}
                 </span>
                 <LocaleSwitcher isMobile onLocaleChange={() => setMenuOpen(false)} />
               </div>

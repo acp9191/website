@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import clsx from 'clsx';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 type Movie = {
   title: string;
@@ -15,6 +16,7 @@ type Movie = {
 };
 
 export default function MovieGallery({ movies }: { movies: Movie[] }) {
+  const t = useTranslations('Movies');
   const [selectedGenre, setSelectedGenre] = useState('All');
   const [selectedYear, setSelectedYear] = useState<number | 'All'>('All');
   const [modalImage, setModalImage] = useState<string | null>(null);
@@ -41,7 +43,7 @@ export default function MovieGallery({ movies }: { movies: Movie[] }) {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">🎬 Favorite Movies</h1>
+      <h1 className="text-3xl font-bold mb-6">{t('title')}</h1>
 
       <div className="flex flex-wrap gap-4 mb-8">
         <select
@@ -49,7 +51,7 @@ export default function MovieGallery({ movies }: { movies: Movie[] }) {
           onChange={(e) => setSelectedGenre(e.target.value)}
           className="px-3 py-2 rounded-md border dark:bg-gray-800 dark:text-white"
         >
-          <option value="All">All Genres</option>
+          <option value="All">{t('allGenres')}</option>
           {allGenres.map((g) => (
             <option key={g} value={g}>
               {g}
@@ -65,7 +67,7 @@ export default function MovieGallery({ movies }: { movies: Movie[] }) {
           }}
           className="px-3 py-2 rounded-md border dark:bg-gray-800 dark:text-white"
         >
-          <option value="All">All Years</option>
+          <option value="All">{t('allYears')}</option>
           {allYears.map((y) => (
             <option key={y} value={y}>
               {y}
@@ -87,7 +89,7 @@ export default function MovieGallery({ movies }: { movies: Movie[] }) {
               >
                 <Image
                   src={movie.poster}
-                  alt={movie.title}
+                  alt={t('posterAlt', { title: movie.title })}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                   className="object-cover rounded-md transition-opacity duration-300 hover:opacity-90"
@@ -121,12 +123,12 @@ export default function MovieGallery({ movies }: { movies: Movie[] }) {
                   >
                     <Image
                       src="/icons/youtube.svg"
-                      alt="YouTube icon"
+                      alt={t('youtubeIcon')}
                       width={20}
                       height={20}
                       className="inline-block"
                     />
-                    Watch Trailer
+                    {t('watchTrailer')}
                   </a>
                 </div>
               )}
@@ -149,7 +151,7 @@ export default function MovieGallery({ movies }: { movies: Movie[] }) {
           <div className="relative w-[90vw] max-w-lg aspect-[2/3]">
             <Image
               src={modalImage}
-              alt="Movie poster full size"
+              alt={t('modalAlt')}
               fill
               sizes="90vw"
               className="rounded-lg object-contain shadow-xl transition-transform duration-300"

@@ -43,6 +43,15 @@ export default function Footer() {
         >
           <img src="/icons/instagram.svg" alt="Instagram" className="w-5 h-5" />
         </a>
+        <a
+          href="https://x.com/acp9191"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="X"
+          className="hover:opacity-75 transition-opacity"
+        >
+          <img src="/icons/x.svg" alt="X" className="w-5 h-5 dark:invert" />
+        </a>
       </div>
       <p>{t('copyright', { year: new Date().getFullYear() })}</p>
     </footer>

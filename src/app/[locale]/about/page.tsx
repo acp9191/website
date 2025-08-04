@@ -10,7 +10,7 @@ export default function AboutPage() {
       <div className="mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md">
         <Image
           src="https://res.cloudinary.com/acp/image/upload/v1754157313/acp_headshot_nhlged.jpg"
-          alt="Avery Peterson headshot"
+          alt={t('imageAlt')}
           width={400}
           height={400}
           className="rounded-xl shadow-md w-full h-auto"
@@ -19,15 +19,13 @@ export default function AboutPage() {
       </div>
       <h1 className="text-4xl font-bold text-center">{t('title')}</h1>
       <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed text-center">
-        I'm Avery Peterson — a software engineer based in NYC who cares about building thoughtful,
-        well-crafted experiences.
+        {t('description1')}
       </p>
       <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed text-center">
-        I enjoy clean code, great design, and making things that feel intentional.
+        {t('description2')}
       </p>
       <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed text-center">
-        Outside of work, you'll usually find me listening to music, reading something new, or
-        running through the city.
+        {t('description3')}
       </p>
     </section>
   );

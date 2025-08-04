@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import clsx from 'clsx';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 type Album = {
   title: string;
@@ -15,6 +16,7 @@ type Album = {
 };
 
 export default function MusicGallery({ albums }: { albums: Album[] }) {
+  const t = useTranslations('Music');
   const [selectedGenre, setSelectedGenre] = useState('All');
   const [selectedYear, setSelectedYear] = useState<number | 'All'>('All');
   const [modalImage, setModalImage] = useState<string | null>(null);
@@ -41,7 +43,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">🎧 Favorite Albums</h1>
+      <h1 className="text-3xl font-bold mb-6">{t('title')}</h1>
 
       <div className="flex flex-wrap gap-4 mb-8">
         <select
@@ -49,7 +51,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
           onChange={(e) => setSelectedGenre(e.target.value)}
           className="px-3 py-2 rounded-md border dark:bg-gray-800 dark:text-white"
         >
-          <option value="All">All Genres</option>
+          <option value="All">{t('allGenres')}</option>
           {allGenres.map((g) => (
             <option key={g} value={g}>
               {g}
@@ -65,7 +67,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
           }}
           className="px-3 py-2 rounded-md border dark:bg-gray-800 dark:text-white"
         >
-          <option value="All">All Years</option>
+          <option value="All">{t('allYears')}</option>
           {allYears.map((y) => (
             <option key={y} value={y}>
               {y}
@@ -87,7 +89,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
               >
                 <Image
                   src={album.cover}
-                  alt={album.title}
+                  alt={t('coverAlt', { title: album.title })}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                   className="object-cover rounded-md"
@@ -120,12 +122,12 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
                   >
                     <Image
                       src="/icons/spotify.svg"
-                      alt="Spotify icon"
+                      alt={t('spotifyIcon')}
                       width={20}
                       height={20}
                       className="inline-block"
                     />
-                    Listen on Spotify
+                    {t('listenOnSpotify')}
                   </a>
                 </div>
               )}
@@ -148,7 +150,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
           <div className="relative w-[90vw] max-w-xl aspect-square">
             <Image
               src={modalImage}
-              alt="Album cover full size"
+              alt={t('modalAlt')}
               fill
               sizes="90vw"
               className="rounded-lg object-contain shadow-xl transition-transform duration-300"

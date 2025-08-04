@@ -4,14 +4,15 @@
     "description": "Je suis un ingénieur logiciel passionné par les bons outils, la bonne musique et le code propre."
   },
   "Header": {
-    "Home": "Accueil",
-    "About": "À propos",
-    "Projects": "Projets",
-    "Albums": "Albums",
-    "Tools": "Outils",
-    "Newsletter": "Newsletter",
-    "light": "Clair",
-    "dark": "Sombre"
+    "title": "Avery Peterson",
+    "about": "🙋‍♂️ À propos",
+    "music": "🎧 Musique",
+    "books": "📚 Livres",
+    "movies": "🎬 Films",
+    "darkMode": "🌙 Sombre",
+    "lightMode": "☀️ Clair",
+    "language": "🌐 Langue",
+    "toggleMenu": "Basculer le menu"
   },
   "Footer": {
     "copyright": "© {year} Avery Peterson. Tous droits réservés."
@@ -21,6 +22,28 @@
     "description": "Inscrivez-vous pour recevoir des mises à jour occasionnelles et des liens intéressants."
   },
   "About": {
-    "title": "🙋‍♂️ À propos de moi"
+    "title": "🙋‍♂️ À propos de moi",
+    "imageAlt": "Portrait d'Avery Peterson",
+    "description1": "Je suis Avery Peterson — un ingénieur logiciel basé à NYC qui se soucie de créer des expériences réfléchies et bien conçues.",
+    "description2": "J'aime le code propre, le bon design et faire des choses qui semblent intentionnelles.",
+    "description3": "En dehors du travail, vous me trouverez généralement en train d'écouter de la musique, de lire quelque chose de nouveau ou de courir dans la ville."
+  },
+  "Movies": {
+    "title": "🎬 Films Préférés",
+    "allGenres": "Tous les Genres",
+    "allYears": "Toutes les Années",
+    "posterAlt": "Affiche du film {title}",
+    "watchTrailer": "Voir la Bande-annonce",
+    "youtubeIcon": "Icône YouTube",
+    "modalAlt": "Affiche de film en taille réelle"
+  },
+  "Music": {
+    "title": "🎧 Albums Préférés",
+    "allGenres": "Tous les Genres",
+    "allYears": "Toutes les Années",
+    "coverAlt": "Pochette de l'album {title}",
+    "listenOnSpotify": "Écouter sur Spotify",
+    "spotifyIcon": "Icône Spotify",
+    "modalAlt": "Pochette d'album en taille réelle"
   }
 }

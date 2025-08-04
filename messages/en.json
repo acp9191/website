@@ -4,14 +4,15 @@
     "description": "I'm a software engineer who loves good tools, good music, and clean code."
   },
   "Header": {
-    "Home": "Home",
-    "About": "About",
-    "Projects": "Projects",
-    "Albums": "Albums",
-    "Tools": "Tools",
-    "Newsletter": "Newsletter",
-    "light": "Light",
-    "dark": "Dark"
+    "title": "Avery Peterson",
+    "about": "🙋‍♂️ About",
+    "music": "🎧 Music",
+    "books": "📚 Books",
+    "movies": "🎬 Movies",
+    "darkMode": "🌙 Dark",
+    "lightMode": "☀️ Light",
+    "language": "🌐 Language",
+    "toggleMenu": "Toggle menu"
   },
   "Footer": {
     "copyright": "\u00a9 {year} Avery Peterson. All rights reserved."
@@ -21,6 +22,28 @@
     "description": "Sign up to get occasional updates and interesting links."
   },
   "About": {
-    "title": "🙋‍♂️ About Me"
+    "title": "🙋‍♂️ About Me",
+    "imageAlt": "Avery Peterson headshot",
+    "description1": "I'm Avery Peterson — a software engineer based in NYC who cares about building thoughtful, well-crafted experiences.",
+    "description2": "I enjoy clean code, great design, and making things that feel intentional.",
+    "description3": "Outside of work, you'll usually find me listening to music, reading something new, or running through the city."
+  },
+  "Movies": {
+    "title": "🎬 Favorite Movies",
+    "allGenres": "All Genres",
+    "allYears": "All Years",
+    "posterAlt": "{title} movie poster",
+    "watchTrailer": "Watch Trailer",
+    "youtubeIcon": "YouTube icon",
+    "modalAlt": "Movie poster full size"
+  },
+  "Music": {
+    "title": "🎧 Favorite Albums",
+    "allGenres": "All Genres",
+    "allYears": "All Years",
+    "coverAlt": "{title} album cover",
+    "listenOnSpotify": "Listen on Spotify",
+    "spotifyIcon": "Spotify icon",
+    "modalAlt": "Album cover full size"
   }
 }

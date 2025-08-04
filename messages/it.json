@@ -4,14 +4,15 @@
     "description": "Sono un ingegnere del software che ama i buoni strumenti, la buona musica e il codice pulito."
   },
   "Header": {
-    "Home": "Home",
-    "About": "Chi sono",
-    "Projects": "Progetti",
-    "Albums": "Album",
-    "Tools": "Strumenti",
-    "Newsletter": "Newsletter",
-    "light": "Chiaro",
-    "dark": "Scuro"
+    "title": "Avery Peterson",
+    "about": "🙋‍♂️ Chi sono",
+    "music": "🎧 Musica",
+    "books": "📚 Libri",
+    "movies": "🎬 Film",
+    "darkMode": "🌙 Scuro",
+    "lightMode": "☀️ Chiaro",
+    "language": "🌐 Lingua",
+    "toggleMenu": "Attiva menu"
   },
   "Footer": {
     "copyright": "© {year} Avery Peterson. Tutti i diritti riservati."
@@ -21,6 +22,28 @@
     "description": "Iscriviti per ricevere aggiornamenti occasionali e link interessanti."
   },
   "About": {
-    "title": "🙋‍♂️ Chi sono"
+    "title": "🙋‍♂️ Chi sono",
+    "imageAlt": "Ritratto di Avery Peterson",
+    "description1": "Sono Avery Peterson — un ingegnere del software con sede a NYC che si preoccupa di costruire esperienze ponderate e ben realizzate.",
+    "description2": "Mi piace il codice pulito, il grande design e fare cose che sembrano intenzionali.",
+    "description3": "Fuori dal lavoro, di solito mi troverai ad ascoltare musica, leggere qualcosa di nuovo o correre per la città."
+  },
+  "Movies": {
+    "title": "🎬 Film Preferiti",
+    "allGenres": "Tutti i Generi",
+    "allYears": "Tutti gli Anni",
+    "posterAlt": "Locandina del film {title}",
+    "watchTrailer": "Guarda il Trailer",
+    "youtubeIcon": "Icona YouTube",
+    "modalAlt": "Locandina del film a dimensione intera"
+  },
+  "Music": {
+    "title": "🎧 Album Preferiti",
+    "allGenres": "Tutti i Generi",
+    "allYears": "Tutti gli Anni",
+    "coverAlt": "Copertina dell'album {title}",
+    "listenOnSpotify": "Ascolta su Spotify",
+    "spotifyIcon": "Icona Spotify",
+    "modalAlt": "Copertina dell'album a dimensione intera"
   }
 }
