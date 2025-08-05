@@ -48,6 +48,34 @@ export default function Header() {
     return () => window.removeEventListener('resize', close);
   }, []);
 
+  const ThemeToggle = ({ isMobile = false }: { isMobile?: boolean }) => (
+    <button
+      onClick={toggleTheme}
+      className={`${
+        isMobile
+          ? 'flex items-center justify-center'
+          : 'flex items-center justify-center px-3 py-1 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300'
+      } cursor-pointer`}
+      aria-label={t('toggleTheme')}
+    >
+      <div className="relative">
+        {/* Toggle Switch */}
+        <div
+          className={`w-12 h-6 rounded-full transition-colors duration-500 ease-in-out ${
+            theme === 'dark' ? 'bg-blue-600' : 'bg-gray-300'
+          }`}
+        >
+          {/* Toggle Button */}
+          <div
+            className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-lg transition-transform duration-500 ease-in-out ${
+              theme === 'dark' ? 'translate-x-6' : 'translate-x-0.5'
+            }`}
+          />
+        </div>
+      </div>
+    </button>
+  );
+
   return (
     <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-xs">
       <div className="max-w-5xl mx-auto px-4">
@@ -89,15 +117,7 @@ export default function Header() {
                 {label}
               </Link>
             ))}
-            {mounted && (
-              <button
-                onClick={toggleTheme}
-                className="px-3 py-1 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 cursor-pointer"
-              >
-                {theme === 'dark' ? t('lightMode') : t('darkMode')}
-              </button>
-            )}
-
+            <ThemeToggle />
             <LocaleSwitcher />
           </nav>
         </div>
@@ -120,16 +140,18 @@ export default function Header() {
                 {label}
               </Link>
             ))}
-            {mounted && (
-              <button
-                onClick={toggleTheme}
-                className="block w-full px-4 py-2 rounded-md text-left text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
-              >
-                {theme === 'dark' ? t('lightMode') : t('darkMode')}
-              </button>
-            )}
 
-            {/* Mobile-specific locale switcher wrapper */}
+            {/* Theme toggle with label */}
+            <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-md">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-700 dark:text-gray-200 text-sm font-medium">
+                  {t('theme')}
+                </span>
+                <ThemeToggle isMobile />
+              </div>
+            </div>
+
+            {/* Language switcher with label */}
             <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-md">
               <div className="flex items-center justify-between">
                 <span className="text-gray-700 dark:text-gray-200 text-sm font-medium">

@@ -12,7 +12,9 @@
     "darkMode": "🌙 Oscuro",
     "lightMode": "☀️ Claro",
     "language": "🌐 Idioma",
-    "toggleMenu": "Alternar menú"
+    "theme": "🎨 Tema",
+    "toggleMenu": "Alternar menú",
+    "toggleTheme": "Cambiar tema"
   },
   "Footer": {
     "copyright": "© {year} Avery Peterson. Todos los derechos reservados."

@@ -4,6 +4,14 @@ import Image from 'next/image';
 
 export default function Home() {
   const t = useTranslations('Home');
+
+  // Parse the title to find and replace the wave emoji with animated version
+  const animatedTitle = () => {
+    const title = t('title');
+    // Replace the wave emoji with animated version
+    return title.replace('👋', '<span class="inline-block animate-wave select-none">👋</span>');
+  };
+
   return (
     <section className="space-y-6 px-4">
       <div className="mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md">
@@ -16,7 +24,10 @@ export default function Home() {
           priority={true}
         />
       </div>
-      <h1 className="text-4xl font-bold text-center">{t('title')}</h1>
+      <h1
+        className="text-4xl font-bold text-center"
+        dangerouslySetInnerHTML={{ __html: animatedTitle() }}
+      />
       <p className="text-lg text-gray-600 dark:text-gray-400 text-center">{t('description')}</p>
     </section>
   );
