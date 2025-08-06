@@ -1,6 +1,6 @@
 {
   "Home": {
-    "title": "Salut 👋 Je suis Avery Peterson",
+    "title": "Salut 👋 Je suis Avery",
     "description": "Je suis un ingénieur logiciel passionné par les bons outils, la bonne musique et le code propre."
   },
   "Header": {
@@ -41,8 +41,15 @@
   },
   "Music": {
     "title": "🎧 Albums Préférés",
+    "subtitle": "Un canon personnel de favoris durables",
     "allGenres": "Tous les Genres",
     "allYears": "Toutes les Années",
+    "allArtists": "Tous les Artistes",
+    "album": "album",
+    "albums": "albums",
+    "noResults": "Aucun album trouvé",
+    "noResultsDescription": "On dirait que même mes albums préférés ont des limites",
+    "clearFilters": "Réinitialiser tous les filtres",
     "coverAlt": "Pochette de l'album {title}",
     "listenOnSpotify": "Écouter sur Spotify",
     "spotifyIcon": "Icône Spotify",
