@@ -22,6 +22,9 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
   const [selectedYear, setSelectedYear] = useState<number | 'All'>('All');
   const [modalImage, setModalImage] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [modalAnimation, setModalAnimation] = useState<'entering' | 'visible' | 'leaving'>(
+    'entering'
+  );
   const [visibleItems, setVisibleItems] = useState<Set<string>>(new Set());
   const [headerVisible, setHeaderVisible] = useState(false);
   const [genreDropdownOpen, setGenreDropdownOpen] = useState(false);
@@ -97,6 +100,17 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
     };
   }, []);
 
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showModal) {
+        closeModal();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [showModal]); // Add closeModal as dependency if needed
+
   // Scroll to top button visibility
   useEffect(() => {
     const handleScroll = () => {
@@ -162,11 +176,26 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
   const openModal = (cover: string) => {
     setModalImage(cover);
     setShowModal(true);
+    setModalAnimation('entering');
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+
+    // Trigger animation after a brief delay
+    setTimeout(() => {
+      setModalAnimation('visible');
+    }, 10);
   };
 
   const closeModal = () => {
-    setShowModal(false);
-    setTimeout(() => setModalImage(null), 300);
+    setModalAnimation('leaving');
+    // Restore body scroll
+    document.body.style.overflow = 'unset';
+
+    setTimeout(() => {
+      setShowModal(false);
+      setModalImage(null);
+      setModalAnimation('entering');
+    }, 300);
   };
 
   const scrollToTop = () => {
@@ -213,7 +242,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
 
       <div
         className={clsx(
-          'flex flex-wrap gap-3 mb-8 transition-all duration-700 ease-out relative z-10',
+          'flex flex-col sm:flex-row flex-wrap gap-3 mb-8 transition-all duration-700 ease-out relative z-10',
           {
             'opacity-100 translate-y-0': headerVisible,
             'opacity-0 translate-y-4': !headerVisible,
@@ -221,18 +250,292 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
         )}
         style={{ transitionDelay: '300ms' }}
       >
-        {/* Genre Dropdown */}
-        <div className="relative" ref={genreDropdownRef}>
-          <button
-            onClick={() => setGenreDropdownOpen(!genreDropdownOpen)}
-            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm font-medium bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            aria-expanded={genreDropdownOpen}
+        <div className="flex flex-wrap gap-3 flex-1">
+          {/* Genre Dropdown */}
+          <div
+            className="relative min-w-0 flex-1 sm:flex-initial sm:min-w-[140px]"
+            ref={genreDropdownRef}
           >
-            <span className="truncate max-w-24 sm:max-w-32">
-              {selectedGenre === 'All' ? t('allGenres') : selectedGenre}
-            </span>
+            <button
+              onClick={() => setGenreDropdownOpen(!genreDropdownOpen)}
+              className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-medium bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm hover:shadow-md"
+              aria-expanded={genreDropdownOpen}
+            >
+              <span className="truncate text-left">
+                {selectedGenre === 'All' ? t('allGenres') : selectedGenre}
+              </span>
+              <svg
+                className={`w-4 h-4 transition-transform duration-200 flex-shrink-0 ${
+                  genreDropdownOpen ? 'rotate-180' : ''
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            {genreDropdownOpen && (
+              <div className="absolute left-0 right-0 sm:left-0 sm:right-auto sm:w-64 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl z-[100] max-h-64 overflow-y-auto">
+                <div className="py-1">
+                  <button
+                    onClick={() => {
+                      setSelectedGenre('All');
+                      setGenreDropdownOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between ${
+                      selectedGenre === 'All'
+                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                        : 'text-gray-900 dark:text-gray-100'
+                    }`}
+                  >
+                    <span>{t('allGenres')}</span>
+                    {selectedGenre === 'All' && (
+                      <svg
+                        className="w-4 h-4 text-blue-600 dark:text-blue-400"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                  {allGenres.map((genre) => (
+                    <button
+                      key={genre}
+                      onClick={() => {
+                        setSelectedGenre(genre);
+                        setGenreDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between ${
+                        selectedGenre === genre
+                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                          : 'text-gray-900 dark:text-gray-100'
+                      }`}
+                    >
+                      <span>{genre}</span>
+                      {selectedGenre === genre && (
+                        <svg
+                          className="w-4 h-4 text-blue-600 dark:text-blue-400"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Artist Dropdown */}
+          <div
+            className="relative min-w-0 flex-1 sm:flex-initial sm:min-w-[140px]"
+            ref={artistDropdownRef}
+          >
+            <button
+              onClick={() => setArtistDropdownOpen(!artistDropdownOpen)}
+              className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-medium bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm hover:shadow-md"
+              aria-expanded={artistDropdownOpen}
+            >
+              <span className="truncate text-left">
+                {selectedArtist === 'All' ? t('allArtists') : selectedArtist}
+              </span>
+              <svg
+                className={`w-4 h-4 transition-transform duration-200 flex-shrink-0 ${
+                  artistDropdownOpen ? 'rotate-180' : ''
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            {artistDropdownOpen && (
+              <div className="absolute left-0 right-0 sm:left-0 sm:right-auto sm:w-64 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl z-[100] max-h-64 overflow-y-auto">
+                <div className="py-1">
+                  <button
+                    onClick={() => {
+                      setSelectedArtist('All');
+                      setArtistDropdownOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between ${
+                      selectedArtist === 'All'
+                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                        : 'text-gray-900 dark:text-gray-100'
+                    }`}
+                  >
+                    <span>{t('allArtists')}</span>
+                    {selectedArtist === 'All' && (
+                      <svg
+                        className="w-4 h-4 text-blue-600 dark:text-blue-400"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                  {allArtists.map((artist) => (
+                    <button
+                      key={artist}
+                      onClick={() => {
+                        setSelectedArtist(artist);
+                        setArtistDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between ${
+                        selectedArtist === artist
+                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                          : 'text-gray-900 dark:text-gray-100'
+                      }`}
+                    >
+                      <span>{artist}</span>
+                      {selectedArtist === artist && (
+                        <svg
+                          className="w-4 h-4 text-blue-600 dark:text-blue-400"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Year Dropdown */}
+          <div
+            className="relative min-w-0 flex-1 sm:flex-initial sm:min-w-[120px]"
+            ref={yearDropdownRef}
+          >
+            <button
+              onClick={() => setYearDropdownOpen(!yearDropdownOpen)}
+              className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-medium bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm hover:shadow-md"
+              aria-expanded={yearDropdownOpen}
+            >
+              <span className="truncate text-left">
+                {selectedYear === 'All' ? t('allYears') : selectedYear}
+              </span>
+              <svg
+                className={`w-4 h-4 transition-transform duration-200 flex-shrink-0 ${
+                  yearDropdownOpen ? 'rotate-180' : ''
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            {yearDropdownOpen && (
+              <div className="absolute left-0 right-0 sm:left-0 sm:right-auto sm:w-48 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl z-[100] max-h-64 overflow-y-auto">
+                <div className="py-1">
+                  <button
+                    onClick={() => {
+                      setSelectedYear('All');
+                      setYearDropdownOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between ${
+                      selectedYear === 'All'
+                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                        : 'text-gray-900 dark:text-gray-100'
+                    }`}
+                  >
+                    <span>{t('allYears')}</span>
+                    {selectedYear === 'All' && (
+                      <svg
+                        className="w-4 h-4 text-blue-600 dark:text-blue-400"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                  {allYears.map((year) => (
+                    <button
+                      key={year}
+                      onClick={() => {
+                        setSelectedYear(year);
+                        setYearDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between ${
+                        selectedYear === year
+                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                          : 'text-gray-900 dark:text-gray-100'
+                      }`}
+                    >
+                      <span>{year}</span>
+                      {selectedYear === year && (
+                        <svg
+                          className="w-4 h-4 text-blue-600 dark:text-blue-400"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Results count - styled as a badge */}
+        <div className="flex items-center justify-center sm:justify-end">
+          <div className="inline-flex items-center gap-2 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-900 dark:text-white shadow-sm">
             <svg
-              className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform ${genreDropdownOpen ? 'rotate-180' : ''}`}
+              className="w-4 h-4 text-gray-500 dark:text-gray-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -241,247 +544,13 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M19 9l-7 7-7-7"
+                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
               />
             </svg>
-          </button>
-
-          {genreDropdownOpen && (
-            <div className="absolute left-0 mt-1 w-40 sm:w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-[100] max-h-60 overflow-y-auto">
-              <button
-                onClick={() => {
-                  setSelectedGenre('All');
-                  setGenreDropdownOpen(false);
-                }}
-                className={`w-full text-left px-3 sm:px-4 py-2 sm:py-2.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors first:rounded-t-md ${
-                  selectedGenre === 'All'
-                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                    : ''
-                }`}
-              >
-                {t('allGenres')}
-                {selectedGenre === 'All' && (
-                  <svg
-                    className="w-4 h-4 ml-auto inline text-blue-600 dark:text-blue-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                )}
-              </button>
-              {allGenres.map((genre) => (
-                <button
-                  key={genre}
-                  onClick={() => {
-                    setSelectedGenre(genre);
-                    setGenreDropdownOpen(false);
-                  }}
-                  className={`w-full text-left px-3 sm:px-4 py-2 sm:py-2.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors last:rounded-b-md ${
-                    selectedGenre === genre
-                      ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                      : ''
-                  }`}
-                >
-                  {genre}
-                  {selectedGenre === genre && (
-                    <svg
-                      className="w-4 h-4 ml-auto inline text-blue-600 dark:text-blue-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Artist Dropdown */}
-        <div className="relative" ref={artistDropdownRef}>
-          <button
-            onClick={() => setArtistDropdownOpen(!artistDropdownOpen)}
-            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm font-medium bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            aria-expanded={artistDropdownOpen}
-          >
-            <span className="truncate max-w-24 sm:max-w-32">
-              {selectedArtist === 'All' ? t('allArtists') : selectedArtist}
+            <span>
+              {filtered.length} {filtered.length === 1 ? t('album') : t('albums')}
             </span>
-            <svg
-              className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform ${artistDropdownOpen ? 'rotate-180' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
-
-          {artistDropdownOpen && (
-            <div className="absolute left-0 mt-1 w-40 sm:w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-[100] max-h-60 overflow-y-auto">
-              <button
-                onClick={() => {
-                  setSelectedArtist('All');
-                  setArtistDropdownOpen(false);
-                }}
-                className={`w-full text-left px-3 sm:px-4 py-2 sm:py-2.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors first:rounded-t-md ${
-                  selectedArtist === 'All'
-                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                    : ''
-                }`}
-              >
-                {t('allArtists')}
-                {selectedArtist === 'All' && (
-                  <svg
-                    className="w-4 h-4 ml-auto inline text-blue-600 dark:text-blue-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                )}
-              </button>
-              {allArtists.map((artist) => (
-                <button
-                  key={artist}
-                  onClick={() => {
-                    setSelectedArtist(artist);
-                    setArtistDropdownOpen(false);
-                  }}
-                  className={`w-full text-left px-3 sm:px-4 py-2 sm:py-2.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors last:rounded-b-md ${
-                    selectedArtist === artist
-                      ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                      : ''
-                  }`}
-                >
-                  {artist}
-                  {selectedArtist === artist && (
-                    <svg
-                      className="w-4 h-4 ml-auto inline text-blue-600 dark:text-blue-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Year Dropdown */}
-        <div className="relative" ref={yearDropdownRef}>
-          <button
-            onClick={() => setYearDropdownOpen(!yearDropdownOpen)}
-            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm font-medium bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            aria-expanded={yearDropdownOpen}
-          >
-            <span className="truncate max-w-24 sm:max-w-32">
-              {selectedYear === 'All' ? t('allYears') : selectedYear}
-            </span>
-            <svg
-              className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform ${yearDropdownOpen ? 'rotate-180' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
-
-          {yearDropdownOpen && (
-            <div className="absolute left-0 mt-1 w-40 sm:w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-[100] max-h-60 overflow-y-auto">
-              <button
-                onClick={() => {
-                  setSelectedYear('All');
-                  setYearDropdownOpen(false);
-                }}
-                className={`w-full text-left px-3 sm:px-4 py-2 sm:py-2.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors first:rounded-t-md ${
-                  selectedYear === 'All'
-                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                    : ''
-                }`}
-              >
-                {t('allYears')}
-                {selectedYear === 'All' && (
-                  <svg
-                    className="w-4 h-4 ml-auto inline text-blue-600 dark:text-blue-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                )}
-              </button>
-              {allYears.map((year) => (
-                <button
-                  key={year}
-                  onClick={() => {
-                    setSelectedYear(year);
-                    setYearDropdownOpen(false);
-                  }}
-                  className={`w-full text-left px-3 sm:px-4 py-2 sm:py-2.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors last:rounded-b-md ${
-                    selectedYear === year
-                      ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                      : ''
-                  }`}
-                >
-                  {year}
-                  {selectedYear === year && (
-                    <svg
-                      className="w-4 h-4 ml-auto inline text-blue-600 dark:text-blue-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Results count */}
-        <div className="flex items-center px-2 sm:px-3 py-1.5 sm:py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
-          {filtered.length} {filtered.length === 1 ? t('album') : t('albums')}
+          </div>
         </div>
       </div>
 
@@ -600,25 +669,39 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
         </svg>
       </button>
 
-      {modalImage && (
+      {modalImage && showModal && (
         <div
           onClick={closeModal}
           className={clsx(
-            'fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/40 transition-opacity duration-300',
+            'fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ease-out',
             {
-              'opacity-100': showModal,
-              'opacity-0 pointer-events-none': !showModal,
+              'backdrop-blur-sm bg-black/60': modalAnimation === 'visible',
+              'backdrop-blur-none bg-black/0':
+                modalAnimation === 'entering' || modalAnimation === 'leaving',
             }
           )}
         >
-          <div className="relative w-[90vw] max-w-xl aspect-square">
-            <Image
-              src={modalImage}
-              alt={t('modalAlt')}
-              fill
-              sizes="90vw"
-              className="rounded-lg object-contain shadow-xl transition-transform duration-300"
-            />
+          <div
+            className={clsx(
+              'relative max-w-xl max-h-[70vh] w-full transition-all duration-300 ease-out',
+              {
+                'scale-100 opacity-100': modalAnimation === 'visible',
+                'scale-75 opacity-0': modalAnimation === 'entering',
+                'scale-90 opacity-0': modalAnimation === 'leaving',
+              }
+            )}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative w-full aspect-square">
+              <Image
+                src={modalImage}
+                alt="Album cover enlarged view"
+                fill
+                sizes="(max-width: 768px) 70vw, 50vw"
+                className="rounded-xl object-contain shadow-2xl"
+                priority
+              />
+            </div>
           </div>
         </div>
       )}
