@@ -23,11 +23,14 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
   const [modalImage, setModalImage] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [visibleItems, setVisibleItems] = useState<Set<string>>(new Set());
+  const [headerVisible, setHeaderVisible] = useState(false);
   const [genreDropdownOpen, setGenreDropdownOpen] = useState(false);
   const [artistDropdownOpen, setArtistDropdownOpen] = useState(false);
   const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
+  const headerObserverRef = useRef<IntersectionObserver | null>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const genreDropdownRef = useRef<HTMLDivElement>(null);
   const artistDropdownRef = useRef<HTMLDivElement>(null);
   const yearDropdownRef = useRef<HTMLDivElement>(null);
@@ -42,6 +45,33 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
     const yearMatch = selectedYear === 'All' || album.year === selectedYear;
     return genreMatch && artistMatch && yearMatch;
   });
+
+  // Set up Intersection Observer for header
+  useEffect(() => {
+    headerObserverRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setHeaderVisible(true);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '50px',
+      }
+    );
+
+    if (headerRef.current) {
+      headerObserverRef.current.observe(headerRef.current);
+    }
+
+    return () => {
+      if (headerObserverRef.current) {
+        headerObserverRef.current.disconnect();
+      }
+    };
+  }, []);
 
   // Set up Intersection Observer
   useEffect(() => {
@@ -148,12 +178,49 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">{t('title')}</h1>
-        <p className="text-xl text-gray-600 dark:text-gray-400 font-light">{t('subtitle')}</p>
+      <div
+        ref={headerRef}
+        className={clsx('text-center mb-8 transition-all duration-700 ease-out', {
+          'opacity-100 translate-y-0': headerVisible,
+          'opacity-0 translate-y-8': !headerVisible,
+        })}
+      >
+        <h1
+          className={clsx(
+            'text-4xl font-bold text-gray-900 dark:text-white mb-3 transition-all duration-700 ease-out',
+            {
+              'opacity-100 translate-y-0': headerVisible,
+              'opacity-0 translate-y-4': !headerVisible,
+            }
+          )}
+          style={{ transitionDelay: '100ms' }}
+        >
+          {t('title')}
+        </h1>
+        <p
+          className={clsx(
+            'text-xl text-gray-600 dark:text-gray-400 font-light transition-all duration-700 ease-out',
+            {
+              'opacity-100 translate-y-0': headerVisible,
+              'opacity-0 translate-y-4': !headerVisible,
+            }
+          )}
+          style={{ transitionDelay: '200ms' }}
+        >
+          {t('subtitle')}
+        </p>
       </div>
 
-      <div className="flex flex-wrap gap-3 mb-8">
+      <div
+        className={clsx(
+          'flex flex-wrap gap-3 mb-8 transition-all duration-700 ease-out relative z-10',
+          {
+            'opacity-100 translate-y-0': headerVisible,
+            'opacity-0 translate-y-4': !headerVisible,
+          }
+        )}
+        style={{ transitionDelay: '300ms' }}
+      >
         {/* Genre Dropdown */}
         <div className="relative" ref={genreDropdownRef}>
           <button
@@ -180,7 +247,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
           </button>
 
           {genreDropdownOpen && (
-            <div className="absolute left-0 mt-1 w-40 sm:w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-20 max-h-60 overflow-y-auto">
+            <div className="absolute left-0 mt-1 w-40 sm:w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-[100] max-h-60 overflow-y-auto">
               <button
                 onClick={() => {
                   setSelectedGenre('All');
@@ -266,7 +333,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
           </button>
 
           {artistDropdownOpen && (
-            <div className="absolute left-0 mt-1 w-40 sm:w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-20 max-h-60 overflow-y-auto">
+            <div className="absolute left-0 mt-1 w-40 sm:w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-[100] max-h-60 overflow-y-auto">
               <button
                 onClick={() => {
                   setSelectedArtist('All');
@@ -352,7 +419,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
           </button>
 
           {yearDropdownOpen && (
-            <div className="absolute left-0 mt-1 w-40 sm:w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-20 max-h-60 overflow-y-auto">
+            <div className="absolute left-0 mt-1 w-40 sm:w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-[100] max-h-60 overflow-y-auto">
               <button
                 onClick={() => {
                   setSelectedYear('All');

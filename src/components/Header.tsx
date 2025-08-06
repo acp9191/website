@@ -112,9 +112,16 @@ export default function Header() {
               <Link
                 key={href}
                 href={href}
-                className="px-3 py-1 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                className="relative px-3 py-1 rounded-full text-gray-700 dark:text-gray-200 transition-all duration-300 hover:scale-110 hover:shadow-lg group overflow-hidden"
               >
-                {label}
+                {/* Background animation */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
+
+                {/* Text with bounce */}
+                <span className="relative block group-hover:animate-pulse">{label}</span>
               </Link>
             ))}
             <ThemeToggle />
@@ -135,9 +142,12 @@ export default function Header() {
                 key={href}
                 href={href}
                 onClick={() => setMenuOpen(false)}
-                className="block px-4 py-2 rounded-md text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                className="relative block px-4 py-2 rounded-md text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 transition-all duration-300 hover:scale-105 hover:shadow-md group overflow-hidden"
               >
-                {label}
+                {/* Mobile shimmer effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500" />
+
+                <span className="relative">{label}</span>
               </Link>
             ))}
 

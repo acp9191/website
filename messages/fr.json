@@ -17,7 +17,10 @@
     "toggleTheme": "Basculer le thème"
   },
   "Footer": {
-    "copyright": "© {year} Avery Peterson. Tous droits réservés."
+    "copyright": "© {year} Avery Peterson. Tous droits réservés.",
+    "builtWith": "Construit avec",
+    "styledWith": ", stylisé avec",
+    "deployedVia": ", déployé via"
   },
   "Newsletter": {
     "title": "Newsletter",

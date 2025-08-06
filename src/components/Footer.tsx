@@ -53,7 +53,39 @@ export default function Footer() {
           <img src="/icons/x.svg" alt="X" className="w-5 h-5 dark:invert" />
         </a>
       </div>
-      <p>{t('copyright', { year: new Date().getFullYear() })}</p>
+
+      <div className="space-y-1">
+        <p className="text-xs text-gray-400 dark:text-gray-500">
+          {t('builtWith')}{' '}
+          <a
+            href="https://nextjs.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors underline"
+          >
+            Next.js
+          </a>
+          {t('styledWith')}{' '}
+          <a
+            href="https://tailwindcss.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors underline"
+          >
+            Tailwind CSS
+          </a>
+          {t('deployedVia')}{' '}
+          <a
+            href="https://vercel.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors underline"
+          >
+            Vercel
+          </a>
+        </p>
+        <p>{t('copyright', { year: new Date().getFullYear() })}</p>
+      </div>
     </footer>
   );
 }
