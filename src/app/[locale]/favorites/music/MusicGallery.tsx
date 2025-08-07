@@ -41,6 +41,36 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
   const allGenres = Array.from(new Set(albums.flatMap((a) => a.genres))).sort();
   const allArtists = Array.from(new Set(albums.map((a) => a.artist))).sort();
   const allYears = Array.from(new Set(albums.map((a) => a.year))).sort((a, b) => b - a);
+  const hasActiveFilters =
+    selectedGenre !== 'All' || selectedArtist !== 'All' || selectedYear !== 'All';
+
+  const resetFilters = () => {
+    setSelectedGenre('All');
+    setSelectedArtist('All');
+    setSelectedYear('All');
+  };
+
+  // Modified filter selection functions to reset other filters
+  const selectGenre = (genre: string) => {
+    setSelectedGenre(genre);
+    setSelectedArtist('All');
+    setSelectedYear('All');
+    setGenreDropdownOpen(false);
+  };
+
+  const selectArtist = (artist: string) => {
+    setSelectedArtist(artist);
+    setSelectedGenre('All');
+    setSelectedYear('All');
+    setArtistDropdownOpen(false);
+  };
+
+  const selectYear = (year: number | 'All') => {
+    setSelectedYear(year);
+    setSelectedGenre('All');
+    setSelectedArtist('All');
+    setYearDropdownOpen(false);
+  };
 
   const filtered = albums.filter((album) => {
     const genreMatch = selectedGenre === 'All' || album.genres.includes(selectedGenre);
@@ -109,7 +139,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
 
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
-  }, [showModal]); // Add closeModal as dependency if needed
+  }, [showModal]);
 
   // Scroll to top button visibility
   useEffect(() => {
@@ -177,10 +207,8 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
     setModalImage(cover);
     setShowModal(true);
     setModalAnimation('entering');
-    // Prevent body scroll when modal is open
     document.body.style.overflow = 'hidden';
 
-    // Trigger animation after a brief delay
     setTimeout(() => {
       setModalAnimation('visible');
     }, 10);
@@ -188,7 +216,6 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
 
   const closeModal = () => {
     setModalAnimation('leaving');
-    // Restore body scroll
     document.body.style.overflow = 'unset';
 
     setTimeout(() => {
@@ -242,7 +269,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
 
       <div
         className={clsx(
-          'flex flex-col sm:flex-row flex-wrap gap-3 mb-8 transition-all duration-700 ease-out relative z-10',
+          'flex items-center gap-3 mb-8 transition-all duration-700 ease-out relative z-10',
           {
             'opacity-100 translate-y-0': headerVisible,
             'opacity-0 translate-y-4': !headerVisible,
@@ -250,53 +277,48 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
         )}
         style={{ transitionDelay: '300ms' }}
       >
-        <div className="flex flex-wrap gap-3 flex-1">
-          {/* Genre Dropdown */}
-          <div
-            className="relative min-w-0 flex-1 sm:flex-initial sm:min-w-[140px]"
-            ref={genreDropdownRef}
+        {/* Genre Dropdown */}
+        <div className="relative flex-shrink-0 w-32 sm:w-36" ref={genreDropdownRef}>
+          <button
+            onClick={() => setGenreDropdownOpen(!genreDropdownOpen)}
+            className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-medium bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm hover:shadow-md cursor-pointer"
+            aria-expanded={genreDropdownOpen}
           >
-            <button
-              onClick={() => setGenreDropdownOpen(!genreDropdownOpen)}
-              className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-medium bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm hover:shadow-md"
-              aria-expanded={genreDropdownOpen}
+            <span className="truncate text-left">
+              {selectedGenre === 'All' ? t('allGenres') : selectedGenre}
+            </span>
+            <svg
+              className={`w-4 h-4 transition-transform duration-200 flex-shrink-0 ${
+                genreDropdownOpen ? 'rotate-180' : ''
+              }`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <span className="truncate text-left">
-                {selectedGenre === 'All' ? t('allGenres') : selectedGenre}
-              </span>
-              <svg
-                className={`w-4 h-4 transition-transform duration-200 flex-shrink-0 ${
-                  genreDropdownOpen ? 'rotate-180' : ''
-                }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
 
-            {genreDropdownOpen && (
-              <div className="absolute left-0 right-0 sm:left-0 sm:right-auto sm:w-64 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl z-[100] max-h-64 overflow-y-auto">
-                <div className="py-1">
+          {genreDropdownOpen && (
+            <div className="absolute left-0 w-64 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl z-[100] max-h-64 overflow-y-auto">
+              <div className="py-1">
+                {allGenres.map((genre) => (
                   <button
-                    onClick={() => {
-                      setSelectedGenre('All');
-                      setGenreDropdownOpen(false);
-                    }}
-                    className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between ${
-                      selectedGenre === 'All'
+                    key={genre}
+                    onClick={() => selectGenre(genre)}
+                    className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between cursor-pointer ${
+                      selectedGenre === genre
                         ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
                         : 'text-gray-900 dark:text-gray-100'
                     }`}
                   >
-                    <span>{t('allGenres')}</span>
-                    {selectedGenre === 'All' && (
+                    <span>{genre}</span>
+                    {selectedGenre === genre && (
                       <svg
                         className="w-4 h-4 text-blue-600 dark:text-blue-400"
                         fill="currentColor"
@@ -310,232 +332,172 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
                       </svg>
                     )}
                   </button>
-                  {allGenres.map((genre) => (
-                    <button
-                      key={genre}
-                      onClick={() => {
-                        setSelectedGenre(genre);
-                        setGenreDropdownOpen(false);
-                      }}
-                      className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between ${
-                        selectedGenre === genre
-                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                          : 'text-gray-900 dark:text-gray-100'
-                      }`}
-                    >
-                      <span>{genre}</span>
-                      {selectedGenre === genre && (
-                        <svg
-                          className="w-4 h-4 text-blue-600 dark:text-blue-400"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
-                    </button>
-                  ))}
-                </div>
+                ))}
               </div>
-            )}
-          </div>
-
-          {/* Artist Dropdown */}
-          <div
-            className="relative min-w-0 flex-1 sm:flex-initial sm:min-w-[140px]"
-            ref={artistDropdownRef}
-          >
-            <button
-              onClick={() => setArtistDropdownOpen(!artistDropdownOpen)}
-              className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-medium bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm hover:shadow-md"
-              aria-expanded={artistDropdownOpen}
-            >
-              <span className="truncate text-left">
-                {selectedArtist === 'All' ? t('allArtists') : selectedArtist}
-              </span>
-              <svg
-                className={`w-4 h-4 transition-transform duration-200 flex-shrink-0 ${
-                  artistDropdownOpen ? 'rotate-180' : ''
-                }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-
-            {artistDropdownOpen && (
-              <div className="absolute left-0 right-0 sm:left-0 sm:right-auto sm:w-64 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl z-[100] max-h-64 overflow-y-auto">
-                <div className="py-1">
-                  <button
-                    onClick={() => {
-                      setSelectedArtist('All');
-                      setArtistDropdownOpen(false);
-                    }}
-                    className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between ${
-                      selectedArtist === 'All'
-                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                        : 'text-gray-900 dark:text-gray-100'
-                    }`}
-                  >
-                    <span>{t('allArtists')}</span>
-                    {selectedArtist === 'All' && (
-                      <svg
-                        className="w-4 h-4 text-blue-600 dark:text-blue-400"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                  {allArtists.map((artist) => (
-                    <button
-                      key={artist}
-                      onClick={() => {
-                        setSelectedArtist(artist);
-                        setArtistDropdownOpen(false);
-                      }}
-                      className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between ${
-                        selectedArtist === artist
-                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                          : 'text-gray-900 dark:text-gray-100'
-                      }`}
-                    >
-                      <span>{artist}</span>
-                      {selectedArtist === artist && (
-                        <svg
-                          className="w-4 h-4 text-blue-600 dark:text-blue-400"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Year Dropdown */}
-          <div
-            className="relative min-w-0 flex-1 sm:flex-initial sm:min-w-[120px]"
-            ref={yearDropdownRef}
-          >
-            <button
-              onClick={() => setYearDropdownOpen(!yearDropdownOpen)}
-              className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-medium bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm hover:shadow-md"
-              aria-expanded={yearDropdownOpen}
-            >
-              <span className="truncate text-left">
-                {selectedYear === 'All' ? t('allYears') : selectedYear}
-              </span>
-              <svg
-                className={`w-4 h-4 transition-transform duration-200 flex-shrink-0 ${
-                  yearDropdownOpen ? 'rotate-180' : ''
-                }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-
-            {yearDropdownOpen && (
-              <div className="absolute left-0 right-0 sm:left-0 sm:right-auto sm:w-48 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl z-[100] max-h-64 overflow-y-auto">
-                <div className="py-1">
-                  <button
-                    onClick={() => {
-                      setSelectedYear('All');
-                      setYearDropdownOpen(false);
-                    }}
-                    className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between ${
-                      selectedYear === 'All'
-                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                        : 'text-gray-900 dark:text-gray-100'
-                    }`}
-                  >
-                    <span>{t('allYears')}</span>
-                    {selectedYear === 'All' && (
-                      <svg
-                        className="w-4 h-4 text-blue-600 dark:text-blue-400"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                  {allYears.map((year) => (
-                    <button
-                      key={year}
-                      onClick={() => {
-                        setSelectedYear(year);
-                        setYearDropdownOpen(false);
-                      }}
-                      className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between ${
-                        selectedYear === year
-                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                          : 'text-gray-900 dark:text-gray-100'
-                      }`}
-                    >
-                      <span>{year}</span>
-                      {selectedYear === year && (
-                        <svg
-                          className="w-4 h-4 text-blue-600 dark:text-blue-400"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
+        {/* Artist Dropdown */}
+        <div className="relative flex-shrink-0 w-32 sm:w-36" ref={artistDropdownRef}>
+          <button
+            onClick={() => setArtistDropdownOpen(!artistDropdownOpen)}
+            className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-medium bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm hover:shadow-md cursor-pointer"
+            aria-expanded={artistDropdownOpen}
+          >
+            <span className="truncate text-left">
+              {selectedArtist === 'All' ? t('allArtists') : selectedArtist}
+            </span>
+            <svg
+              className={`w-4 h-4 transition-transform duration-200 flex-shrink-0 ${
+                artistDropdownOpen ? 'rotate-180' : ''
+              }`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+
+          {artistDropdownOpen && (
+            <div className="absolute left-0 w-64 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl z-[100] max-h-64 overflow-y-auto">
+              <div className="py-1">
+                {allArtists.map((artist) => (
+                  <button
+                    key={artist}
+                    onClick={() => selectArtist(artist)}
+                    className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between cursor-pointer ${
+                      selectedArtist === artist
+                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                        : 'text-gray-900 dark:text-gray-100'
+                    }`}
+                  >
+                    <span>{artist}</span>
+                    {selectedArtist === artist && (
+                      <svg
+                        className="w-4 h-4 text-blue-600 dark:text-blue-400"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Year Dropdown */}
+        <div className="relative flex-shrink-0 w-24 sm:w-28" ref={yearDropdownRef}>
+          <button
+            onClick={() => setYearDropdownOpen(!yearDropdownOpen)}
+            className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-medium bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm hover:shadow-md cursor-pointer"
+            aria-expanded={yearDropdownOpen}
+          >
+            <span className="truncate text-left">
+              {selectedYear === 'All' ? t('allYears') : selectedYear}
+            </span>
+            <svg
+              className={`w-4 h-4 transition-transform duration-200 flex-shrink-0 ${
+                yearDropdownOpen ? 'rotate-180' : ''
+              }`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+
+          {yearDropdownOpen && (
+            <div className="absolute left-0 w-48 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl z-[100] max-h-64 overflow-y-auto">
+              <div className="py-1">
+                {allYears.map((year) => (
+                  <button
+                    key={year}
+                    onClick={() => selectYear(year)}
+                    className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between cursor-pointer ${
+                      selectedYear === year
+                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                        : 'text-gray-900 dark:text-gray-100'
+                    }`}
+                  >
+                    <span>{year}</span>
+                    {selectedYear === year && (
+                      <svg
+                        className="w-4 h-4 text-blue-600 dark:text-blue-400"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Reset Button */}
+        <button
+          onClick={resetFilters}
+          disabled={!hasActiveFilters}
+          className={clsx(
+            'flex-shrink-0 px-3 py-2.5 rounded-lg border text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+            {
+              'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm hover:shadow-md cursor-pointer':
+                hasActiveFilters,
+              'border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 text-gray-400 dark:text-gray-600 cursor-not-allowed opacity-50':
+                !hasActiveFilters,
+            }
+          )}
+          aria-label={t('resetFilters')}
+        >
+          <div className="flex items-center gap-2">
+            <svg
+              className="w-4 h-4 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </svg>
+            <span className="hidden sm:inline whitespace-nowrap">{t('reset')}</span>
+          </div>
+        </button>
+
         {/* Results count - styled as a badge */}
-        <div className="flex items-center justify-center sm:justify-end">
+        <div className="flex-shrink-0 ml-auto">
           <div className="inline-flex items-center gap-2 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-900 dark:text-white shadow-sm">
             <svg
-              className="w-4 h-4 text-gray-500 dark:text-gray-400"
+              className="w-4 h-4 text-gray-500 dark:text-gray-400 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -547,7 +509,7 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
                 d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
               />
             </svg>
-            <span>
+            <span className="whitespace-nowrap">
               {filtered.length} {filtered.length === 1 ? t('album') : t('albums')}
             </span>
           </div>
@@ -555,96 +517,75 @@ export default function MusicGallery({ albums }: { albums: Album[] }) {
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-        {filtered.length === 0 ? (
-          <div className="col-span-full flex flex-col items-center justify-center py-16 px-4">
-            <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
-              {t('noResults')}
-            </h3>
-            <p className="text-gray-500 dark:text-gray-500 text-center max-w-md">
-              {t('noResultsDescription')}
-            </p>
-            <button
-              onClick={() => {
-                setSelectedGenre('All');
-                setSelectedArtist('All');
-                setSelectedYear('All');
-              }}
-              className="mt-6 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200 text-sm font-medium cursor-pointer"
-            >
-              {t('clearFilters')}
-            </button>
-          </div>
-        ) : (
-          filtered.map((album, i) => {
-            const albumId = `${album.title}-${album.artist}`.replace(/\s+/g, '-').toLowerCase();
+        {filtered.map((album, i) => {
+          const albumId = `${album.title}-${album.artist}`.replace(/\s+/g, '-').toLowerCase();
 
-            return (
-              <div
-                key={albumId}
-                ref={(el) => setElementRef(el, albumId)}
-                className={clsx(
-                  'rounded-lg bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-all duration-500 overflow-hidden',
-                  {
-                    'opacity-100 translate-y-0': visibleItems.has(albumId),
-                    'opacity-0 translate-y-4': !visibleItems.has(albumId),
-                  }
-                )}
-                style={{ transitionDelay: `${(i % 3) * 50}ms` }}
-              >
-                <div className="p-4">
-                  <div
-                    className="relative w-full aspect-square overflow-hidden rounded-md cursor-pointer"
-                    onClick={() => openModal(album.cover)}
-                  >
-                    <Image
-                      src={album.cover}
-                      alt={t('coverAlt', { title: album.title })}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                      className="object-cover rounded-md"
-                    />
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold mb-1">{album.title}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{album.artist}</p>
-                  <div className="mt-2 flex flex-wrap gap-1 text-xs">
-                    {album.genres.map((g) => (
-                      <span
-                        key={g}
-                        className="px-2 py-0.5 rounded-full bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-white"
-                      >
-                        {g}
-                      </span>
-                    ))}
-                  </div>
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-2 line-clamp-4">
-                    {album.description}
-                  </p>
-                  {album.spotify && (
-                    <div className="mt-3">
-                      <a
-                        href={album.spotify}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-green-600 hover:underline text-sm"
-                      >
-                        <Image
-                          src="/icons/spotify.svg"
-                          alt={t('spotifyIcon')}
-                          width={20}
-                          height={20}
-                          className="inline-block"
-                        />
-                        {t('listenOnSpotify')}
-                      </a>
-                    </div>
-                  )}
+          return (
+            <div
+              key={albumId}
+              ref={(el) => setElementRef(el, albumId)}
+              className={clsx(
+                'rounded-lg bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-all duration-500 overflow-hidden',
+                {
+                  'opacity-100 translate-y-0': visibleItems.has(albumId),
+                  'opacity-0 translate-y-4': !visibleItems.has(albumId),
+                }
+              )}
+              style={{ transitionDelay: `${(i % 3) * 50}ms` }}
+            >
+              <div className="p-4">
+                <div
+                  className="relative w-full aspect-square overflow-hidden rounded-md cursor-pointer"
+                  onClick={() => openModal(album.cover)}
+                >
+                  <Image
+                    src={album.cover}
+                    alt={t('coverAlt', { title: album.title })}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                    className="object-cover rounded-md"
+                  />
                 </div>
               </div>
-            );
-          })
-        )}
+              <div className="p-4">
+                <h3 className="text-lg font-semibold mb-1">{album.title}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{album.artist}</p>
+                <div className="mt-2 flex flex-wrap gap-1 text-xs">
+                  {album.genres.map((g) => (
+                    <span
+                      key={g}
+                      className="px-2 py-0.5 rounded-full bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-white"
+                    >
+                      {g}
+                    </span>
+                  ))}
+                </div>
+                <p className="text-sm text-gray-700 dark:text-gray-300 mt-2 line-clamp-4">
+                  {album.description}
+                </p>
+                {album.spotify && (
+                  <div className="mt-3">
+                    <a
+                      href={album.spotify}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-green-600 hover:underline text-sm"
+                    >
+                      <Image
+                        src="/icons/spotify.svg"
+                        alt={t('spotifyIcon')}
+                        width={20}
+                        height={20}
+                        className="inline-block"
+                      />
+                      {t('listenOnSpotify')}
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Scroll to Top Button */}
