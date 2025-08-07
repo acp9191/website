@@ -5,8 +5,8 @@ export default function Footer() {
   const t = useTranslations('Footer');
 
   return (
-    <footer className="text-center text-sm text-gray-500 dark:text-gray-400 mt-8 space-y-2">
-      <div className="flex justify-center gap-4 mb-2">
+    <footer className="text-center text-sm text-gray-500 dark:text-gray-400 mt-8 space-y-4">
+      <div className="flex justify-center gap-4 mb-4">
         <a
           href="https://github.com/acp9191"
           target="_blank"
@@ -54,7 +54,7 @@ export default function Footer() {
         </a>
       </div>
 
-      <div className="space-y-1">
+      <div className="space-y-2">
         <p className="text-xs text-gray-400 dark:text-gray-500">
           {t('builtWith')}{' '}
           <a
