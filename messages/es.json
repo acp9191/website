@@ -35,9 +35,15 @@
   },
   "Movies": {
     "title": "🎬 Películas Favoritas",
+    "subtitle": "Digno de un rewatch en cualquier temporada",
     "allGenres": "Todos los Géneros",
     "allYears": "Todos los Años",
-    "posterAlt": "Póster de la película {title}",
+    "allDirectors": "Todos los Directores",
+    "movie": "película",
+    "movies": "películas",
+    "reset": "Reiniciar",
+    "resetFilters": "Reiniciar Filtros",
+    "coverAlt": "Póster de la película {title}",
     "watchTrailer": "Ver Tráiler",
     "youtubeIcon": "Icono de YouTube",
     "modalAlt": "Póster de película a tamaño completo"

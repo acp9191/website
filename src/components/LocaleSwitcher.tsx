@@ -60,7 +60,7 @@ export default function LocaleSwitcher({ isMobile = false, onLocaleChange }: Loc
       <select
         value={locale}
         onChange={(e) => switchLocale(e.target.value)}
-        className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-0"
+        className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-0 cursor-pointer"
       >
         {locales.map((loc) => (
           <option key={loc.code} value={loc.code}>
@@ -76,7 +76,7 @@ export default function LocaleSwitcher({ isMobile = false, onLocaleChange }: Loc
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
         aria-label="Select language"
         aria-expanded={isOpen}
       >
@@ -103,7 +103,7 @@ export default function LocaleSwitcher({ isMobile = false, onLocaleChange }: Loc
             <button
               key={loc.code}
               onClick={() => switchLocale(loc.code)}
-              className={`w-full text-left px-3 sm:px-4 py-2 sm:py-2.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 transition-colors first:rounded-t-md last:rounded-b-md ${
+              className={`w-full text-left px-3 sm:px-4 py-2 sm:py-2.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 transition-colors first:rounded-t-md last:rounded-b-md cursor-pointer ${
                 locale === loc.code
                   ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
                   : ''

@@ -35,9 +35,15 @@
   },
   "Movies": {
     "title": "🎬 Films Préférés",
+    "subtitle": "Digne d'un rewatch en toute saison",
     "allGenres": "Tous les Genres",
     "allYears": "Toutes les Années",
-    "posterAlt": "Affiche du film {title}",
+    "allDirectors": "Tous les Réalisateurs",
+    "movie": "film",
+    "movies": "films",
+    "reset": "Réinitialiser",
+    "resetFilters": "Réinitialiser les filtres",
+    "coverAlt": "Affiche du film {title}",
     "watchTrailer": "Voir la Bande-annonce",
     "youtubeIcon": "Icône YouTube",
     "modalAlt": "Affiche de film en taille réelle"

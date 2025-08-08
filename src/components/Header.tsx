@@ -94,14 +94,14 @@ export default function Header() {
           >
             {/* Hamburger Icon */}
             <Bars3Icon
-              className={`absolute inset-0 w-6 h-6 m-auto transition-opacity duration-300 ${
-                menuOpen ? 'opacity-0' : 'opacity-100'
+              className={`absolute inset-0 w-6 h-6 m-auto transition-all duration-300 ease-out ${
+                menuOpen ? 'opacity-0 rotate-45' : 'opacity-100 rotate-0'
               }`}
             />
             {/* X Icon */}
             <XMarkIcon
-              className={`absolute inset-0 w-6 h-6 m-auto transition-opacity duration-300 ${
-                menuOpen ? 'opacity-100' : 'opacity-0'
+              className={`absolute inset-0 w-6 h-6 m-auto transition-all duration-300 ease-out ${
+                menuOpen ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-45'
               }`}
             />
           </button>
@@ -121,7 +121,7 @@ export default function Header() {
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
 
                 {/* Text with bounce */}
-                <span className="relative block group-hover:animate-pulse">{label}</span>
+                <span className="relative block">{label}</span>
               </Link>
             ))}
             <ThemeToggle />
@@ -129,48 +129,69 @@ export default function Header() {
           </nav>
         </div>
 
-        {/* Mobile nav */}
-        <div
-          ref={menuRef}
-          className={`overflow-hidden transition-all duration-300 ease-in-out sm:hidden ${
-            menuOpen ? 'max-h-96' : 'max-h-0'
-          }`}
-        >
-          <nav className="flex flex-col gap-2 py-2">
-            {links.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                onClick={() => setMenuOpen(false)}
-                className="relative block px-4 py-2 rounded-md text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 transition-all duration-300 hover:scale-105 hover:shadow-md group overflow-hidden"
+        {/* Mobile nav - improved animation */}
+        <div className="sm:hidden overflow-hidden">
+          <div
+            ref={menuRef}
+            className={`transition-all duration-300 ease-out ${
+              menuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <nav className="flex flex-col gap-2 py-4">
+              {links.map(({ href, label }, index) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`relative block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 transition-all duration-300 hover:scale-[1.02] hover:shadow-md group overflow-hidden transform ${
+                    menuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                  }`}
+                  style={{
+                    transitionDelay: menuOpen ? `${index * 50}ms` : '0ms',
+                    transitionDuration: '400ms',
+                  }}
+                >
+                  {/* Mobile shimmer effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500" />
+                  <span className="relative">{label}</span>
+                </Link>
+              ))}
+
+              {/* Theme toggle with staggered animation */}
+              <div
+                className={`px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-lg transform transition-all duration-400 ${
+                  menuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                }`}
+                style={{
+                  transitionDelay: menuOpen ? `${links.length * 50}ms` : '0ms',
+                }}
               >
-                {/* Mobile shimmer effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500" />
-
-                <span className="relative">{label}</span>
-              </Link>
-            ))}
-
-            {/* Theme toggle with label */}
-            <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-md">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-700 dark:text-gray-200 text-sm font-medium">
-                  {t('theme')}
-                </span>
-                <ThemeToggle isMobile />
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700 dark:text-gray-200 text-sm font-medium">
+                    {t('theme')}
+                  </span>
+                  <ThemeToggle isMobile />
+                </div>
               </div>
-            </div>
 
-            {/* Language switcher with label */}
-            <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-md">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-700 dark:text-gray-200 text-sm font-medium">
-                  {t('language')}
-                </span>
-                <LocaleSwitcher isMobile onLocaleChange={() => setMenuOpen(false)} />
+              {/* Language switcher with staggered animation */}
+              <div
+                className={`px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-lg transform transition-all duration-400 ${
+                  menuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                }`}
+                style={{
+                  transitionDelay: menuOpen ? `${(links.length + 1) * 50}ms` : '0ms',
+                }}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700 dark:text-gray-200 text-sm font-medium">
+                    {t('language')}
+                  </span>
+                  <LocaleSwitcher isMobile onLocaleChange={() => setMenuOpen(false)} />
+                </div>
               </div>
-            </div>
-          </nav>
+            </nav>
+          </div>
         </div>
       </div>
     </header>

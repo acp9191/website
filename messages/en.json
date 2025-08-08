@@ -35,9 +35,15 @@
   },
   "Movies": {
     "title": "🎬 Favorite Movies",
+    "subtitle": "Worthy of a rewatch in any season",
     "allGenres": "All Genres",
     "allYears": "All Years",
-    "posterAlt": "{title} movie poster",
+    "allDirectors": "All Directors",
+    "movie": "movie",
+    "movies": "movies",
+    "reset": "Reset",
+    "resetFilters": "Reset Filters",
+    "coverAlt": "{title} movie poster",
     "watchTrailer": "Watch Trailer",
     "youtubeIcon": "YouTube icon",
     "modalAlt": "Movie poster full size"

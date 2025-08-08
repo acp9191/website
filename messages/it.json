@@ -35,9 +35,15 @@
   },
   "Movies": {
     "title": "🎬 Film Preferiti",
+    "subtitle": "Digno di un rewatch in qualsiasi stagione",
     "allGenres": "Tutti i Generi",
     "allYears": "Tutti gli Anni",
-    "posterAlt": "Locandina del film {title}",
+    "allDirectors": "Tutti i Registi",
+    "movie": "film",
+    "movies": "film",
+    "reset": "Reimposta",
+    "resetFilters": "Reimposta filtri",
+    "coverAlt": "Locandina del film {title}",
     "watchTrailer": "Guarda il Trailer",
     "youtubeIcon": "Icona YouTube",
     "modalAlt": "Locandina del film a dimensione intera"
