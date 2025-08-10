@@ -1,6 +1,7 @@
 'use client';
 
-import MediaGallery, { MediaItem, FilterConfig } from '@/src/components/MediaGallery';
+import MediaGallery from '@/src/components/MediaGallery/MediaGallery';
+import { MediaItem, FilterConfig } from '@/src/components/MediaGallery/types';
 
 type Album = {
   title: string;
