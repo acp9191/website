@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { AnimatedCounter } from './AnimatedCounter';
 
 // Generic item interface
 export interface MediaItem {
@@ -339,7 +340,7 @@ export default function MediaGallery({
               />
             </svg>
             <span>
-              {filtered.length}{' '}
+              <AnimatedCounter value={filtered.length} />{' '}
               {filtered.length === 1 ? t(filterConfig.itemSingular) : t(filterConfig.itemPlural)}
             </span>
           </div>
