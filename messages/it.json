@@ -62,5 +62,18 @@
     "listenOnSpotify": "Ascolta su Spotify",
     "spotifyIcon": "Icona Spotify",
     "modalAlt": "Copertina dell'album a dimensione intera"
+  },
+  "Books": {
+    "title": "📚 Libri Preferiti",
+    "subtitle": "Un canone personale di letture durature",
+    "allGenres": "Tutti i Generi",
+    "allYears": "Tutti gli Anni",
+    "allAuthors": "Tutti gli Autori",
+    "book": "libro",
+    "books": "libri",
+    "reset": "Reimposta",
+    "resetFilters": "Reimposta filtri",
+    "coverAlt": "{title} copertina del libro",
+    "modalAlt": "Copertina del libro a dimensione intera"
   }
 }

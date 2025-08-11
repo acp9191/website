@@ -62,5 +62,18 @@
     "listenOnSpotify": "Auf Spotify hören",
     "spotifyIcon": "Spotify-Symbol",
     "modalAlt": "Albumcover in voller Größe"
+  },
+  "Books": {
+    "title": "📚 Lieblingsbücher",
+    "subtitle": "Eine Sammlung zeitloser Favoriten",
+    "allGenres": "Alle Genres",
+    "allYears": "Alle Jahre",
+    "allAuthors": "Alle Autoren",
+    "book": "Buch",
+    "books": "Bücher",
+    "reset": "Zurücksetzen",
+    "resetFilters": "Filter zurücksetzen",
+    "coverAlt": "{title} Buchcover",
+    "modalAlt": "Buchcover in voller Größe"
   }
 }

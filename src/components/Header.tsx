@@ -16,7 +16,7 @@ export default function Header() {
   const links = [
     { href: '/about', label: t('about') },
     { href: '/favorites/music', label: t('music') },
-    // { href: '/favorites/books', label: t('books') },
+    { href: '/favorites/books', label: t('books') },
     { href: '/favorites/movies', label: t('movies') },
   ];
 

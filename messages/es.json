@@ -62,5 +62,18 @@
     "listenOnSpotify": "Escuchar en Spotify",
     "spotifyIcon": "Icono de Spotify",
     "modalAlt": "Portada del álbum a tamaño completo"
+  },
+  "Books": {
+    "title": "📚 Libros Favoritos",
+    "subtitle": "Una colección de lecturas memorables",
+    "allGenres": "Todos los Géneros",
+    "allYears": "Todos los Años",
+    "allAuthors": "Todos los Autores",
+    "book": "libro",
+    "books": "libros",
+    "reset": "Reiniciar",
+    "resetFilters": "Reiniciar Filtros",
+    "coverAlt": "{title} portada del libro",
+    "modalAlt": "Portada del libro a tamaño completo"
   }
 }

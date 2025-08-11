@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   const baseUrl = 'https://avery-peterson.com';
   const locales = ['en', 'es', 'fr', 'it', 'de'];
-  const staticPaths = ['', '/about', '/favorites/music', '/favorites/movies'];
+  const staticPaths = ['', '/about', '/favorites/music', '/favorites/books', '/favorites/movies'];
 
   const urls = staticPaths
     .flatMap((path) =>

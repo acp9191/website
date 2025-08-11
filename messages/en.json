@@ -62,5 +62,18 @@
     "listenOnSpotify": "Listen on Spotify",
     "spotifyIcon": "Spotify icon",
     "modalAlt": "Album cover full size"
+  },
+  "Books": {
+    "title": "📚 Favorite Books",
+    "subtitle": "Stories that have stuck with me",
+    "allGenres": "All Genres",
+    "allYears": "All Years",
+    "allAuthors": "All Authors",
+    "book": "book",
+    "books": "books",
+    "reset": "Reset",
+    "resetFilters": "Reset Filters",
+    "coverAlt": "{title} book cover",
+    "modalAlt": "Book cover full size"
   }
 }

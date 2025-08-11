@@ -62,5 +62,18 @@
     "listenOnSpotify": "Écouter sur Spotify",
     "spotifyIcon": "Icône Spotify",
     "modalAlt": "Pochette d'album en taille réelle"
+  },
+  "Books": {
+    "title": "📚 Livres Préférés",
+    "subtitle": "Un canon personnel de lectures marquantes",
+    "allGenres": "Tous les Genres",
+    "allYears": "Toutes les Années",
+    "allAuthors": "Tous les Auteurs",
+    "book": "livre",
+    "books": "livres",
+    "reset": "Réinitialiser",
+    "resetFilters": "Réinitialiser les filtres",
+    "coverAlt": "{title} couverture de livre",
+    "modalAlt": "Couverture de livre en taille réelle"
   }
 }
