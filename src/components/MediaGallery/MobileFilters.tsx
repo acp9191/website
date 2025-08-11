@@ -51,6 +51,31 @@ export function MobileFilters({
     };
   }, []);
 
+  // Filter handlers that reset other filters
+  const handleCategorySelect = (value: string) => {
+    filterState.setSelectedCategory(value);
+    if (value !== 'All') {
+      filterState.setSelectedSubtitle('All');
+      filterState.setSelectedYear('All');
+    }
+  };
+
+  const handleSubtitleSelect = (value: string) => {
+    filterState.setSelectedSubtitle(value);
+    if (value !== 'All') {
+      filterState.setSelectedCategory('All');
+      filterState.setSelectedYear('All');
+    }
+  };
+
+  const handleYearSelect = (value: number | 'All') => {
+    filterState.setSelectedYear(value);
+    if (value !== 'All') {
+      filterState.setSelectedCategory('All');
+      filterState.setSelectedSubtitle('All');
+    }
+  };
+
   return (
     <div ref={filtersRef} className="lg:hidden w-full mb-8">
       <div className="flex flex-col gap-3">
@@ -127,7 +152,7 @@ export function MobileFilters({
             }
             options={['All', ...filterData.allCategories]}
             selectedValue={filterState.selectedCategory}
-            onSelect={filterState.setSelectedCategory}
+            onSelect={handleCategorySelect}
             isOpen={categoryDropdownOpen}
             setIsOpen={setCategoryDropdownOpen}
             closeOthers={() => {
@@ -146,7 +171,7 @@ export function MobileFilters({
             }
             options={['All', ...filterData.allSubtitles]}
             selectedValue={filterState.selectedSubtitle}
-            onSelect={filterState.setSelectedSubtitle}
+            onSelect={handleSubtitleSelect}
             isOpen={subtitleDropdownOpen}
             setIsOpen={setSubtitleDropdownOpen}
             closeOthers={() => {
@@ -165,7 +190,7 @@ export function MobileFilters({
             }
             options={['All', ...filterData.allYears]}
             selectedValue={filterState.selectedYear}
-            onSelect={filterState.setSelectedYear}
+            onSelect={handleYearSelect}
             isOpen={yearDropdownOpen}
             setIsOpen={setYearDropdownOpen}
             closeOthers={() => {

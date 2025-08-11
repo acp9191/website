@@ -69,6 +69,31 @@ export function DesktopFilters({
     };
   }, []);
 
+  // Filter handlers that reset other filters
+  const handleCategorySelect = (value: string) => {
+    filterState.setSelectedCategory(value);
+    if (value !== 'All') {
+      filterState.setSelectedSubtitle('All');
+      filterState.setSelectedYear('All');
+    }
+  };
+
+  const handleSubtitleSelect = (value: string) => {
+    filterState.setSelectedSubtitle(value);
+    if (value !== 'All') {
+      filterState.setSelectedCategory('All');
+      filterState.setSelectedYear('All');
+    }
+  };
+
+  const handleYearSelect = (value: number | 'All') => {
+    filterState.setSelectedYear(value);
+    if (value !== 'All') {
+      filterState.setSelectedCategory('All');
+      filterState.setSelectedSubtitle('All');
+    }
+  };
+
   return (
     <div className="hidden lg:block w-72 flex-shrink-0">
       <div ref={sidebarVisibilityRef} className="h-0" />
@@ -129,7 +154,7 @@ export function DesktopFilters({
               label={t(filterConfig.categoryLabel)}
               selectedValue={filterState.selectedCategory}
               options={['All', ...filterData.allCategories]}
-              onSelect={filterState.setSelectedCategory}
+              onSelect={handleCategorySelect}
               isOpen={categoryDropdownOpen}
               setIsOpen={setCategoryDropdownOpen}
               visible={sidebarVisible}
@@ -140,7 +165,7 @@ export function DesktopFilters({
               label={t(filterConfig.subtitleLabel)}
               selectedValue={filterState.selectedSubtitle}
               options={['All', ...filterData.allSubtitles]}
-              onSelect={filterState.setSelectedSubtitle}
+              onSelect={handleSubtitleSelect}
               isOpen={subtitleDropdownOpen}
               setIsOpen={setSubtitleDropdownOpen}
               visible={sidebarVisible}
@@ -151,7 +176,7 @@ export function DesktopFilters({
               label={t(filterConfig.yearLabel)}
               selectedValue={filterState.selectedYear}
               options={['All', ...filterData.allYears]}
-              onSelect={filterState.setSelectedYear}
+              onSelect={handleYearSelect}
               isOpen={yearDropdownOpen}
               setIsOpen={setYearDropdownOpen}
               visible={sidebarVisible}
