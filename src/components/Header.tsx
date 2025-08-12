@@ -174,15 +174,6 @@ export default function Header() {
                       : 'text-gray-700 dark:text-gray-200'
                   }`}
                 >
-                  {/* Background animation - different for active */}
-                  <div
-                    className={`absolute inset-0 rounded-full transition-opacity duration-300 ${
-                      isActive
-                        ? 'bg-blue-100 dark:bg-blue-800/30 opacity-100'
-                        : 'bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-20'
-                    }`}
-                  />
-
                   {/* Shimmer effect - only for non-active links */}
                   {!isActive && (
                     <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
