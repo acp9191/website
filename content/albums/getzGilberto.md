@@ -3,7 +3,7 @@ title: 'Getz/Gilberto'
 artist: 'Stan Getz & João Gilberto'
 cover: 'https://res.cloudinary.com/acp/image/upload/v1754687005/Music/ddc05170-2289-4d7d-9315-791de9907463.png'
 year: 1964
-spotify: 'https://open.spotify.com/album/3nzuGtN3nXARvvecier4K0'
+spotify: 'https://open.spotify.com/album/73ZRKdD3Ds43IjHrhKgucY'
 genres: ['Bossa Nova', 'Jazz', 'Latin Jazz']
 ---
 
