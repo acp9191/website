@@ -45,6 +45,10 @@ export default async function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png"></link>
         <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png"></link>
         <link rel="manifest" href="/favicons/site.webmanifest"></link>
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"></meta>
+        <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"></meta>
+        <meta name="apple-mobile-web-app-capable" content="yes"></meta>
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"></meta>
       </head>
       <body>
         <NextIntlClientProvider>
