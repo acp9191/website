@@ -1,0 +1,38 @@
+# Dependabot configuration for automatic dependency updates
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Keep npm dependencies up to date
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
+    # Group updates to reduce PR noise
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+      development-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+    # Limit the number of open PRs
+    open-pull-requests-limit: 5
+    # Add labels to PRs for easy filtering
+    labels:
+      - "dependencies"
+      - "automated"
+    # Assign reviewers (optional - uncomment and add your GitHub username)
+    # reviewers:
+    #   - "your-github-username"
+    # Customize commit messages
+    commit-message:
+      prefix: "chore"
+      include: "scope"

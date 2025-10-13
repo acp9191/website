@@ -1,6 +1,7 @@
 {
   "name": "Avery Peterson",
   "short_name": "Avery Peterson",
+  "id": "/",
   "start_url": "/",
   "scope": "/",
   "description": "Avery Peterson's personal website.",
@@ -19,6 +20,29 @@
   "theme_color": "#ffffff",
   "background_color": "#ffffff",
   "display": "standalone",
+  "display_override": ["window-controls-overlay"],
   "orientation": "portrait-primary",
-  "categories": ["personal", "portfolio"]
+  "categories": ["personal", "portfolio"],
+  "protocol_handlers": [
+    {
+      "protocol": "web+avery",
+      "url": "/?action=%s"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-home.png",
+      "sizes": "2940x1665",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Homepage view"
+    },
+    {
+      "src": "/screenshots/mobile-home.png",
+      "sizes": "688x1484",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Homepage view"
+    }
+  ]
 }
