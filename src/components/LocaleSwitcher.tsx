@@ -61,6 +61,7 @@ export default function LocaleSwitcher({ isMobile = false, onLocaleChange }: Loc
         value={locale}
         onChange={(e) => switchLocale(e.target.value)}
         className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-0 cursor-pointer"
+        aria-label="Select language"
       >
         {locales.map((loc) => (
           <option key={loc.code} value={loc.code}>
@@ -92,6 +93,7 @@ export default function LocaleSwitcher({ isMobile = false, onLocaleChange }: Loc
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
@@ -117,6 +119,7 @@ export default function LocaleSwitcher({ isMobile = false, onLocaleChange }: Loc
                   className="w-4 h-4 ml-auto text-blue-600 dark:text-blue-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
+                  aria-hidden="true"
                 >
                   <path
                     fillRule="evenodd"

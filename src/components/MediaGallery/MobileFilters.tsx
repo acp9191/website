@@ -93,6 +93,7 @@ export function MobileFilters({
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -129,7 +130,7 @@ export function MobileFilters({
                 }
               )}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -274,6 +275,7 @@ function MobileFilterButton({
         onClick={handleToggle}
         className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-medium bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm hover:shadow-md cursor-pointer relative z-10"
         aria-expanded={isOpen}
+        aria-label={`Filter: ${label}`}
       >
         <span className="truncate text-left min-w-0">{label}</span>
         <svg
@@ -283,6 +285,7 @@ function MobileFilterButton({
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
@@ -307,6 +310,7 @@ function MobileFilterButton({
                     className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0 ml-2"
                     fill="currentColor"
                     viewBox="0 0 20 20"
+                    aria-hidden="true"
                   >
                     <path
                       fillRule="evenodd"

@@ -118,6 +118,7 @@ export default function Header() {
 
   return (
     <header
+      role="banner"
       className={`sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 transition-all duration-300 ease-out ${
         scrolled ? 'shadow-md backdrop-blur-sm bg-white/95 dark:bg-gray-900/95' : 'shadow-xs'
       }`}
@@ -159,7 +160,7 @@ export default function Header() {
           </button>
 
           {/* Desktop nav */}
-          <nav className="hidden sm:flex gap-4 items-center">
+          <nav className="hidden sm:flex gap-4 items-center" role="navigation" aria-label="Main navigation">
             {links.map(({ href, label }) => {
               const isActive = isActiveLink(href);
               return (
@@ -204,7 +205,7 @@ export default function Header() {
               menuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
             }`}
           >
-            <nav className="flex flex-col gap-2 py-4">
+            <nav className="flex flex-col gap-2 py-4" role="navigation" aria-label="Mobile navigation">
               {links.map(({ href, label }, index) => {
                 const isActive = isActiveLink(href);
                 return (

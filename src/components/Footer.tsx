@@ -5,7 +5,7 @@ export default function Footer() {
   const t = useTranslations('Footer');
 
   return (
-    <footer className="text-center text-sm text-gray-500 dark:text-gray-400 mt-8 space-y-4">
+    <footer className="text-center text-sm text-gray-500 dark:text-gray-400 mt-8 space-y-4 py-3" role="contentinfo">
       <div className="flex justify-center gap-4 mb-4">
         <a
           href="https://github.com/acp9191"
@@ -20,7 +20,7 @@ export default function Footer() {
           href="https://open.spotify.com/user/acp9191"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="Twitter"
+          aria-label="Spotify"
           className="hover:opacity-75 transition-opacity"
         >
           <img src="/icons/spotify.svg" alt="Spotify" className="w-5 h-5" />

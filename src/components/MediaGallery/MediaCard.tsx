@@ -27,12 +27,13 @@ export default function MediaCard({ item, filterConfig, onImageClick, t }: Media
   return (
     <div className="rounded-lg bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-all duration-500 overflow-hidden flex flex-col w-full h-full">
       <div className="p-4">
-        <div
+        <button
           className={clsx(
             'relative w-full overflow-hidden rounded-md cursor-pointer',
             filterConfig.aspectRatio === 'auto' ? 'h-auto' : getAspectRatioClasses()
           )}
           onClick={() => onImageClick(item.cover)}
+          aria-label={`View ${item.title} cover image`}
         >
           <Image
             src={item.cover}
@@ -46,7 +47,7 @@ export default function MediaCard({ item, filterConfig, onImageClick, t }: Media
               filterConfig.aspectRatio === 'auto' ? 'w-full h-auto' : 'object-cover'
             )}
           />
-        </div>
+        </button>
       </div>
 
       <div className="p-4 pt-0 flex flex-col flex-1">
