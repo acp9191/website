@@ -41,12 +41,32 @@ export default async function RootLayout({
             `,
           }}
         />
+        <script
+          // Register service worker for PWA functionality
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').then(
+                    function(registration) {
+                      console.log('ServiceWorker registration successful');
+                    },
+                    function(err) {
+                      console.log('ServiceWorker registration failed: ', err);
+                    }
+                  );
+                });
+              }
+            `,
+          }}
+        />
         <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png"></link>
         <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png"></link>
         <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png"></link>
-        <link rel="manifest" href="/favicons/site.webmanifest"></link>
+        <link rel="manifest" href="/manifest.json"></link>
         <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"></meta>
         <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"></meta>
+        <meta name="mobile-web-app-capable" content="yes"></meta>
         <meta name="apple-mobile-web-app-capable" content="yes"></meta>
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"></meta>
       </head>
