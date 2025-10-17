@@ -3,17 +3,41 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState, useRef, useEffect } from 'react';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, XMarkIcon, SunIcon, MoonIcon, ComputerDesktopIcon } from '@heroicons/react/24/outline';
 import LocaleSwitcher from './LocaleSwitcher';
 
 export default function Header() {
   const t = useTranslations('Header');
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Read actual theme from localStorage after mount
+  useEffect(() => {
+    setMounted(true);
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | 'system' | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+    } else {
+      setTheme('system');
+    }
+  }, []);
+
+  // Listen for system theme changes when in system mode
+  useEffect(() => {
+    if (theme !== 'system') return;
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      document.documentElement.classList.toggle('dark', e.matches);
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [theme]);
 
   const links = [
     { href: '/about', label: t('about') },
@@ -42,20 +66,6 @@ export default function Header() {
     return false;
   };
 
-  // Only run on client side after hydration
-  useEffect(() => {
-    setMounted(true);
-    // Read theme from localStorage first, then from DOM as fallback
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark' || savedTheme === 'light') {
-      setTheme(savedTheme);
-      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
-    } else {
-      // Fallback to system preference or DOM state
-      const isDark = document.documentElement.classList.contains('dark');
-      setTheme(isDark ? 'dark' : 'light');
-    }
-  }, []);
 
   // Scroll effect
   useEffect(() => {
@@ -69,10 +79,26 @@ export default function Header() {
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    // Cycle through: light → dark → system
+    let newTheme: 'light' | 'dark' | 'system';
+    if (theme === 'light') {
+      newTheme = 'dark';
+    } else if (theme === 'dark') {
+      newTheme = 'system';
+    } else {
+      newTheme = 'light';
+    }
+
     setTheme(newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
     localStorage.setItem('theme', newTheme);
+
+    // Apply the actual dark mode based on the new theme
+    if (newTheme === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.classList.toggle('dark', prefersDark);
+    } else {
+      document.documentElement.classList.toggle('dark', newTheme === 'dark');
+    }
   };
 
   // Close menu on resize
@@ -82,39 +108,64 @@ export default function Header() {
     return () => window.removeEventListener('resize', close);
   }, []);
 
-  const ThemeToggle = ({ isMobile = false }: { isMobile?: boolean }) => (
-    <button
-      onClick={toggleTheme}
-      className={`${
-        isMobile
-          ? 'flex items-center justify-center'
-          : `flex items-center justify-center px-3 py-1 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 ${
-              scrolled ? 'scale-90' : 'scale-100'
-            }`
-      } cursor-pointer`}
-      aria-label={t('toggleTheme')}
-    >
-      <div className="relative">
-        {/* Toggle Switch */}
+  const ThemeToggle = ({ isMobile = false }: { isMobile?: boolean }) => {
+    // Don't render until mounted to prevent flash
+    if (!mounted) {
+      return (
         <div
           className={`${
-            scrolled ? 'w-10 h-5' : 'w-12 h-6'
-          } rounded-full transition-all duration-500 ease-in-out ${
-            theme === 'dark' ? 'bg-blue-600' : 'bg-gray-300'
+            isMobile
+              ? 'flex items-center justify-center'
+              : `flex items-center justify-center p-2 ${scrolled ? 'scale-90' : 'scale-100'}`
           }`}
+          aria-hidden="true"
         >
-          {/* Toggle Button */}
-          <div
-            className={`absolute ${
-              scrolled ? 'top-0.5 w-4 h-4' : 'top-0.5 w-5 h-5'
-            } rounded-full bg-white shadow-lg transition-all duration-500 ease-in-out ${
-              theme === 'dark' ? (scrolled ? 'translate-x-5' : 'translate-x-6') : 'translate-x-0.5'
+          <div className={`${isMobile ? 'w-5 h-5' : scrolled ? 'w-5 h-5' : 'w-6 h-6'}`} />
+        </div>
+      );
+    }
+
+    return (
+      <button
+        onClick={toggleTheme}
+        className={`${
+          isMobile
+            ? 'flex items-center justify-center'
+            : `flex items-center justify-center p-2 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 ${
+                scrolled ? 'scale-90' : 'scale-100'
+              }`
+        } cursor-pointer`}
+        aria-label={`${t('toggleTheme')} (${theme === 'light' ? 'Light' : theme === 'dark' ? 'Dark' : 'System'})`}
+      >
+        <div className={`relative ${isMobile ? 'w-5 h-5' : scrolled ? 'w-5 h-5' : 'w-6 h-6'}`}>
+          {/* Sun Icon (light mode) */}
+          <SunIcon
+            className={`w-full h-full absolute inset-0 transition-all duration-300 ${
+              theme === 'light'
+                ? 'opacity-100 rotate-0 scale-100'
+                : 'opacity-0 rotate-90 scale-0'
+            }`}
+          />
+          {/* Moon Icon (dark mode) */}
+          <MoonIcon
+            className={`w-full h-full absolute inset-0 transition-all duration-300 ${
+              theme === 'dark'
+                ? 'opacity-100 rotate-0 scale-100'
+                : 'opacity-0 -rotate-90 scale-0'
+            }`}
+          />
+          {/* Computer Icon (system theme) */}
+          <ComputerDesktopIcon
+            className={`w-full h-full absolute inset-0 transition-all duration-300 ${
+              theme === 'system'
+                ? 'opacity-100 rotate-0 scale-100'
+                : 'opacity-0 rotate-180 scale-0'
             }`}
           />
         </div>
-      </div>
-    </button>
-  );
+      </button>
+    );
+  };
 
   return (
     <header

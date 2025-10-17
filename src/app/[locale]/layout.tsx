@@ -33,7 +33,17 @@ export default async function RootLayout({
               try {
                 const savedTheme = localStorage.getItem('theme');
                 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                const isDark = savedTheme ? savedTheme === 'dark' : prefersDark;
+                let isDark;
+
+                if (savedTheme === 'dark') {
+                  isDark = true;
+                } else if (savedTheme === 'light') {
+                  isDark = false;
+                } else {
+                  // 'system' or no saved theme - use system preference
+                  isDark = prefersDark;
+                }
+
                 if (isDark) {
                   document.documentElement.classList.add('dark');
                 }
