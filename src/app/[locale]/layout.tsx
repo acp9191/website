@@ -1,11 +1,19 @@
 // app/layout.tsx
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
+import { Inter } from 'next/font/google';
 import '../globals.css';
 import ClientLayout from '@/src/components/ClientLayout';
 import { notFound } from 'next/navigation';
 import { routing } from '@/src/i18n/routing';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+
+// Font optimization with next/font
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 export const metadata = {
   title: 'Avery Peterson',
@@ -25,7 +33,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html suppressHydrationWarning lang={locale}>
+    <html suppressHydrationWarning lang={locale} className={inter.variable}>
       <head>
         <script
           // This script sets the initial theme based on user preference or saved setting
