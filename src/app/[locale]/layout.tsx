@@ -4,6 +4,8 @@ import '../globals.css';
 import ClientLayout from '@/src/components/ClientLayout';
 import { notFound } from 'next/navigation';
 import { routing } from '@/src/i18n/routing';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata = {
   title: 'Avery Peterson',
@@ -84,6 +86,8 @@ export default async function RootLayout({
         <NextIntlClientProvider>
           <ClientLayout>{children}</ClientLayout>
         </NextIntlClientProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
