@@ -62,6 +62,14 @@ Three fully-featured galleries for showcasing favorites:
 - **Modals** - Keyboard accessible with Escape key support
 - **Color contrast** - Meets WCAG contrast requirements in both light and dark modes
 
+### 🛡️ Security
+
+- **Content Security Policy (CSP)** - Prevents XSS attacks
+- **Security headers** - HSTS, X-Frame-Options, X-Content-Type-Options
+- **HTTPS enforcement** - Upgrade insecure requests
+- **Privacy-focused** - No tracking cookies, minimal data collection
+- **Regular updates** - Dependabot keeps dependencies secure
+
 ### 🔧 Developer Experience
 
 - **TypeScript** for type safety
