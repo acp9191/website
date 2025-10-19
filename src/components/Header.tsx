@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { Bars3Icon, XMarkIcon, SunIcon, MoonIcon, ComputerDesktopIcon } from '@heroicons/react/24/outline';
 import LocaleSwitcher from './LocaleSwitcher';
 
@@ -10,19 +10,33 @@ export default function Header() {
   const t = useTranslations('Header');
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
+  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>(() => {
+    // Initialize from localStorage immediately
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | 'system' | null;
+      return savedTheme || 'system';
+    }
+    return 'system';
+  });
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Read actual theme from localStorage after mount
-  useEffect(() => {
+  // Use layoutEffect to apply theme synchronously before paint
+  useLayoutEffect(() => {
     setMounted(true);
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | 'system' | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else {
-      setTheme('system');
+    const themeToApply = savedTheme || 'system';
+    setTheme(themeToApply);
+
+    // Apply the dark mode class based on saved theme
+    if (themeToApply === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else if (themeToApply === 'light') {
+      document.documentElement.classList.remove('dark');
+    } else if (themeToApply === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.classList.toggle('dark', prefersDark);
     }
   }, []);
 
