@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/src/i18n/routing';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { metadata as siteMetadata } from './metadata';
 
 // Font optimization with next/font
 const inter = Inter({
@@ -15,10 +16,7 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-export const metadata = {
-  title: 'Avery Peterson',
-  description: 'Personal website of Avery Peterson',
-};
+export const metadata = siteMetadata;
 
 export default async function RootLayout({
   children,
