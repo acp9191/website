@@ -12,31 +12,35 @@ npm start      # Start production server
 
 ## Project Architecture
 
-This is a Next.js 15 personal website featuring a multilingual media gallery system (music albums, movies, books) with PWA support.
+This is a Next.js 16 personal website featuring a multilingual media gallery system (music albums, movies, books) with PWA support.
 
 ### Tech Stack
-- **Framework**: Next.js 15 (App Router)
+
+- **Framework**: Next.js 16 (App Router with Turbopack)
 - **Styling**: Tailwind CSS v4
-- **Internationalization**: next-intl (en, es, fr, it, de)
+- **Internationalization**: next-intl 4.4 (en, es, fr, it, de)
 - **PWA**: next-pwa (disabled in dev)
 - **Content**: Markdown files with gray-matter frontmatter parsing
 
 ### Key Architectural Patterns
 
 **Internationalized Routing**
+
 - All routes are under `src/app/[locale]/` dynamic segment
-- Middleware (`src/middleware.ts`) handles locale detection and routing
+- Proxy (`src/proxy.ts`) handles locale detection and routing (Next.js 16 convention)
 - Locale configuration in `src/i18n/routing.ts` with 5 supported languages
 - Translation files in `messages/*.json` (one per locale)
 - Path alias `@/*` maps to root directory
 
 **Content Management**
+
 - Content stored as Markdown files in `content/{albums,movies,books}/`
 - Each file has YAML frontmatter (title, artist/author/director, cover URL, year, genres/categories, optional external links)
 - Markdown body becomes the description
 - Server components read files at build/request time using `fs/promises` and `gray-matter`
 
 **Media Gallery System**
+
 - Reusable `MediaGallery` component (`src/components/MediaGallery/`) powers all three galleries
 - Three specialized page components: `MusicGallery.tsx`, `MovieGallery.tsx`, `BookGallery.tsx`
 - Each page loads its content directory, transforms to `MediaItem[]`, and renders `MediaGallery`
@@ -48,12 +52,14 @@ This is a Next.js 15 personal website featuring a multilingual media gallery sys
   - `useModal`: Image modal state
 
 **Theme System**
+
 - Dark mode implemented with Tailwind's dark class strategy
 - Initial theme set via inline script in `src/app/[locale]/layout.tsx` (prevents flash)
 - Theme toggle in `ClientLayout` component persists to localStorage
 - PWA theme-color meta tags respect user's color scheme preference
 
 **Image Hosting**
+
 - All media covers hosted on Cloudinary (`res.cloudinary.com/acp`)
 - Next.js Image component configured for Cloudinary domain in `next.config.ts`
 

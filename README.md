@@ -1,11 +1,11 @@
 # Avery Peterson - Personal Website
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38bdf8)](https://tailwindcss.com/)
 
-A modern, multilingual personal website featuring a Progressive Web App (PWA) with offline support, built with Next.js 15 and Tailwind CSS v4.
+A modern, multilingual personal website featuring a Progressive Web App (PWA) with offline support, built with Next.js 16 and Tailwind CSS v4.
 
 🔗 **[Live Site](https://avery-peterson.com)** | 📱 **Installable as PWA** | ♿ **Fully Accessible**
 
@@ -74,7 +74,7 @@ Three fully-featured galleries for showcasing favorites:
 
 - **TypeScript** for type safety
 - **Tailwind CSS v4** for styling
-- **Next.js 15 App Router** with server components
+- **Next.js 16 App Router** with server components and Turbopack
 - **Automatic dependency updates** via Dependabot
 - **Content-driven** - Markdown files with YAML frontmatter
 - **Path aliases** (`@/`) for clean imports
@@ -135,7 +135,7 @@ avery-site/
 │   │   └── ClientLayout.tsx # Theme provider
 │   ├── i18n/
 │   │   └── routing.ts    # Locale configuration
-│   └── middleware.ts     # Next.js middleware for i18n
+│   └── proxy.ts          # Next.js proxy for i18n routing
 ├── .github/
 │   └── dependabot.yml    # Automatic dependency updates
 └── next.config.ts        # Next.js + PWA configuration
@@ -252,11 +252,11 @@ vercel
 
 | Technology          | Purpose                         |
 | ------------------- | ------------------------------- |
-| **Next.js 15**      | React framework with App Router |
+| **Next.js 16**      | React framework with App Router and Turbopack |
 | **React 19**        | UI library                      |
-| **TypeScript**      | Type safety                     |
+| **TypeScript 5**    | Type safety                     |
 | **Tailwind CSS v4** | Styling                         |
-| **next-intl**       | Internationalization            |
+| **next-intl 4.4**   | Internationalization            |
 | **next-pwa**        | Progressive Web App support     |
 | **gray-matter**     | Markdown frontmatter parsing    |
 | **Headless UI**     | Accessible UI components        |
