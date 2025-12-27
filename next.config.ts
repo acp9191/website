@@ -1,14 +1,11 @@
 import { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
+import withPWAInit from '@ducanh2912/next-pwa';
 
-const withPWA = require('next-pwa')({
+const withPWA = withPWAInit({
   dest: 'public',
-  register: false,
-  skipWaiting: true,
-  // Optional: keep SW off in dev to avoid caching headaches
   disable: process.env.NODE_ENV === 'development',
-  buildExcludes: [/app-build-manifest\.json$/],
-  publicExcludes: ['!robots.txt', '!sitemap.xml'],
+  register: true,
 });
 
 const nextConfig: NextConfig = {

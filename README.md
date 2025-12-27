@@ -37,9 +37,9 @@ Three fully-featured galleries for showcasing favorites:
 
 ### 📱 Progressive Web App (PWA)
 
-- **Offline support** - Full functionality without internet
+- **Offline support** - Works without internet after first visit
 - **Installable** - Add to home screen on mobile/desktop
-- **Service worker** caching with Workbox strategies
+- **Smart caching** - Automatic caching with Workbox (static assets, images, pages)
 - **Window controls overlay** for native app experience on desktop
 - **Protocol handlers** for custom URL schemes (`web+avery://`)
 - **App manifest** with screenshots for rich install UI
@@ -212,22 +212,14 @@ Edit the JSON files in `messages/`:
 
 ## 🎯 PWA Configuration
 
-The PWA is configured in `next.config.ts`:
-
-```typescript
-const withPWA = require('next-pwa')({
-  dest: 'public',
-  disable: process.env.NODE_ENV === 'development',
-  buildExcludes: [/app-build-manifest\.json$/],
-});
-```
+The PWA is configured in `next.config.ts` with service worker generation disabled in development mode.
 
 ### Testing PWA Offline
 
 1. Build for production: `npm run build`
 2. Start production server: `npm start`
-3. Visit the site and browse pages
-4. In DevTools Network tab, check "Offline"
+3. Open DevTools → **Application** → **Service Workers** (should show "activated")
+4. Browse a few pages, then enable **Network** → **Offline** mode
 5. Refresh - site should work offline!
 
 ## 🔒 Environment Variables
@@ -250,18 +242,18 @@ vercel
 
 ## 📦 Tech Stack
 
-| Technology          | Purpose                         |
-| ------------------- | ------------------------------- |
+| Technology          | Purpose                                       |
+| ------------------- | --------------------------------------------- |
 | **Next.js 16**      | React framework with App Router and Turbopack |
-| **React 19**        | UI library                      |
-| **TypeScript 5**    | Type safety                     |
-| **Tailwind CSS v4** | Styling                         |
-| **next-intl 4.4**   | Internationalization            |
-| **next-pwa**        | Progressive Web App support     |
-| **gray-matter**     | Markdown frontmatter parsing    |
-| **Headless UI**     | Accessible UI components        |
-| **Hero Icons**      | Icon library                    |
-| **Cloudinary**      | Image hosting and optimization  |
+| **React 19**        | UI library                                    |
+| **TypeScript 5**    | Type safety                                   |
+| **Tailwind CSS v4** | Styling                                       |
+| **next-intl 4.4**   | Internationalization                          |
+| **Workbox**         | Progressive Web App caching strategies        |
+| **gray-matter**     | Markdown frontmatter parsing                  |
+| **Headless UI**     | Accessible UI components                      |
+| **Hero Icons**      | Icon library                                  |
+| **Cloudinary**      | Image hosting and optimization                |
 
 ## 🤖 Automation
 
@@ -297,8 +289,8 @@ This project is open source and available under the [MIT License](LICENSE).
 
 **Avery Peterson**
 
-- Website: [avery-peterson.com](https://your-domain.com)
-- GitHub: [@your-username](https://github.com/acp9191)
+- Website: [avery-peterson.com](https://avery-peterson.com)
+- GitHub: [@acp9191](https://github.com/acp9191)
 
 ---
 

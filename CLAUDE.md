@@ -19,7 +19,7 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 - **Framework**: Next.js 16 (App Router with Turbopack)
 - **Styling**: Tailwind CSS v4
 - **Internationalization**: next-intl 4.4 (en, es, fr, it, de)
-- **PWA**: next-pwa (disabled in dev)
+- **PWA**: Service worker with Workbox (disabled in dev, enabled in production)
 - **Content**: Markdown files with gray-matter frontmatter parsing
 
 ### Key Architectural Patterns
@@ -63,6 +63,19 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 - All media covers hosted on Cloudinary (`res.cloudinary.com/acp`)
 - Next.js Image component configured for Cloudinary domain in `next.config.ts`
 
+**PWA Architecture**
+
+- Service worker: `public/sw.js` (generated at build using Workbox)
+- Config: `next.config.ts` with PWA disabled in dev mode
+- Service worker calls `skipWaiting()` and `clientsClaim()` for immediate activation
+- Caching strategies:
+  - **Precaching**: Static assets (JS, CSS, fonts, icons)
+  - **NetworkFirst**: Homepage, API routes, RSC data
+  - **CacheFirst**: Static JS chunks, audio/video
+  - **StaleWhileRevalidate**: Images, fonts, CSS
+- Key cache stores: `workbox-precache-v2`, `next-image`, `pages-rsc-prefetch`
+- Manifest: `public/manifest.json` with icons, screenshots, protocol handlers
+
 ### File Structure Conventions
 
 - Server components: `src/app/[locale]/**/page.tsx`
@@ -90,5 +103,17 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 ### Build Notes
 
 - TypeScript strict mode is disabled (`tsconfig.json`)
-- Service worker generated in `public/` directory during production build
+- Service worker generated in `public/sw.js` during production build
 - Sitemap generated at `/sitemap.xml` via route handler in `src/app/sitemap.xml/route.ts`
+- PWA features only work in production mode (`npm start`), not development (`npm run dev`)
+
+### Testing PWA
+
+```bash
+npm run build && npm start
+```
+
+- DevTools → Application → Service Workers (should show "activated")
+- DevTools → Cache Storage (should show workbox caches)
+- Console: `!!navigator.serviceWorker.controller` (should be true)
+- Test offline: Browse pages, enable Network offline mode, refresh
