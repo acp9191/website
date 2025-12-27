@@ -19,6 +19,14 @@ const nextConfig: NextConfig = {
         hostname: 'res.cloudinary.com',
       },
     ],
+    // Enable image optimization features
+    formats: ['image/avif', 'image/webp'],
+    // Device sizes for responsive images
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    // Image sizes for different breakpoints
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // Minimum quality for optimized images
+    minimumCacheTTL: 60,
   },
   async headers() {
     return [
@@ -30,11 +38,11 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // unsafe-inline needed for Next.js, unsafe-eval for dev
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com", // Allow Vercel Analytics
               "style-src 'self' 'unsafe-inline'", // unsafe-inline needed for Tailwind
               "img-src 'self' data: https: blob:", // Allow images from Cloudinary and data URIs
               "font-src 'self' data:",
-              "connect-src 'self' https://res.cloudinary.com", // API calls
+              "connect-src 'self' https://res.cloudinary.com https://va.vercel-scripts.com https://vitals.vercel-insights.com", // Allow Vercel Analytics
               "frame-src 'self' https://www.youtube.com https://open.spotify.com", // Embedded content
               "media-src 'self' https://res.cloudinary.com",
               "object-src 'none'", // Prevent Flash/Java

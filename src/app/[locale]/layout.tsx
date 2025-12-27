@@ -59,25 +59,27 @@ export default async function RootLayout({
             `,
           }}
         />
-        <script
-          // Register service worker for PWA functionality
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').then(
-                    function(registration) {
-                      console.log('ServiceWorker registration successful');
-                    },
-                    function(err) {
-                      console.log('ServiceWorker registration failed: ', err);
-                    }
-                  );
-                });
-              }
-            `,
-          }}
-        />
+        {process.env.NODE_ENV === 'production' && (
+          <script
+            // Register service worker for PWA functionality (only in production)
+            dangerouslySetInnerHTML={{
+              __html: `
+                if ('serviceWorker' in navigator) {
+                  window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/sw.js').then(
+                      function(registration) {
+                        console.log('ServiceWorker registration successful');
+                      },
+                      function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                      }
+                    );
+                  });
+                }
+              `,
+            }}
+          />
+        )}
         <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png"></link>
         <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png"></link>
         <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png"></link>

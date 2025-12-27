@@ -1,15 +1,17 @@
 import Image from 'next/image';
 import clsx from 'clsx';
 import { MediaItem, FilterConfig } from './types';
+import { getOptimizedImageUrl, getBlurPlaceholderUrl } from '@/src/utils/imageOptimization';
 
 interface MediaCardProps {
   item: MediaItem;
   filterConfig: FilterConfig;
-  onImageClick: (cover: string) => void;
   t: (key: string) => string;
+  priority?: boolean;
 }
 
-export default function MediaCard({ item, filterConfig, onImageClick, t }: MediaCardProps) {
+export default function MediaCard({ item, filterConfig, t, priority = false }: MediaCardProps) {
+
   // Get aspect ratio classes based on config
   const getAspectRatioClasses = () => {
     switch (filterConfig.aspectRatio) {
@@ -24,30 +26,71 @@ export default function MediaCard({ item, filterConfig, onImageClick, t }: Media
     }
   };
 
+  // Optimize the image URL with Cloudinary transformations
+  // For fill images (grid items), specify a reasonable max width based on expected display size
+  // For auto aspect ratio images, specify width to optimize file size
+  const getOptimizedWidth = () => {
+    if (filterConfig.aspectRatio === 'auto') {
+      return 800; // Larger width for better quality on auto images
+    }
+    // For grid items, max width is ~33vw on desktop, so ~600px is reasonable
+    // This optimizes file size while maintaining quality
+    return 600;
+  };
+
+  const optimizedImageUrl = getOptimizedImageUrl(
+    item.cover,
+    getOptimizedWidth(),
+    undefined // Never force height to maintain aspect ratio
+  );
+
+  // Generate blur placeholder
+  const blurDataURL = getBlurPlaceholderUrl(item.cover);
+
+  // Calculate responsive sizes based on aspect ratio
+  const getSizes = () => {
+    if (filterConfig.aspectRatio === 'auto') {
+      return '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px';
+    }
+    return '(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw';
+  };
+
   return (
-    <div className="rounded-lg bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-all duration-500 overflow-hidden flex flex-col w-full h-full">
+    <div className="rounded-lg bg-white dark:bg-gray-800 shadow-md transition-all duration-500 overflow-hidden flex flex-col w-full h-full">
       <div className="p-4">
-        <button
+        <div
           className={clsx(
-            'relative w-full overflow-hidden rounded-md cursor-pointer',
+            'relative w-full overflow-hidden rounded-md',
             filterConfig.aspectRatio === 'auto' ? 'h-auto' : getAspectRatioClasses()
           )}
-          onClick={() => onImageClick(item.cover)}
-          aria-label={`View ${item.title} cover image`}
         >
-          <Image
-            src={item.cover}
-            alt={`${item.title} cover`}
-            width={filterConfig.aspectRatio === 'auto' ? 400 : undefined}
-            height={filterConfig.aspectRatio === 'auto' ? 600 : undefined}
-            fill={filterConfig.aspectRatio !== 'auto'}
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-            className={clsx(
-              'rounded-md hover:scale-105 transition-transform duration-300',
-              filterConfig.aspectRatio === 'auto' ? 'w-full h-auto' : 'object-cover'
-            )}
-          />
-        </button>
+          {filterConfig.aspectRatio === 'auto' ? (
+            <Image
+              src={optimizedImageUrl}
+              alt={`${item.title} cover`}
+              width={400}
+              height={600}
+              sizes={getSizes()}
+              placeholder="blur"
+              blurDataURL={blurDataURL}
+              priority={priority}
+              loading={priority ? undefined : 'lazy'}
+              className="rounded-md w-full h-auto"
+            />
+          ) : (
+            <Image
+              src={optimizedImageUrl}
+              alt={`${item.title} cover`}
+              fill
+              sizes={getSizes()}
+              placeholder="blur"
+              blurDataURL={blurDataURL}
+              priority={priority}
+              loading={priority ? undefined : 'lazy'}
+              className="rounded-md object-cover"
+            />
+          )}
+        </div>
       </div>
 
       <div className="p-4 pt-0 flex flex-col flex-1">
@@ -89,6 +132,7 @@ export default function MediaCard({ item, filterConfig, onImageClick, t }: Media
                 width={20}
                 height={20}
                 className="inline-block"
+                loading="lazy"
               />
               {item.externalLink.label}
             </a>

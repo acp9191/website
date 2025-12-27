@@ -3,6 +3,7 @@ import { useTranslations } from 'next-intl';
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import clsx from 'clsx';
+import { getOptimizedImageUrl, getBlurPlaceholderUrl } from '@/src/utils/imageOptimization';
 
 export default function Home() {
   const t = useTranslations('Home');
@@ -63,12 +64,15 @@ export default function Home() {
         style={{ transitionDelay: '100ms' }}
       >
         <Image
-          src="https://res.cloudinary.com/acp/image/upload/v1754157313/acp_headshot_nhlged.jpg"
+          src={getOptimizedImageUrl('https://res.cloudinary.com/acp/image/upload/v1754157313/acp_headshot_nhlged.jpg')}
           alt="Avery Peterson headshot"
           width={400}
           height={400}
           className="rounded-xl shadow-md w-full h-auto"
           priority={true}
+          placeholder="blur"
+          blurDataURL={getBlurPlaceholderUrl('https://res.cloudinary.com/acp/image/upload/v1754157313/acp_headshot_nhlged.jpg')}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
         />
       </div>
 

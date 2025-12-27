@@ -7,10 +7,8 @@ import { MediaGalleryHeader } from './MediaGalleryHeader';
 import { MediaGalleryFilters } from './MediaGalleryFilters';
 import { MediaGalleryGrid } from './MediaGalleryGrid';
 import { ScrollToTopButton } from './ScrollToTopButton';
-import { ImageModal } from './ImageModal';
 import { useMediaGalleryFilters } from './hooks/useMediaGalleryFilters';
 import { useIntersectionObserver } from './hooks/useIntersectionObserver';
-import { useModal } from './hooks/useModal';
 
 interface MediaGalleryProps {
   items: MediaItem[];
@@ -30,7 +28,6 @@ export default function MediaGallery({
   // Custom hooks
   const filterState = useMediaGalleryFilters();
   const { headerVisible, headerRef } = useIntersectionObserver();
-  const { modalImage, showModal, modalAnimation, openModal, closeModal } = useModal();
 
   const filtered = items.filter((item) => {
     const categoryMatch =
@@ -107,7 +104,6 @@ export default function MediaGallery({
           <MediaGalleryGrid
             items={filtered}
             filterConfig={filterConfig}
-            onImageClick={openModal}
             t={t}
           />
         </div>
@@ -125,20 +121,12 @@ export default function MediaGallery({
           <MediaGalleryGrid
             items={filtered}
             filterConfig={filterConfig}
-            onImageClick={openModal}
             t={t}
           />
         </div>
       </div>
 
       <ScrollToTopButton show={showScrollTop} onClick={scrollToTop} />
-
-      <ImageModal
-        image={modalImage}
-        show={showModal}
-        animation={modalAnimation}
-        onClose={closeModal}
-      />
     </div>
   );
 }

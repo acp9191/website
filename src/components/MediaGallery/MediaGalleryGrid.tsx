@@ -6,11 +6,10 @@ import MediaCard from './MediaCard';
 interface MediaGalleryGridProps {
   items: MediaItem[];
   filterConfig: FilterConfig;
-  onImageClick: (cover: string) => void;
   t: (key: string) => string;
 }
 
-export function MediaGalleryGrid({ items, filterConfig, onImageClick, t }: MediaGalleryGridProps) {
+export function MediaGalleryGrid({ items, filterConfig, t }: MediaGalleryGridProps) {
   const [visibleItems, setVisibleItems] = useState<Set<string>>(new Set());
   const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -62,6 +61,18 @@ export function MediaGalleryGrid({ items, filterConfig, onImageClick, t }: Media
         rootMargin: '100px',
       }
     );
+
+    // Re-observe elements after a brief delay to ensure DOM is updated
+    const timeoutId = setTimeout(() => {
+      const elements = document.querySelectorAll('[data-item-id]');
+      elements.forEach((el) => {
+        if (observerRef.current) {
+          observerRef.current.observe(el as Element);
+        }
+      });
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
   }, [items]);
 
   // Observe elements when they mount
@@ -91,8 +102,8 @@ export function MediaGalleryGrid({ items, filterConfig, onImageClick, t }: Media
               <MediaCard
                 item={item}
                 filterConfig={filterConfig}
-                onImageClick={onImageClick}
                 t={t}
+                priority={i < 6} // Priority loading for first 6 items (above the fold)
               />
             </div>
           );
