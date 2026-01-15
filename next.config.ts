@@ -40,7 +40,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'", // unsafe-inline needed for Tailwind
               "img-src 'self' data: https: blob:", // Allow images from Cloudinary and data URIs
               "font-src 'self' data:",
-              "connect-src 'self' https://res.cloudinary.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://auth.privy.io https://*.auth.privy.io https://rpc.walletconnect.com https://*.magic.link", // Allow Vercel Analytics and Privy
+              "connect-src 'self' https://res.cloudinary.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://auth.privy.io https://*.auth.privy.io https://*.walletconnect.com https://*.magic.link", // Allow Vercel Analytics and Privy
               "frame-src 'self' https://www.youtube.com https://open.spotify.com https://auth.privy.io https://verify.walletconnect.com", // Embedded content and Privy
               "media-src 'self' https://res.cloudinary.com",
               "object-src 'none'", // Prevent Flash/Java
