@@ -36,11 +36,11 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://auth.privy.io", // Allow Vercel Analytics and Privy
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://auth.privy.io https://challenges.cloudflare.com", // Allow Vercel Analytics, Privy, and Cloudflare Turnstile
               "style-src 'self' 'unsafe-inline'", // unsafe-inline needed for Tailwind
               "img-src 'self' data: https: blob:", // Allow images from Cloudinary and data URIs
               "font-src 'self' data:",
-              "connect-src 'self' https://res.cloudinary.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://auth.privy.io https://*.auth.privy.io https://*.walletconnect.com https://*.magic.link", // Allow Vercel Analytics and Privy
+              "connect-src 'self' https://res.cloudinary.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://auth.privy.io https://*.auth.privy.io https://*.walletconnect.com https://*.magic.link wss://www.walletlink.org https://www.walletlink.org", // Allow Vercel Analytics, Privy, and WalletLink (Coinbase)
               "frame-src 'self' https://www.youtube.com https://open.spotify.com https://auth.privy.io https://verify.walletconnect.com", // Embedded content and Privy
               "media-src 'self' https://res.cloudinary.com",
               "object-src 'none'", // Prevent Flash/Java
