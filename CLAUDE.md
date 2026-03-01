@@ -18,7 +18,7 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 
 - **Framework**: Next.js 16 (App Router with Turbopack)
 - **Styling**: Tailwind CSS v4
-- **Internationalization**: next-intl 4.4 (en, es, fr, it, de)
+- **Internationalization**: next-intl 4.8 (en, es, fr, it, de)
 - **PWA**: Service worker with Serwist (disabled in dev, enabled in production)
 - **Content**: Markdown files with gray-matter frontmatter parsing
 
