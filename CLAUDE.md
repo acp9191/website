@@ -19,7 +19,7 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 - **Framework**: Next.js 16 (App Router with Turbopack)
 - **Styling**: Tailwind CSS v4
 - **Internationalization**: next-intl 4.4 (en, es, fr, it, de)
-- **PWA**: Service worker with Workbox (disabled in dev, enabled in production)
+- **PWA**: Service worker with Serwist (disabled in dev, enabled in production)
 - **Content**: Markdown files with gray-matter frontmatter parsing
 
 ### Key Architectural Patterns
@@ -65,15 +65,16 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 
 **PWA Architecture**
 
-- Service worker: `public/sw.js` (generated at build using Workbox)
+- Service worker source: `src/app/sw.ts` (compiled to `public/sw.js` at build using Serwist)
 - Config: `next.config.ts` with PWA disabled in dev mode
-- Service worker calls `skipWaiting()` and `clientsClaim()` for immediate activation
-- Caching strategies:
-  - **Precaching**: Static assets (JS, CSS, fonts, icons)
+- Service worker uses `skipWaiting`, `clientsClaim`, and `navigationPreload` for immediate activation
+- Caching via `defaultCache` from `@serwist/next/worker`:
+  - **Precaching**: Static assets (JS, CSS, fonts, icons) via `self.__SW_MANIFEST`
   - **NetworkFirst**: Homepage, API routes, RSC data
   - **CacheFirst**: Static JS chunks, audio/video
   - **StaleWhileRevalidate**: Images, fonts, CSS
-- Key cache stores: `workbox-precache-v2`, `next-image`, `pages-rsc-prefetch`
+- Key cache stores: `serwist-precache-v2`, `next-image`, `pages-rsc-prefetch`
+- `src/app/sw.ts` is excluded from the main `tsconfig.json` (Serwist compiles it independently)
 - Manifest: `public/manifest.json` with icons, screenshots, protocol handlers
 
 ### File Structure Conventions
@@ -114,6 +115,6 @@ npm run build && npm start
 ```
 
 - DevTools → Application → Service Workers (should show "activated")
-- DevTools → Cache Storage (should show workbox caches)
+- DevTools → Cache Storage (should show `serwist-precache-v2-*` and other serwist caches)
 - Console: `!!navigator.serviceWorker.controller` (should be true)
 - Test offline: Browse pages, enable Network offline mode, refresh
