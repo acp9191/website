@@ -33,6 +33,7 @@ export default async function RootLayout({
   return (
     <html suppressHydrationWarning lang={locale} className={inter.variable}>
       <head>
+        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
         <script
           // This script sets the initial theme based on user preference or saved setting
           // It runs before the React app hydrates to ensure the correct theme is applied immediately

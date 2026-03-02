@@ -61,3 +61,23 @@ body {
   animation: wave 2.5s ease-in-out infinite;
   animation-delay: 1s; /* Wait 1 second before starting */
 }
+
+/* Slide up only (no opacity) — safe for LCP elements since transform doesn't affect visibility */
+@keyframes slideUp {
+  from { transform: translateY(2rem); }
+  to { transform: translateY(0); }
+}
+
+/* Fade + slide up — for non-LCP elements (text, etc.) */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(1rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.7s ease-out both;
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.7s ease-out both;
+}
