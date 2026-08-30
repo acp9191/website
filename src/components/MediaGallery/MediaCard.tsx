@@ -66,7 +66,7 @@ export default function MediaCard({ item, filterConfig, priority = false }: Medi
           {filterConfig.aspectRatio === 'auto' ? (
             <Image
               src={optimizedImageUrl}
-              alt={`${item.title} cover`}
+              alt={item.coverAlt}
               width={400}
               height={600}
               sizes={getSizes()}
@@ -79,7 +79,7 @@ export default function MediaCard({ item, filterConfig, priority = false }: Medi
           ) : (
             <Image
               src={optimizedImageUrl}
-              alt={`${item.title} cover`}
+              alt={item.coverAlt}
               fill
               sizes={getSizes()}
               placeholder="blur"
@@ -127,7 +127,8 @@ export default function MediaCard({ item, filterConfig, priority = false }: Medi
             >
               <Image
                 src={item.externalLink.icon}
-                alt={item.externalLink.label}
+                // Decorative: the link text right next to it already says this.
+                alt=""
                 width={20}
                 height={20}
                 className="inline-block"

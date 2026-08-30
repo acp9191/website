@@ -9,12 +9,13 @@
     "music": "🎧 Música",
     "books": "📚 Libros",
     "movies": "🎬 Películas",
-    "darkMode": "🌙 Oscuro",
-    "lightMode": "☀️ Claro",
     "language": "🌐 Idioma",
     "theme": "🎨 Tema",
     "toggleMenu": "Alternar menú",
-    "toggleTheme": "Cambiar tema"
+    "toggleTheme": "Cambiar tema",
+    "selectLanguage": "Seleccionar idioma",
+    "mainNavigation": "Navegación principal",
+    "mobileNavigation": "Navegación móvil"
   },
   "Footer": {
     "copyright": "© {year} Avery Peterson. Todos los derechos reservados.",
@@ -38,11 +39,11 @@
     "movie": "película",
     "movies": "películas",
     "reset": "Reiniciar",
-    "resetFilters": "Reiniciar Filtros",
     "coverAlt": "Póster de la película {title}",
     "watchTrailer": "Ver Tráiler",
-    "youtubeIcon": "Icono de YouTube",
-    "modalAlt": "Póster de película a tamaño completo"
+    "all": "Todas",
+    "scrollToTop": "Volver arriba",
+    "filterBy": "Filtrar por {label}"
   },
   "Music": {
     "title": "🎧 Álbumes Favoritos",
@@ -53,11 +54,11 @@
     "album": "álbum",
     "albums": "álbumes",
     "reset": "Reiniciar",
-    "resetFilters": "Reiniciar Filtros",
     "coverAlt": "Portada del álbum {title}",
     "listenOnSpotify": "Escuchar en Spotify",
-    "spotifyIcon": "Icono de Spotify",
-    "modalAlt": "Portada del álbum a tamaño completo"
+    "all": "Todos",
+    "scrollToTop": "Volver arriba",
+    "filterBy": "Filtrar por {label}"
   },
   "Books": {
     "title": "📚 Libros Favoritos",
@@ -68,13 +69,21 @@
     "book": "libro",
     "books": "libros",
     "reset": "Reiniciar",
-    "resetFilters": "Reiniciar Filtros",
     "coverAlt": "{title} portada del libro",
-    "modalAlt": "Portada del libro a tamaño completo"
+    "all": "Todos",
+    "scrollToTop": "Volver arriba",
+    "filterBy": "Filtrar por {label}"
   },
   "NotFound": {
     "title": "Página no encontrada",
     "description": "La página que buscas no existe o se ha movido.",
     "backHome": "Volver al inicio"
+  },
+  "Meta": {
+    "description": "Sitio web personal de Avery Peterson, ingeniero de software al que le gustan las buenas herramientas, la buena música y el código limpio.",
+    "about": "Acerca de mí",
+    "music": "Álbumes Favoritos",
+    "books": "Libros Favoritos",
+    "movies": "Películas Favoritas"
   }
 }

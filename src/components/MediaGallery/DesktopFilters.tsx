@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import { AnimatedCounter } from '../AnimatedCounter';
-import FilterDropdown from './FilterDropdown';
+import FilterDropdown, { FilterValue } from './FilterDropdown';
 import { MediaItem, FilterConfig, FilterState } from './types';
 
 interface DesktopFiltersProps {
@@ -14,7 +14,7 @@ interface DesktopFiltersProps {
     hasActiveFilters: boolean;
   };
   filtered: MediaItem[];
-  t: (key: string) => string;
+  t: (key: string, values?: Record<string, string | number>) => string;
 }
 
 export function DesktopFilters({
@@ -69,29 +69,22 @@ export function DesktopFilters({
     };
   }, []);
 
-  // Filter handlers that reset other filters
-  const handleCategorySelect = (value: string) => {
-    filterState.setSelectedCategory(value);
-    if (value !== 'All') {
-      filterState.setSelectedSubtitle('All');
-      filterState.setSelectedYear('All');
-    }
+  /*
+    The three filters combine. MediaGallery already ANDs them when computing
+    `filtered`; these handlers used to clear the other two on every selection,
+    so that capability was unreachable and picking a genre silently dropped a
+    year the user had chosen.
+  */
+  const handleCategorySelect = (value: FilterValue) => {
+    filterState.setSelectedCategory(String(value));
   };
 
-  const handleSubtitleSelect = (value: string) => {
-    filterState.setSelectedSubtitle(value);
-    if (value !== 'All') {
-      filterState.setSelectedCategory('All');
-      filterState.setSelectedYear('All');
-    }
+  const handleSubtitleSelect = (value: FilterValue) => {
+    filterState.setSelectedSubtitle(String(value));
   };
 
-  const handleYearSelect = (value: number | 'All') => {
-    filterState.setSelectedYear(value);
-    if (value !== 'All') {
-      filterState.setSelectedCategory('All');
-      filterState.setSelectedSubtitle('All');
-    }
+  const handleYearSelect = (value: FilterValue) => {
+    filterState.setSelectedYear(value === 'All' ? 'All' : Number(value));
   };
 
   return (
@@ -153,6 +146,8 @@ export function DesktopFilters({
             {/* Filter Dropdowns */}
             <FilterDropdown
               label={t(filterConfig.categoryLabel)}
+              ariaLabel={t('filterBy', { label: t(filterConfig.categoryLabel) })}
+              allLabel={t('all')}
               selectedValue={filterState.selectedCategory}
               options={['All', ...filterData.allCategories]}
               onSelect={handleCategorySelect}
@@ -164,6 +159,8 @@ export function DesktopFilters({
 
             <FilterDropdown
               label={t(filterConfig.subtitleLabel)}
+              ariaLabel={t('filterBy', { label: t(filterConfig.subtitleLabel) })}
+              allLabel={t('all')}
               selectedValue={filterState.selectedSubtitle}
               options={['All', ...filterData.allSubtitles]}
               onSelect={handleSubtitleSelect}
@@ -175,6 +172,8 @@ export function DesktopFilters({
 
             <FilterDropdown
               label={t(filterConfig.yearLabel)}
+              ariaLabel={t('filterBy', { label: t(filterConfig.yearLabel) })}
+              allLabel={t('all')}
               selectedValue={filterState.selectedYear}
               options={['All', ...filterData.allYears]}
               onSelect={handleYearSelect}

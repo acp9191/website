@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useListbox, type FilterValue } from './hooks/useListbox';
 import clsx from 'clsx';
 import { AnimatedCounter } from '../AnimatedCounter';
 import { MediaItem, FilterConfig, FilterState } from './types';
@@ -13,7 +14,7 @@ interface MobileFiltersProps {
     hasActiveFilters: boolean;
   };
   filtered: MediaItem[];
-  t: (key: string) => string;
+  t: (key: string, values?: Record<string, string | number>) => string;
 }
 
 export function MobileFilters({
@@ -51,29 +52,19 @@ export function MobileFilters({
     };
   }, []);
 
-  // Filter handlers that reset other filters
-  const handleCategorySelect = (value: string) => {
-    filterState.setSelectedCategory(value);
-    if (value !== 'All') {
-      filterState.setSelectedSubtitle('All');
-      filterState.setSelectedYear('All');
-    }
+  // The three filters combine; MediaGallery already ANDs them. Clearing the
+  // siblings here made that unreachable and silently discarded the user's
+  // other selections.
+  const handleCategorySelect = (value: FilterValue) => {
+    filterState.setSelectedCategory(String(value));
   };
 
-  const handleSubtitleSelect = (value: string) => {
-    filterState.setSelectedSubtitle(value);
-    if (value !== 'All') {
-      filterState.setSelectedCategory('All');
-      filterState.setSelectedYear('All');
-    }
+  const handleSubtitleSelect = (value: FilterValue) => {
+    filterState.setSelectedSubtitle(String(value));
   };
 
-  const handleYearSelect = (value: number | 'All') => {
-    filterState.setSelectedYear(value);
-    if (value !== 'All') {
-      filterState.setSelectedCategory('All');
-      filterState.setSelectedSubtitle('All');
-    }
+  const handleYearSelect = (value: FilterValue) => {
+    filterState.setSelectedYear(value === 'All' ? 'All' : Number(value));
   };
 
   return (
@@ -152,6 +143,8 @@ export function MobileFilters({
                 : filterState.selectedCategory
             }
             options={['All', ...filterData.allCategories]}
+            allLabel={t('all')}
+            ariaLabel={t('filterBy', { label: t(filterConfig.categoryLabel) })}
             selectedValue={filterState.selectedCategory}
             onSelect={handleCategorySelect}
             isOpen={categoryDropdownOpen}
@@ -171,6 +164,8 @@ export function MobileFilters({
                 : filterState.selectedSubtitle
             }
             options={['All', ...filterData.allSubtitles]}
+            allLabel={t('all')}
+            ariaLabel={t('filterBy', { label: t(filterConfig.subtitleLabel) })}
             selectedValue={filterState.selectedSubtitle}
             onSelect={handleSubtitleSelect}
             isOpen={subtitleDropdownOpen}
@@ -190,6 +185,8 @@ export function MobileFilters({
                 : filterState.selectedYear.toString()
             }
             options={['All', ...filterData.allYears]}
+            allLabel={t('all')}
+            ariaLabel={t('filterBy', { label: t(filterConfig.yearLabel) })}
             selectedValue={filterState.selectedYear}
             onSelect={handleYearSelect}
             isOpen={yearDropdownOpen}
@@ -209,9 +206,13 @@ export function MobileFilters({
 
 interface MobileFilterButtonProps {
   label: string;
-  options: (string | number)[];
-  selectedValue: string | number | 'All';
-  onSelect: (value: any) => void;
+  /** Localized aria-label for the trigger. */
+  ariaLabel: string;
+  /** Localized text for the "All" sentinel; the stored value stays 'All'. */
+  allLabel: string;
+  options: FilterValue[];
+  selectedValue: FilterValue;
+  onSelect: (value: FilterValue) => void;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   closeOthers: () => void;
@@ -221,6 +222,8 @@ interface MobileFilterButtonProps {
 
 function MobileFilterButton({
   label,
+  ariaLabel,
+  allLabel,
   options,
   selectedValue,
   onSelect,
@@ -230,24 +233,17 @@ function MobileFilterButton({
   visible,
   delay,
 }: MobileFilterButtonProps) {
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const {
+    containerRef,
+    triggerRef,
+    listRef,
+    listboxId,
+    handleSelect,
+    handleTriggerKeyDown,
+    handleOptionKeyDown,
+  } = useListbox({ isOpen, setIsOpen, options, selectedValue, onSelect });
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen, setIsOpen]);
+  const display = (value: FilterValue) => (value === 'All' ? allLabel : value);
 
   const handleToggle = () => {
     if (!isOpen) {
@@ -256,14 +252,9 @@ function MobileFilterButton({
     setIsOpen(!isOpen);
   };
 
-  const handleSelect = (value: string | number) => {
-    onSelect(value);
-    setIsOpen(false);
-  };
-
   return (
     <div
-      ref={dropdownRef}
+      ref={containerRef}
       className={clsx('relative w-full sm:flex-1 transition-all duration-700 ease-out', {
         'opacity-100 translate-y-0': visible,
         'opacity-0 translate-y-4': !visible,
@@ -272,10 +263,16 @@ function MobileFilterButton({
       style={{ transitionDelay: delay }}
     >
       <button
+        ref={triggerRef}
+        type="button"
         onClick={handleToggle}
+        onKeyDown={handleTriggerKeyDown}
         className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-medium bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm hover:shadow-md cursor-pointer relative z-10"
+        role="combobox"
+        aria-haspopup="listbox"
         aria-expanded={isOpen}
-        aria-label={`Filter: ${label}`}
+        aria-controls={listboxId}
+        aria-label={ariaLabel}
       >
         <span className="truncate text-left min-w-0">{label}</span>
         <svg
@@ -292,19 +289,29 @@ function MobileFilterButton({
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 w-full sm:w-64 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl z-[9999] max-h-64 overflow-y-auto">
+        <div
+          ref={listRef}
+          id={listboxId}
+          role="listbox"
+          aria-label={ariaLabel}
+          className="absolute left-0 w-full sm:w-64 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl z-[9999] max-h-64 overflow-y-auto"
+        >
           <div className="py-1">
             {options.map((option) => (
               <button
                 key={option}
+                type="button"
+                role="option"
+                aria-selected={selectedValue === option}
                 onClick={() => handleSelect(option)}
-                className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between cursor-pointer ${
+                onKeyDown={(event) => handleOptionKeyDown(event, option)}
+                className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700 focus:outline-none transition-colors flex items-center justify-between cursor-pointer ${
                   selectedValue === option
                     ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
                     : 'text-gray-900 dark:text-gray-100'
                 }`}
               >
-                <span className="truncate min-w-0">{option}</span>
+                <span className="truncate min-w-0">{display(option)}</span>
                 {selectedValue === option && (
                   <svg
                     className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0 ml-2"

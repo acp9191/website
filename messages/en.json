@@ -9,12 +9,13 @@
     "music": "🎧 Music",
     "books": "📚 Books",
     "movies": "🎬 Movies",
-    "darkMode": "🌙 Dark",
-    "lightMode": "☀️ Light",
     "language": "🌐 Language",
     "theme": "🎨 Theme",
     "toggleMenu": "Toggle menu",
-    "toggleTheme": "Toggle theme"
+    "toggleTheme": "Toggle theme",
+    "selectLanguage": "Select language",
+    "mainNavigation": "Main navigation",
+    "mobileNavigation": "Mobile navigation"
   },
   "Footer": {
     "copyright": "© {year} Avery Peterson. All rights reserved.",
@@ -38,11 +39,11 @@
     "movie": "movie",
     "movies": "movies",
     "reset": "Reset",
-    "resetFilters": "Reset Filters",
     "coverAlt": "{title} movie poster",
     "watchTrailer": "Watch Trailer",
-    "youtubeIcon": "YouTube icon",
-    "modalAlt": "Movie poster full size"
+    "all": "All",
+    "scrollToTop": "Scroll to top",
+    "filterBy": "Filter by {label}"
   },
   "Music": {
     "title": "🎧 Favorite Albums",
@@ -53,11 +54,11 @@
     "album": "album",
     "albums": "albums",
     "reset": "Reset",
-    "resetFilters": "Reset Filters",
     "coverAlt": "{title} album cover",
     "listenOnSpotify": "Listen on Spotify",
-    "spotifyIcon": "Spotify icon",
-    "modalAlt": "Album cover full size"
+    "all": "All",
+    "scrollToTop": "Scroll to top",
+    "filterBy": "Filter by {label}"
   },
   "Books": {
     "title": "📚 Favorite Books",
@@ -68,13 +69,21 @@
     "book": "book",
     "books": "books",
     "reset": "Reset",
-    "resetFilters": "Reset Filters",
     "coverAlt": "{title} book cover",
-    "modalAlt": "Book cover full size"
+    "all": "All",
+    "scrollToTop": "Scroll to top",
+    "filterBy": "Filter by {label}"
   },
   "NotFound": {
     "title": "Page not found",
     "description": "The page you're looking for doesn't exist or has moved.",
     "backHome": "Back to home"
+  },
+  "Meta": {
+    "description": "Personal website of Avery Peterson, software engineer who loves good tools, good music, and clean code.",
+    "about": "About Me",
+    "music": "Favorite Albums",
+    "books": "Favorite Books",
+    "movies": "Favorite Movies"
   }
 }

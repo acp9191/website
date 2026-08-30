@@ -9,12 +9,13 @@
     "music": "🎧 Musique",
     "books": "📚 Livres",
     "movies": "🎬 Films",
-    "darkMode": "🌙 Sombre",
-    "lightMode": "☀️ Clair",
     "language": "🌐 Langue",
     "theme": "🎨 Thème",
     "toggleMenu": "Basculer le menu",
-    "toggleTheme": "Basculer le thème"
+    "toggleTheme": "Basculer le thème",
+    "selectLanguage": "Choisir la langue",
+    "mainNavigation": "Navigation principale",
+    "mobileNavigation": "Navigation mobile"
   },
   "Footer": {
     "copyright": "© {year} Avery Peterson. Tous droits réservés.",
@@ -38,11 +39,11 @@
     "movie": "film",
     "movies": "films",
     "reset": "Réinitialiser",
-    "resetFilters": "Réinitialiser les filtres",
     "coverAlt": "Affiche du film {title}",
     "watchTrailer": "Voir la Bande-annonce",
-    "youtubeIcon": "Icône YouTube",
-    "modalAlt": "Affiche de film en taille réelle"
+    "all": "Tous",
+    "scrollToTop": "Retour en haut",
+    "filterBy": "Filtrer par {label}"
   },
   "Music": {
     "title": "🎧 Albums Préférés",
@@ -53,11 +54,11 @@
     "album": "album",
     "albums": "albums",
     "reset": "Réinitialiser",
-    "resetFilters": "Réinitialiser les filtres",
     "coverAlt": "Pochette de l'album {title}",
     "listenOnSpotify": "Écouter sur Spotify",
-    "spotifyIcon": "Icône Spotify",
-    "modalAlt": "Pochette d'album en taille réelle"
+    "all": "Tous",
+    "scrollToTop": "Retour en haut",
+    "filterBy": "Filtrer par {label}"
   },
   "Books": {
     "title": "📚 Livres Préférés",
@@ -68,13 +69,21 @@
     "book": "livre",
     "books": "livres",
     "reset": "Réinitialiser",
-    "resetFilters": "Réinitialiser les filtres",
     "coverAlt": "{title} couverture de livre",
-    "modalAlt": "Couverture de livre en taille réelle"
+    "all": "Tous",
+    "scrollToTop": "Retour en haut",
+    "filterBy": "Filtrer par {label}"
   },
   "NotFound": {
     "title": "Page introuvable",
     "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
     "backHome": "Retour à l'accueil"
+  },
+  "Meta": {
+    "description": "Site personnel d'Avery Peterson, ingénieur logiciel passionné par les bons outils, la bonne musique et le code propre.",
+    "about": "À propos de moi",
+    "music": "Albums Préférés",
+    "books": "Livres Préférés",
+    "movies": "Films Préférés"
   }
 }

@@ -8,7 +8,8 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/src/i18n/routing';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import { metadata as siteMetadata } from './metadata';
+import type { Metadata } from 'next';
+import { SITE_NAME, SITE_URL, buildMetadata } from '@/src/lib/metadata';
 
 // Font optimization with next/font
 const inter = Inter({
@@ -17,7 +18,27 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-export const metadata = siteMetadata;
+/**
+ * Site-wide defaults. Per-page titles, descriptions, canonicals and hreflang
+ * sets come from each page's own generateMetadata; `title.template` frames
+ * whatever they supply.
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: SITE_NAME,
+      template: `%s | ${SITE_NAME}`,
+    },
+    ...(await buildMetadata({ locale, path: '' })),
+  };
+}
 
 // Prerender every locale at build time instead of rendering on demand
 export function generateStaticParams() {

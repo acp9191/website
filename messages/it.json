@@ -9,12 +9,13 @@
     "music": "🎧 Musica",
     "books": "📚 Libri",
     "movies": "🎬 Film",
-    "darkMode": "🌙 Scuro",
-    "lightMode": "☀️ Chiaro",
     "language": "🌐 Lingua",
     "theme": "🎨 Tema",
     "toggleMenu": "Attiva menu",
-    "toggleTheme": "Cambia tema"
+    "toggleTheme": "Cambia tema",
+    "selectLanguage": "Seleziona lingua",
+    "mainNavigation": "Navigazione principale",
+    "mobileNavigation": "Navigazione mobile"
   },
   "Footer": {
     "copyright": "© {year} Avery Peterson. Tutti i diritti riservati.",
@@ -38,11 +39,11 @@
     "movie": "film",
     "movies": "film",
     "reset": "Reimposta",
-    "resetFilters": "Reimposta filtri",
     "coverAlt": "Locandina del film {title}",
     "watchTrailer": "Guarda il Trailer",
-    "youtubeIcon": "Icona YouTube",
-    "modalAlt": "Locandina del film a dimensione intera"
+    "all": "Tutti",
+    "scrollToTop": "Torna su",
+    "filterBy": "Filtra per {label}"
   },
   "Music": {
     "title": "🎧 Album Preferiti",
@@ -53,11 +54,11 @@
     "album": "album",
     "albums": "album",
     "reset": "Reimposta",
-    "resetFilters": "Reimposta filtri",
     "coverAlt": "Copertina dell'album {title}",
     "listenOnSpotify": "Ascolta su Spotify",
-    "spotifyIcon": "Icona Spotify",
-    "modalAlt": "Copertina dell'album a dimensione intera"
+    "all": "Tutti",
+    "scrollToTop": "Torna su",
+    "filterBy": "Filtra per {label}"
   },
   "Books": {
     "title": "📚 Libri Preferiti",
@@ -68,13 +69,21 @@
     "book": "libro",
     "books": "libri",
     "reset": "Reimposta",
-    "resetFilters": "Reimposta filtri",
     "coverAlt": "{title} copertina del libro",
-    "modalAlt": "Copertina del libro a dimensione intera"
+    "all": "Tutti",
+    "scrollToTop": "Torna su",
+    "filterBy": "Filtra per {label}"
   },
   "NotFound": {
     "title": "Pagina non trovata",
     "description": "La pagina che cerchi non esiste o è stata spostata.",
     "backHome": "Torna alla home"
+  },
+  "Meta": {
+    "description": "Sito personale di Avery Peterson, ingegnere del software che ama i buoni strumenti, la buona musica e il codice pulito.",
+    "about": "Chi sono",
+    "music": "Album Preferiti",
+    "books": "Libri Preferiti",
+    "movies": "Film Preferiti"
   }
 }
