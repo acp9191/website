@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+
+# A new push to the same PR makes the previous run irrelevant.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          # Single source of truth, kept in step with engines.node in package.json
+          node-version-file: .nvmrc
+          cache: npm
+
+      # `npm ci` rather than `npm install`: installs exactly what the lockfile
+      # pins and fails if package.json and the lockfile have drifted apart.
+      - run: npm ci
+
+      # The script passes --max-warnings 0, so warnings fail the run too.
+      - name: Lint
+        run: npm run lint
+
+      # `!cancelled()` so a lint failure still reports type errors in the same
+      # run, rather than hiding them behind a second push.
+      - name: Typecheck
+        if: '!cancelled()'
+        run: npm run typecheck
