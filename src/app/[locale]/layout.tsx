@@ -44,6 +44,13 @@ export default async function RootLayout({
     <html suppressHydrationWarning lang={locale} className={inter.variable}>
       <head>
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+        {/*
+          Must stay a raw <script> here in <head>, ahead of the stylesheet, or
+          the browser paints a light background before the theme is resolved.
+          React logs a dev-only warning about script tags when a client-side
+          locale switch re-renders this layout; that is cosmetic, and moving
+          the script to <body> to silence it reintroduces the flash.
+        */}
         <script
           // This script sets the initial theme based on user preference or saved setting
           // It runs before the React app hydrates to ensure the correct theme is applied immediately
@@ -52,20 +59,16 @@ export default async function RootLayout({
               try {
                 const savedTheme = localStorage.getItem('theme');
                 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                let isDark;
-
-                if (savedTheme === 'dark') {
-                  isDark = true;
-                } else if (savedTheme === 'light') {
-                  isDark = false;
-                } else {
-                  // 'system' or no saved theme - use system preference
-                  isDark = prefersDark;
-                }
+                const pref = savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : 'system';
+                const isDark = pref === 'system' ? prefersDark : pref === 'dark';
 
                 if (isDark) {
                   document.documentElement.classList.add('dark');
                 }
+
+                // Record the stored preference so the theme toggle can paint the
+                // right icon from CSS alone, before React hydrates.
+                document.documentElement.dataset.theme = pref;
               } catch (e) {}
             `,
           }}
