@@ -1,8 +1,11 @@
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 import { getOptimizedImageUrl, getBlurPlaceholderUrl } from '@/src/utils/imageOptimization';
 
-export default async function Home() {
+export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const t = await getTranslations('Home');
 
   const title = t('title').replace(

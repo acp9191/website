@@ -1,5 +1,6 @@
 // app/layout.tsx
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
+import { setRequestLocale } from 'next-intl/server';
 import { Inter } from 'next/font/google';
 import '../globals.css';
 import ClientLayout from '@/src/components/ClientLayout';
@@ -18,6 +19,11 @@ const inter = Inter({
 
 export const metadata = siteMetadata;
 
+// Prerender every locale at build time instead of rendering on demand
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
 export default async function RootLayout({
   children,
   params,
@@ -29,6 +35,10 @@ export default async function RootLayout({
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
+
+  // Without this, next-intl resolves the locale from request headers, which
+  // opts the whole subtree into dynamic rendering.
+  setRequestLocale(locale);
 
   return (
     <html suppressHydrationWarning lang={locale} className={inter.variable}>

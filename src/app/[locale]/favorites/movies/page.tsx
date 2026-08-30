@@ -2,6 +2,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import matter from 'gray-matter';
+import { setRequestLocale } from 'next-intl/server';
 import dynamic from 'next/dynamic';
 
 const MovieGallery = dynamic(() => import('./MovieGallery'));
@@ -16,7 +17,14 @@ type Movie = {
   trailer?: string;
 };
 
-export default async function MusicPage() {
+export default async function MoviePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const dir = path.join(process.cwd(), 'content/movies');
   const files = await fs.readdir(dir);
 
