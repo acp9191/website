@@ -91,8 +91,14 @@ export default function MediaGallery({
           subtitle={t('subtitle')}
         />
 
-        {/* Desktop Layout */}
-        <div className="hidden lg:flex gap-8 pt-8">
+        {/*
+          One grid for both breakpoints. MediaGalleryFilters renders the
+          desktop sidebar and the mobile filter bar, each gated by its own
+          breakpoint classes, so only the layout direction changes here:
+          stacked (filters above grid) on mobile, sidebar beside grid on
+          desktop.
+        */}
+        <div className="flex flex-col lg:flex-row lg:gap-8 pt-8">
           <MediaGalleryFilters
             items={items}
             filterConfig={filterConfig}
@@ -101,28 +107,7 @@ export default function MediaGallery({
             t={t}
           />
 
-          <MediaGalleryGrid
-            items={filtered}
-            filterConfig={filterConfig}
-            t={t}
-          />
-        </div>
-
-        {/* Mobile Layout */}
-        <div className="lg:hidden pt-8">
-          <MediaGalleryFilters
-            items={items}
-            filterConfig={filterConfig}
-            filterState={filterState}
-            filtered={filtered}
-            t={t}
-          />
-
-          <MediaGalleryGrid
-            items={filtered}
-            filterConfig={filterConfig}
-            t={t}
-          />
+          <MediaGalleryGrid items={filtered} filterConfig={filterConfig} t={t} />
         </div>
       </div>
 
