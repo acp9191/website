@@ -1,25 +1,40 @@
-// filepath: /Users/averypeterson/Downloads/avery-site-complete/src/app/sitemap.xml/route.ts
 import { NextResponse } from 'next/server';
+import { routing } from '@/src/i18n/routing';
+
+const baseUrl = 'https://avery-peterson.com';
+
+const staticPaths = ['', '/about', '/favorites/music', '/favorites/books', '/favorites/movies'];
+
+/**
+ * `localePrefix` is 'as-needed', so the default locale lives at unprefixed
+ * paths — /about, not /en/about. Emitting the prefixed form for every locale
+ * advertised a URL that 307s, which is exactly what a sitemap should not do.
+ */
+function localizedUrl(locale: string, path: string) {
+  const prefix = locale === routing.defaultLocale ? '' : `/${locale}`;
+  // The home page of the default locale is the bare origin.
+  return `${baseUrl}${prefix}${path}` || baseUrl;
+}
 
 export async function GET() {
-  const baseUrl = 'https://avery-peterson.com';
-  const locales = ['en', 'es', 'fr', 'it', 'de'];
-  const staticPaths = ['', '/about', '/favorites/music', '/favorites/books', '/favorites/movies'];
+  // Content is static, so a single build-time timestamp is honest here: it is
+  // the last moment the pages could have changed.
+  const lastmod = new Date().toISOString();
 
   const urls = staticPaths
     .flatMap((path) =>
-      locales.map(
+      routing.locales.map(
         (locale) => `
     <url>
-      <loc>${baseUrl}/${locale}${path}</loc>
-      <lastmod>${new Date().toISOString()}</lastmod>
-      ${locales
+      <loc>${localizedUrl(locale, path)}</loc>
+      <lastmod>${lastmod}</lastmod>
+      ${routing.locales
         .map(
           (altLocale) =>
-            `<xhtml:link rel="alternate" hreflang="${altLocale}" href="${baseUrl}/${altLocale}${path}"/>`
+            `<xhtml:link rel="alternate" hreflang="${altLocale}" href="${localizedUrl(altLocale, path)}"/>`
         )
         .join('\n      ')}
-      <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}/en${path}"/>
+      <xhtml:link rel="alternate" hreflang="x-default" href="${localizedUrl(routing.defaultLocale, path)}"/>
     </url>`
       )
     )

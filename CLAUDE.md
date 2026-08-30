@@ -5,9 +5,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ```bash
-npm run dev    # Start development server on http://localhost:3000
-npm run build  # Build for production (includes type checking)
-npm start      # Start production server
+npm run dev        # Start development server on http://localhost:3000
+npm run build      # Build for production (includes type checking)
+npm start          # Start production server
+npm run lint       # ESLint (next/core-web-vitals)
+npm run typecheck  # tsc --noEmit
 ```
 
 ## Project Architecture
@@ -35,7 +37,8 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 **Content Management**
 
 - Content stored as Markdown files in `content/{albums,movies,books}/`
-- Each file has YAML frontmatter (title, artist/author/director, cover URL, year, genres/categories, optional external links)
+- Each file has YAML frontmatter (title, artist/author/director, image URL, year, genres, optional external links)
+- Loaded by `loadContent(collection)` in `src/lib/content.ts`, which parses every `.md` in the directory and sorts by title
 - Markdown body becomes the description
 - Server components read files at build/request time using `fs/promises` and `gray-matter`
 
@@ -49,7 +52,6 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 - Custom hooks in `src/components/MediaGallery/hooks/`:
   - `useMediaGalleryFilters`: Filter state management
   - `useIntersectionObserver`: Header visibility detection
-  - `useModal`: Image modal state
 
 **Theme System**
 
@@ -89,8 +91,11 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 1. Create `.md` file in appropriate content directory (`content/albums/`, `content/movies/`, `content/books/`)
 2. Include required frontmatter fields:
    - Music: `title`, `artist`, `cover`, `year`, `genres`, optional `spotify`
-   - Movies: `title`, `director`, `cover`, `year`, `genres`, optional `trailer`
-   - Books: `title`, `author`, `cover`, `year`, `categories`
+   - Movies: `title`, `director`, `poster`, `year`, `genres`, optional `trailer`
+   - Books: `title`, `author`, `cover`, `year`, `genres`
+
+   Note the image field differs by collection: movies use `poster`, albums and
+   books use `cover`.
 3. Add description in markdown body
 4. Content auto-loads on next build/page request
 
@@ -103,7 +108,7 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 
 ### Build Notes
 
-- TypeScript strict mode is disabled (`tsconfig.json`)
+- TypeScript strict mode is enabled (`tsconfig.json`)
 - Service worker generated in `public/sw.js` during production build
 - Sitemap generated at `/sitemap.xml` via route handler in `src/app/sitemap.xml/route.ts`
 - PWA features only work in production mode (`npm start`), not development (`npm run dev`)

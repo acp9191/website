@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import clsx from 'clsx';
 import { MediaItem, FilterConfig } from './types';
 import MediaCard from './MediaCard';
@@ -6,82 +6,55 @@ import MediaCard from './MediaCard';
 interface MediaGalleryGridProps {
   items: MediaItem[];
   filterConfig: FilterConfig;
-  t: (key: string) => string;
 }
 
-export function MediaGalleryGrid({ items, filterConfig, t }: MediaGalleryGridProps) {
+export function MediaGalleryGrid({ items, filterConfig }: MediaGalleryGridProps) {
   const [visibleItems, setVisibleItems] = useState<Set<string>>(new Set());
   const observerRef = useRef<IntersectionObserver | null>(null);
 
-  // Set up Intersection Observer for grid items
-  useEffect(() => {
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const itemId = entry.target.getAttribute('data-item-id') || '';
-            setVisibleItems((prev) => new Set([...prev, itemId]));
-          }
-        });
-      },
-      {
-        threshold: 0,
-        rootMargin: '100px',
-      }
-    );
+  // Created on first use rather than in an effect. Ref callbacks run during
+  // commit, before effects, so an effect-created observer does not exist yet
+  // when the cards try to register — they would never be observed and would sit
+  // at opacity 0 forever. The old code hid this by re-querying the document on
+  // a setTimeout; creating the observer lazily removes the need for that.
+  const getObserver = useCallback(() => {
+    if (!observerRef.current) {
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const itemId = entry.target.getAttribute('data-item-id');
+              if (itemId) {
+                setVisibleItems((prev) => (prev.has(itemId) ? prev : new Set(prev).add(itemId)));
+              }
+            }
+          });
+        },
+        { threshold: 0, rootMargin: '100px' }
+      );
+    }
+    return observerRef.current;
+  }, []);
 
+  useEffect(() => {
     return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
+      observerRef.current?.disconnect();
+      observerRef.current = null;
     };
   }, []);
 
-  // Reset visibility when items change (filters)
-  useEffect(() => {
-    setVisibleItems(new Set());
+  // Note: filtering resets this state by remounting the grid — MediaGallery
+  // passes a `key` derived from the active filters. Clearing it from an effect
+  // instead would cascade an extra render on every filter change.
 
-    // Disconnect and reconnect observer to ensure fresh observation
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-    }
-
-    // Re-initialize observer
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const itemId = entry.target.getAttribute('data-item-id') || '';
-            setVisibleItems((prev) => new Set([...prev, itemId]));
-          }
-        });
-      },
-      {
-        threshold: 0,
-        rootMargin: '100px',
-      }
-    );
-
-    // Re-observe elements after a brief delay to ensure DOM is updated
-    const timeoutId = setTimeout(() => {
-      const elements = document.querySelectorAll('[data-item-id]');
-      elements.forEach((el) => {
-        if (observerRef.current) {
-          observerRef.current.observe(el as Element);
-        }
-      });
-    }, 0);
-
-    return () => clearTimeout(timeoutId);
-  }, [items]);
-
-  // Observe elements when they mount
-  const setElementRef = (element: HTMLDivElement | null, itemId: string) => {
-    if (element && observerRef.current) {
+  const setElementRef = useCallback(
+    (element: HTMLDivElement | null, itemId: string) => {
+      if (!element) return;
       element.setAttribute('data-item-id', itemId);
-      observerRef.current.observe(element);
-    }
-  };
+      getObserver().observe(element);
+    },
+    [getObserver]
+  );
 
   return (
     <div className="flex-1 min-w-0">
@@ -102,7 +75,6 @@ export function MediaGalleryGrid({ items, filterConfig, t }: MediaGalleryGridPro
               <MediaCard
                 item={item}
                 filterConfig={filterConfig}
-                t={t}
                 priority={i < 6} // Priority loading for first 6 items (above the fold)
               />
             </div>

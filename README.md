@@ -31,7 +31,6 @@ Three fully-featured galleries for showcasing favorites:
 
 - Advanced multi-dimensional filtering (category/genre, artist/director/author, year)
 - Responsive grid layout
-- Modal image viewer
 - Markdown content support with frontmatter
 - Cloudinary-hosted images with Next.js Image optimization
 
@@ -53,14 +52,13 @@ Three fully-featured galleries for showcasing favorites:
 
 ### ♿ Accessibility
 
-- **WCAG 2.1 compliant** - Meets Level AA standards
+- **Built against WCAG 2.1 AA** - targets Level AA; not independently audited
 - **Semantic HTML** - Proper landmark regions (header, main, nav, footer)
 - **ARIA attributes** - Comprehensive labeling for assistive technologies
 - **Keyboard navigation** - Full site navigation without mouse
 - **Screen reader friendly** - Decorative icons hidden from screen readers
 - **Focus management** - Clear focus indicators and logical tab order
-- **Modals** - Keyboard accessible with Escape key support
-- **Color contrast** - Meets WCAG contrast requirements in both light and dark modes
+- **Color contrast** - Aims for WCAG AA contrast in both light and dark modes
 
 ### 🛡️ Security
 
@@ -105,9 +103,11 @@ Open [http://localhost:3000](http://localhost:3000) to view the site.
 ### Available Scripts
 
 ```bash
-npm run dev    # Start development server (PWA disabled)
-npm run build  # Build for production
-npm start      # Start production server (PWA enabled)
+npm run dev        # Start development server (PWA disabled)
+npm run build      # Build for production
+npm start          # Start production server (PWA enabled)
+npm run lint       # ESLint (next/core-web-vitals)
+npm run typecheck  # tsc --noEmit
 ```
 
 ## 📁 Project Structure
@@ -187,7 +187,7 @@ title: 'Book Title'
 author: 'Author Name'
 cover: 'https://res.cloudinary.com/acp/image/upload/...'
 year: 2024
-categories: ['Fiction', 'Science Fiction']
+genres: ['Fiction', 'Science Fiction']
 ---
 
 Your book notes here.

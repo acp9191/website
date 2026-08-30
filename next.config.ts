@@ -22,8 +22,9 @@ const nextConfig: NextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     // Image sizes for different breakpoints
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    // Minimum quality for optimized images
-    minimumCacheTTL: 60,
+    // Cloudinary URLs are version-pinned and immutable, so the optimized
+    // output can be cached for a year rather than re-optimized every minute.
+    minimumCacheTTL: 31536000,
   },
   async headers() {
     return [
@@ -35,7 +36,10 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://challenges.cloudflare.com", // Allow Vercel Analytics and Cloudflare Turnstile
+              // 'unsafe-inline' is still needed for the inline theme script in
+              // the document head. 'unsafe-eval' is not: a production Next build
+              // does not eval.
+              "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://challenges.cloudflare.com", // Allow Vercel Analytics and Cloudflare Turnstile
               "style-src 'self' 'unsafe-inline'", // unsafe-inline needed for Tailwind
               "img-src 'self' data: https: blob:", // Allow images from Cloudinary and data URIs
               "font-src 'self' data:",
@@ -58,16 +62,14 @@ const nextConfig: NextConfig = {
             value: 'max-age=63072000; includeSubDomains; preload',
           },
           {
+            // Retained for pre-CSP browsers; `frame-ancestors 'none'` above is
+            // the modern equivalent and takes precedence where both are read.
             key: 'X-Frame-Options',
             value: 'DENY', // Prevent clickjacking
           },
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff', // Prevent MIME sniffing
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block', // Legacy XSS protection
           },
           {
             key: 'Referrer-Policy',

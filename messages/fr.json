@@ -71,5 +71,10 @@
     "resetFilters": "Réinitialiser les filtres",
     "coverAlt": "{title} couverture de livre",
     "modalAlt": "Couverture de livre en taille réelle"
+  },
+  "NotFound": {
+    "title": "Page introuvable",
+    "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "backHome": "Retour à l'accueil"
   }
 }

@@ -2,24 +2,16 @@
 
 import MediaGallery from '@/src/components/MediaGallery/MediaGallery';
 import { MediaItem, FilterConfig } from '@/src/components/MediaGallery/types';
+import { ContentEntry } from '@/src/lib/content';
 
-type Book = {
-  title: string;
-  author: string;
-  cover: string;
-  description: string;
-  year: number;
-  genres: string[];
-};
-
-export default function BookGallery({ books }: { books: Book[] }) {
-  const mediaItems: MediaItem[] = books.map((movie) => ({
-    title: movie.title,
-    subtitle: movie.author,
-    cover: movie.cover,
-    description: movie.description,
-    year: movie.year,
-    categories: movie.genres,
+export default function BookGallery({ books }: { books: ContentEntry[] }) {
+  const mediaItems: MediaItem[] = books.map((book) => ({
+    title: book.title,
+    subtitle: book.author ?? '',
+    cover: book.cover ?? '',
+    description: book.description,
+    year: book.year,
+    categories: book.genres ?? [],
     type: 'book',
   }));
 

@@ -2,27 +2,18 @@
 
 import MediaGallery from '@/src/components/MediaGallery/MediaGallery';
 import { MediaItem, FilterConfig } from '@/src/components/MediaGallery/types';
+import { ContentEntry } from '@/src/lib/content';
 
-type Album = {
-  title: string;
-  artist: string;
-  cover: string;
-  description: string;
-  year: number;
-  genres: string[];
-  spotify?: string;
-};
-
-export default function MusicGallery({ albums }: { albums: Album[] }) {
+export default function MusicGallery({ albums }: { albums: ContentEntry[] }) {
   // Convert albums to MediaItem format
   const mediaItems: MediaItem[] = albums.map((album) => ({
     title: album.title,
-    subtitle: album.artist, // Artist becomes subtitle
-    cover: album.cover,
+    subtitle: album.artist ?? '',
+    cover: album.cover ?? '',
     description: album.description,
     year: album.year,
-    categories: album.genres, // Genres become categories
-    type: 'music', // Specify type as music
+    categories: album.genres ?? [],
+    type: 'music',
     externalLink: album.spotify
       ? {
           url: album.spotify,

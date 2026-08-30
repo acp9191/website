@@ -71,5 +71,10 @@
     "resetFilters": "Reiniciar Filtros",
     "coverAlt": "{title} portada del libro",
     "modalAlt": "Portada del libro a tamaño completo"
+  },
+  "NotFound": {
+    "title": "Página no encontrada",
+    "description": "La página que buscas no existe o se ha movido.",
+    "backHome": "Volver al inicio"
   }
 }

@@ -17,7 +17,7 @@
     "toggleTheme": "Toggle theme"
   },
   "Footer": {
-    "copyright": "\u00a9 {year} Avery Peterson. All rights reserved.",
+    "copyright": "© {year} Avery Peterson. All rights reserved.",
     "builtWith": "Built with",
     "styledWith": ", styled with",
     "deployedVia": ", deployed via"
@@ -71,5 +71,10 @@
     "resetFilters": "Reset Filters",
     "coverAlt": "{title} book cover",
     "modalAlt": "Book cover full size"
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist or has moved.",
+    "backHome": "Back to home"
   }
 }
