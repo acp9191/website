@@ -1,7 +1,7 @@
 'use client';
 import { Link, usePathname } from '@/src/i18n/navigation';
 import { useTranslations } from 'next-intl';
-import { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Bars3Icon, XMarkIcon, SunIcon, MoonIcon, ComputerDesktopIcon } from '@heroicons/react/24/outline';
 import LocaleSwitcher from './LocaleSwitcher';
 
@@ -17,27 +17,13 @@ export default function Header() {
     }
     return 'system';
   });
-  const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Use layoutEffect to apply theme synchronously before paint
-  useLayoutEffect(() => {
-    setMounted(true);
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | 'system' | null;
-    const themeToApply = savedTheme || 'system';
-    setTheme(themeToApply);
-
-    // Apply the dark mode class based on saved theme
-    if (themeToApply === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else if (themeToApply === 'light') {
-      document.documentElement.classList.remove('dark');
-    } else if (themeToApply === 'system') {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      document.documentElement.classList.toggle('dark', prefersDark);
-    }
-  }, []);
+  // The inline script in the document head already applied the `dark` class and
+  // the `data-theme` attribute before first paint, and the state initializer
+  // above reads the same value from localStorage, so there is nothing to
+  // re-apply on mount.
 
   // Listen for system theme changes when in system mode
   useEffect(() => {
@@ -90,6 +76,9 @@ export default function Header() {
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
 
+    // Keep the attribute in sync so the CSS shows the matching icon.
+    document.documentElement.dataset.theme = newTheme;
+
     // Apply the actual dark mode based on the new theme
     if (newTheme === 'system') {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -106,64 +95,32 @@ export default function Header() {
     return () => window.removeEventListener('resize', close);
   }, []);
 
-  const ThemeToggle = ({ isMobile = false }: { isMobile?: boolean }) => {
-    // Don't render until mounted to prevent flash
-    if (!mounted) {
-      return (
-        <div
-          className={`${
-            isMobile
-              ? 'flex items-center justify-center'
-              : `flex items-center justify-center p-2 ${scrolled ? 'scale-90' : 'scale-100'}`
-          }`}
-          aria-hidden="true"
-        >
-          <div className={`${isMobile ? 'w-5 h-5' : scrolled ? 'w-5 h-5' : 'w-6 h-6'}`} />
-        </div>
-      );
-    }
-
-    return (
-      <button
-        onClick={toggleTheme}
-        className={`${
-          isMobile
-            ? 'flex items-center justify-center'
-            : `flex items-center justify-center p-2 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 ${
-                scrolled ? 'scale-90' : 'scale-100'
-              }`
-        } cursor-pointer`}
-        aria-label={`${t('toggleTheme')} (${theme === 'light' ? 'Light' : theme === 'dark' ? 'Dark' : 'System'})`}
-      >
-        <div className={`relative ${isMobile ? 'w-5 h-5' : scrolled ? 'w-5 h-5' : 'w-6 h-6'}`}>
-          {/* Sun Icon (light mode) */}
-          <SunIcon
-            className={`w-full h-full absolute inset-0 transition-all duration-300 ${
-              theme === 'light'
-                ? 'opacity-100 rotate-0 scale-100'
-                : 'opacity-0 rotate-90 scale-0'
-            }`}
-          />
-          {/* Moon Icon (dark mode) */}
-          <MoonIcon
-            className={`w-full h-full absolute inset-0 transition-all duration-300 ${
-              theme === 'dark'
-                ? 'opacity-100 rotate-0 scale-100'
-                : 'opacity-0 -rotate-90 scale-0'
-            }`}
-          />
-          {/* Computer Icon (system theme) */}
-          <ComputerDesktopIcon
-            className={`w-full h-full absolute inset-0 transition-all duration-300 ${
-              theme === 'system'
-                ? 'opacity-100 rotate-0 scale-100'
-                : 'opacity-0 rotate-180 scale-0'
-            }`}
-          />
-        </div>
-      </button>
-    );
-  };
+  // Renders identically on server and client — which icon is visible is decided
+  // in CSS from the `data-theme` attribute the inline head script sets before
+  // first paint. Gating this on a `mounted` flag instead made the control pop in
+  // after hydration, which read as a flash on a hard refresh.
+  const ThemeToggle = ({ isMobile = false }: { isMobile?: boolean }) => (
+    <button
+      onClick={toggleTheme}
+      className={`${
+        isMobile
+          ? 'flex items-center justify-center'
+          : `flex items-center justify-center p-2 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 ${
+              scrolled ? 'scale-90' : 'scale-100'
+            }`
+      } cursor-pointer`}
+      aria-label={t('toggleTheme')}
+    >
+      <div className={`relative ${isMobile ? 'w-5 h-5' : scrolled ? 'w-5 h-5' : 'w-6 h-6'}`}>
+        {/* Sun Icon (light mode) */}
+        <SunIcon className="w-full h-full absolute inset-0 theme-icon theme-icon-light" />
+        {/* Moon Icon (dark mode) */}
+        <MoonIcon className="w-full h-full absolute inset-0 theme-icon theme-icon-dark" />
+        {/* Computer Icon (system theme) */}
+        <ComputerDesktopIcon className="w-full h-full absolute inset-0 theme-icon theme-icon-system" />
+      </div>
+    </button>
+  );
 
   return (
     <header

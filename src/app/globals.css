@@ -81,3 +81,35 @@ body {
 .animate-fade-up {
   animation: fadeUp 0.7s ease-out both;
 }
+
+/*
+  Theme toggle icons.
+
+  Which icon is showing is resolved from the `data-theme` attribute that the
+  inline head script sets before first paint, rather than from React state.
+  The server cannot know the stored preference, so a state-driven toggle has
+  to wait for hydration and the icon visibly pops in on a hard refresh. Doing
+  it in CSS means the correct icon is painted with the first frame, and the
+  server and client markup stay identical.
+*/
+.theme-icon {
+  opacity: 0;
+  transform: rotate(90deg) scale(0);
+  transition:
+    opacity 300ms,
+    transform 300ms;
+}
+
+:root[data-theme='light'] .theme-icon-light,
+:root[data-theme='dark'] .theme-icon-dark,
+:root[data-theme='system'] .theme-icon-system {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* No attribute yet (script blocked or still parsing): fall back to the system
+   icon so the control is never blank. */
+:root:not([data-theme]) .theme-icon-system {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
