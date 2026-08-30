@@ -2,6 +2,8 @@ export interface MediaItem {
   title: string;
   subtitle: string;
   cover: string;
+  /** Localized alt text for the cover image, resolved by the gallery wrapper. */
+  coverAlt: string;
   description: string;
   year: number;
   categories: string[];

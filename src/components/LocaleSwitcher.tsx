@@ -1,6 +1,6 @@
 'use client';
 
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter, usePathname } from '@/src/i18n/navigation';
 import { routing } from '@/src/i18n/routing';
 import { useState, useEffect, useRef } from 'react';
@@ -26,6 +26,7 @@ interface LocaleSwitcherProps {
 
 export default function LocaleSwitcher({ isMobile = false, onLocaleChange }: LocaleSwitcherProps) {
   const locale = useLocale();
+  const t = useTranslations('Header');
   const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
@@ -63,7 +64,7 @@ export default function LocaleSwitcher({ isMobile = false, onLocaleChange }: Loc
         value={locale}
         onChange={(e) => switchLocale(e.target.value as Locale)}
         className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-0 cursor-pointer"
-        aria-label="Select language"
+        aria-label={t('selectLanguage')}
       >
         {locales.map((loc) => (
           <option key={loc.code} value={loc.code}>
@@ -80,7 +81,7 @@ export default function LocaleSwitcher({ isMobile = false, onLocaleChange }: Loc
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-        aria-label="Select language"
+        aria-label={t('selectLanguage')}
         aria-expanded={isOpen}
       >
         <span className="text-sm sm:text-base">{currentLocale?.flag}</span>

@@ -1,15 +1,19 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import MediaGallery from '@/src/components/MediaGallery/MediaGallery';
 import { MediaItem, FilterConfig } from '@/src/components/MediaGallery/types';
 import { ContentEntry } from '@/src/lib/content';
 
 export default function MusicGallery({ albums }: { albums: ContentEntry[] }) {
+  const t = useTranslations('Music');
+
   // Convert albums to MediaItem format
   const mediaItems: MediaItem[] = albums.map((album) => ({
     title: album.title,
     subtitle: album.artist ?? '',
     cover: album.cover ?? '',
+    coverAlt: t('coverAlt', { title: album.title }),
     description: album.description,
     year: album.year,
     categories: album.genres ?? [],
@@ -17,7 +21,7 @@ export default function MusicGallery({ albums }: { albums: ContentEntry[] }) {
     externalLink: album.spotify
       ? {
           url: album.spotify,
-          label: 'Listen on Spotify',
+          label: t('listenOnSpotify'),
           icon: '/icons/spotify.svg',
         }
       : undefined,

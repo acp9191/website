@@ -3,9 +3,10 @@ import clsx from 'clsx';
 interface ScrollToTopButtonProps {
   show: boolean;
   onClick: () => void;
+  label: string;
 }
 
-export function ScrollToTopButton({ show, onClick }: ScrollToTopButtonProps) {
+export function ScrollToTopButton({ show, onClick, label }: ScrollToTopButtonProps) {
   return (
     <button
       onClick={onClick}
@@ -16,7 +17,7 @@ export function ScrollToTopButton({ show, onClick }: ScrollToTopButtonProps) {
           'opacity-0 translate-y-4 pointer-events-none': !show,
         }
       )}
-      aria-label="Scroll to top"
+      aria-label={label}
     >
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path

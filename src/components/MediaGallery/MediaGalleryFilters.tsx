@@ -7,7 +7,7 @@ interface MediaGalleryFiltersProps {
   filterConfig: FilterConfig;
   filterState: FilterState;
   filtered: MediaItem[];
-  t: (key: string) => string;
+  t: (key: string, values?: Record<string, string | number>) => string;
 }
 
 export function MediaGalleryFilters({

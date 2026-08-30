@@ -184,7 +184,7 @@ export default function Header() {
           </button>
 
           {/* Desktop nav */}
-          <nav className="hidden sm:flex gap-4 items-center" role="navigation" aria-label="Main navigation">
+          <nav className="hidden sm:flex gap-4 items-center" role="navigation" aria-label={t('mainNavigation')}>
             {links.map(({ href, label }) => {
               const isActive = isActiveLink(href);
               return (
@@ -229,7 +229,7 @@ export default function Header() {
               menuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
             }`}
           >
-            <nav className="flex flex-col gap-2 py-4" role="navigation" aria-label="Mobile navigation">
+            <nav className="flex flex-col gap-2 py-4" role="navigation" aria-label={t('mobileNavigation')}>
               {links.map(({ href, label }, index) => {
                 const isActive = isActiveLink(href);
                 return (

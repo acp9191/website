@@ -9,12 +9,13 @@
     "music": "🎧 Musik",
     "books": "📚 Bücher",
     "movies": "🎬 Filme",
-    "darkMode": "🌙 Dunkel",
-    "lightMode": "☀️ Hell",
     "language": "🌐 Sprache",
     "theme": "🎨 Design",
     "toggleMenu": "Menü umschalten",
-    "toggleTheme": "Design umschalten"
+    "toggleTheme": "Design umschalten",
+    "selectLanguage": "Sprache auswählen",
+    "mainNavigation": "Hauptnavigation",
+    "mobileNavigation": "Mobile Navigation"
   },
   "Footer": {
     "copyright": "© {year} Avery Peterson. Alle Rechte vorbehalten.",
@@ -38,11 +39,11 @@
     "movie": "Film",
     "movies": "Filme",
     "reset": "Zurücksetzen",
-    "resetFilters": "Filter zurücksetzen",
     "coverAlt": "{title} Filmplakat",
     "watchTrailer": "Trailer ansehen",
-    "youtubeIcon": "YouTube-Symbol",
-    "modalAlt": "Filmplakat in voller Größe"
+    "all": "Alle",
+    "scrollToTop": "Nach oben scrollen",
+    "filterBy": "Nach {label} filtern"
   },
   "Music": {
     "title": "🎧 Lieblingsalben",
@@ -53,11 +54,11 @@
     "album": "Album",
     "albums": "Alben",
     "reset": "Zurücksetzen",
-    "resetFilters": "Filter zurücksetzen",
     "coverAlt": "{title} Albumcover",
     "listenOnSpotify": "Auf Spotify hören",
-    "spotifyIcon": "Spotify-Symbol",
-    "modalAlt": "Albumcover in voller Größe"
+    "all": "Alle",
+    "scrollToTop": "Nach oben scrollen",
+    "filterBy": "Nach {label} filtern"
   },
   "Books": {
     "title": "📚 Lieblingsbücher",
@@ -68,13 +69,21 @@
     "book": "Buch",
     "books": "Bücher",
     "reset": "Zurücksetzen",
-    "resetFilters": "Filter zurücksetzen",
     "coverAlt": "{title} Buchcover",
-    "modalAlt": "Buchcover in voller Größe"
+    "all": "Alle",
+    "scrollToTop": "Nach oben scrollen",
+    "filterBy": "Nach {label} filtern"
   },
   "NotFound": {
     "title": "Seite nicht gefunden",
     "description": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
     "backHome": "Zurück zur Startseite"
+  },
+  "Meta": {
+    "description": "Persönliche Website von Avery Peterson, Softwareentwickler mit einer Vorliebe für gute Werkzeuge, gute Musik und sauberen Code.",
+    "about": "Über mich",
+    "music": "Lieblingsalben",
+    "books": "Lieblingsbücher",
+    "movies": "Lieblingsfilme"
   }
 }

@@ -117,7 +117,7 @@ export default function MediaGallery({
         </div>
       </div>
 
-      <ScrollToTopButton show={showScrollTop} onClick={scrollToTop} />
+      <ScrollToTopButton show={showScrollTop} onClick={scrollToTop} label={t('scrollToTop')} />
     </div>
   );
 }
