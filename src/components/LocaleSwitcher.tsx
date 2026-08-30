@@ -1,16 +1,23 @@
 'use client';
 
 import { useLocale } from 'next-intl';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname } from '@/src/i18n/navigation';
+import { routing } from '@/src/i18n/routing';
 import { useState, useEffect, useRef } from 'react';
 
-const locales = [
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-];
+type Locale = (typeof routing.locales)[number];
+
+// Display metadata only — the set of supported locales comes from `routing`,
+// so adding one there is a type error here until it's given a name and flag.
+const localeDetails: Record<Locale, { name: string; flag: string }> = {
+  en: { name: 'English', flag: '🇺🇸' },
+  es: { name: 'Español', flag: '🇪🇸' },
+  fr: { name: 'Français', flag: '🇫🇷' },
+  it: { name: 'Italiano', flag: '🇮🇹' },
+  de: { name: 'Deutsch', flag: '🇩🇪' },
+};
+
+const locales = routing.locales.map((code) => ({ code, ...localeDetails[code] }));
 
 interface LocaleSwitcherProps {
   isMobile?: boolean;
@@ -26,16 +33,11 @@ export default function LocaleSwitcher({ isMobile = false, onLocaleChange }: Loc
 
   const currentLocale = locales.find((loc) => loc.code === locale);
 
-  const switchLocale = (newLocale: string) => {
-    const segments = pathname.split('/').filter(Boolean);
-
-    if (['en', 'es', 'fr', 'it', 'de'].includes(segments[0])) {
-      segments[0] = newLocale;
-    } else {
-      segments.unshift(newLocale);
-    }
-
-    router.push(`/${segments.join('/')}`);
+  const switchLocale = (newLocale: Locale) => {
+    // `pathname` is locale-free here, so the router applies the right prefix
+    // for the target locale — including omitting it for the default locale,
+    // which the old manual path rebuild always got wrong (/en/... -> 307).
+    router.push(pathname, { locale: newLocale });
     setIsOpen(false);
     onLocaleChange?.(); // Close mobile menu when locale changes
   };
@@ -59,7 +61,7 @@ export default function LocaleSwitcher({ isMobile = false, onLocaleChange }: Loc
     return (
       <select
         value={locale}
-        onChange={(e) => switchLocale(e.target.value)}
+        onChange={(e) => switchLocale(e.target.value as Locale)}
         className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-0 cursor-pointer"
         aria-label="Select language"
       >

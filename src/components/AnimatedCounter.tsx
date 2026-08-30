@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface AnimatedCounterProps {
   value: number;
@@ -10,39 +10,43 @@ interface AnimatedCounterProps {
 export function AnimatedCounter({ value, duration = 800 }: AnimatedCounterProps) {
   const [displayValue, setDisplayValue] = useState(value);
 
+  // The currently displayed number, tracked in a ref so the effect can read it
+  // without depending on it. Depending on `displayValue` would re-run the
+  // effect on every animated frame, each run starting another rAF chain on top
+  // of the ones already running.
+  const displayRef = useRef(value);
+
   useEffect(() => {
-    // Initialize displayValue on first render
-    if (displayValue === 0 && value > 0) {
-      setDisplayValue(value);
-      return;
-    }
+    const startValue = displayRef.current;
+    if (startValue === value) return;
 
-    if (value !== displayValue) {
-      const startValue = displayValue;
-      const difference = value - startValue;
-      const startTime = Date.now();
+    const difference = value - startValue;
+    const startTime = performance.now();
+    let frame: number;
 
-      const animate = () => {
-        const now = Date.now();
-        const elapsed = now - startTime;
-        const progress = Math.min(elapsed / duration, 1);
+    const animate = (now: number) => {
+      const progress = Math.min((now - startTime) / duration, 1);
 
-        // More pronounced easing function
-        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      // More pronounced easing function
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
 
-        const currentValue = Math.round(startValue + difference * easeOutQuart);
-        setDisplayValue(currentValue);
+      const currentValue = Math.round(startValue + difference * easeOutQuart);
+      displayRef.current = currentValue;
+      setDisplayValue(currentValue);
 
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        } else {
-          setDisplayValue(value); // Ensure final value is exact
-        }
-      };
+      if (progress < 1) {
+        frame = requestAnimationFrame(animate);
+      } else {
+        displayRef.current = value; // Ensure final value is exact
+        setDisplayValue(value);
+      }
+    };
 
-      requestAnimationFrame(animate);
-    }
-  }, [value, displayValue, duration]);
+    frame = requestAnimationFrame(animate);
+
+    // Cancel in flight when `value` changes again mid-animation, or on unmount.
+    return () => cancelAnimationFrame(frame);
+  }, [value, duration]);
 
   return (
     <span
