@@ -188,7 +188,6 @@ author: 'Author Name'
 cover: 'https://res.cloudinary.com/acp/image/upload/...'
 year: 2024
 genres: ['Fiction', 'Science Fiction']
-link: 'https://example.com/book' # optional
 ---
 
 Your book notes here.

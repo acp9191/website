@@ -13,15 +13,6 @@ export default function BookGallery({ books }: { books: ContentEntry[] }) {
     year: book.year,
     categories: book.genres ?? [],
     type: 'book',
-    // Some books carry a `link` in their frontmatter; it was previously parsed
-    // and then dropped on the floor.
-    externalLink: book.link
-      ? {
-          url: book.link,
-          label: 'View Book',
-          icon: '/icons/book.svg',
-        }
-      : undefined,
   }));
 
   const filterConfig: FilterConfig = {

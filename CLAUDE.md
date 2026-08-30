@@ -92,7 +92,7 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 2. Include required frontmatter fields:
    - Music: `title`, `artist`, `cover`, `year`, `genres`, optional `spotify`
    - Movies: `title`, `director`, `poster`, `year`, `genres`, optional `trailer`
-   - Books: `title`, `author`, `cover`, `year`, `genres`, optional `link`
+   - Books: `title`, `author`, `cover`, `year`, `genres`
 
    Note the image field differs by collection: movies use `poster`, albums and
    books use `cover`.

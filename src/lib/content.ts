@@ -19,7 +19,6 @@ export type Frontmatter = {
   director?: string;
   spotify?: string;
   trailer?: string;
-  link?: string;
 };
 
 export type ContentEntry = Frontmatter & {
