@@ -1,6 +1,5 @@
 'use client';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Link, usePathname } from '@/src/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { Bars3Icon, XMarkIcon, SunIcon, MoonIcon, ComputerDesktopIcon } from '@heroicons/react/24/outline';
@@ -60,25 +59,10 @@ export default function Header() {
     { href: '/favorites/movies', label: t('movies') },
   ];
 
-  // Helper function to check if a link is active
-  const isActiveLink = (href: string) => {
-    // Remove locale prefix for comparison (e.g., /en/about -> /about)
-    const cleanPathname = pathname.replace(/^\/[a-z]{2}(?=\/|$)/, '') || '/';
-    const cleanHref = href;
-
-    // Exact match for most pages
-    if (cleanHref === cleanPathname) return true;
-
-    // Special case for favorites pages - highlight parent when on subpages
-    if (cleanHref === '/favorites/music' && cleanPathname.startsWith('/favorites/music'))
-      return true;
-    if (cleanHref === '/favorites/books' && cleanPathname.startsWith('/favorites/books'))
-      return true;
-    if (cleanHref === '/favorites/movies' && cleanPathname.startsWith('/favorites/movies'))
-      return true;
-
-    return false;
-  };
+  // `usePathname` from the i18n navigation wrappers already returns a
+  // locale-free pathname, so href and pathname compare directly. A prefix
+  // match keeps the parent link highlighted on any subpage.
+  const isActiveLink = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
 
   // Scroll effect
