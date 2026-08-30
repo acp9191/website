@@ -35,8 +35,10 @@ export const metadata: Metadata = {
 
   alternates: {
     canonical: '/',
+    // `localePrefix` is 'as-needed': the default locale is served unprefixed,
+    // so declaring en: '/en' pointed the English alternate at a 307.
     languages: {
-      en: '/en',
+      en: '/',
       es: '/es',
       fr: '/fr',
       it: '/it',

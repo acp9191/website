@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
 export default function Footer() {
@@ -14,7 +15,13 @@ export default function Footer() {
           aria-label="GitHub"
           className="hover:opacity-75 transition-opacity"
         >
-          <img src="/icons/github.svg" alt="GitHub" className="w-5 h-5 dark:invert" />
+          <Image
+            src="/icons/github.svg"
+            alt="GitHub"
+            width={20}
+            height={20}
+            className="w-5 h-5 dark:invert"
+          />
         </a>
         <a
           href="https://open.spotify.com/user/acp9191"
@@ -23,7 +30,13 @@ export default function Footer() {
           aria-label="Spotify"
           className="hover:opacity-75 transition-opacity"
         >
-          <img src="/icons/spotify.svg" alt="Spotify" className="w-5 h-5" />
+          <Image
+            src="/icons/spotify.svg"
+            alt="Spotify"
+            width={20}
+            height={20}
+            className="w-5 h-5"
+          />
         </a>
         <a
           href="https://linkedin.com/in/acp"
@@ -32,7 +45,13 @@ export default function Footer() {
           aria-label="LinkedIn"
           className="hover:opacity-75 transition-opacity"
         >
-          <img src="/icons/linkedin.png" alt="LinkedIn" className="w-5 h-5" />
+          <Image
+            src="/icons/linkedin.png"
+            alt="LinkedIn"
+            width={20}
+            height={20}
+            className="w-5 h-5"
+          />
         </a>
         <a
           href="https://www.instagram.com/acp.jpg"
@@ -41,7 +60,13 @@ export default function Footer() {
           aria-label="Instagram"
           className="hover:opacity-75 transition-opacity"
         >
-          <img src="/icons/instagram.svg" alt="Instagram" className="w-5 h-5" />
+          <Image
+            src="/icons/instagram.svg"
+            alt="Instagram"
+            width={20}
+            height={20}
+            className="w-5 h-5"
+          />
         </a>
         <a
           href="https://x.com/acp9191"
@@ -50,7 +75,13 @@ export default function Footer() {
           aria-label="X"
           className="hover:opacity-75 transition-opacity"
         >
-          <img src="/icons/x.svg" alt="X" className="w-5 h-5 dark:invert" />
+          <Image
+            src="/icons/x.svg"
+            alt="X"
+            width={20}
+            height={20}
+            className="w-5 h-5 dark:invert"
+          />
         </a>
       </div>
 

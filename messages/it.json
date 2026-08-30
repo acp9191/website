@@ -71,5 +71,10 @@
     "resetFilters": "Reimposta filtri",
     "coverAlt": "{title} copertina del libro",
     "modalAlt": "Copertina del libro a dimensione intera"
+  },
+  "NotFound": {
+    "title": "Pagina non trovata",
+    "description": "La pagina che cerchi non esiste o è stata spostata.",
+    "backHome": "Torna alla home"
   }
 }

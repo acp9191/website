@@ -6,11 +6,10 @@ import { getOptimizedImageUrl, getBlurPlaceholderUrl } from '@/src/utils/imageOp
 interface MediaCardProps {
   item: MediaItem;
   filterConfig: FilterConfig;
-  t: (key: string) => string;
   priority?: boolean;
 }
 
-export default function MediaCard({ item, filterConfig, t, priority = false }: MediaCardProps) {
+export default function MediaCard({ item, filterConfig, priority = false }: MediaCardProps) {
 
   // Get aspect ratio classes based on config
   const getAspectRatioClasses = () => {

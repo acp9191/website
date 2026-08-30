@@ -107,7 +107,13 @@ export default function MediaGallery({
             t={t}
           />
 
-          <MediaGalleryGrid items={filtered} filterConfig={filterConfig} t={t} />
+          {/* Remounting on filter change resets the grid's reveal state without
+              an effect that would cascade an extra render. */}
+          <MediaGalleryGrid
+            key={`${filterState.selectedCategory}|${filterState.selectedSubtitle}|${filterState.selectedYear}`}
+            items={filtered}
+            filterConfig={filterConfig}
+          />
         </div>
       </div>
 

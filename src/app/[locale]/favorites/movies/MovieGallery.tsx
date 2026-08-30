@@ -2,26 +2,18 @@
 
 import MediaGallery from '@/src/components/MediaGallery/MediaGallery';
 import { MediaItem, FilterConfig } from '@/src/components/MediaGallery/types';
+import { ContentEntry } from '@/src/lib/content';
 
-type Movie = {
-  title: string;
-  director: string;
-  poster: string;
-  description: string;
-  year: number;
-  genres: string[];
-  trailer?: string;
-};
-
-export default function MovieGallery({ movies }: { movies: Movie[] }) {
+export default function MovieGallery({ movies }: { movies: ContentEntry[] }) {
   const mediaItems: MediaItem[] = movies.map((movie) => ({
     title: movie.title,
-    subtitle: movie.director,
-    cover: movie.poster,
+    subtitle: movie.director ?? '',
+    // Movies name their image `poster`; albums and books use `cover`.
+    cover: movie.poster ?? '',
     description: movie.description,
     year: movie.year,
-    categories: movie.genres,
-    type: 'movie', // Specify type as movie
+    categories: movie.genres ?? [],
+    type: 'movie',
     externalLink: movie.trailer
       ? {
           url: movie.trailer,
@@ -38,7 +30,7 @@ export default function MovieGallery({ movies }: { movies: Movie[] }) {
     resetLabel: 'reset',
     itemSingular: 'movie',
     itemPlural: 'movies',
-    aspectRatio: 'auto', // Movie posters are typically 3:4 ratio
+    aspectRatio: 'auto',
   };
 
   return (

@@ -5,6 +5,51 @@ import { useState, useRef, useEffect } from 'react';
 import { Bars3Icon, XMarkIcon, SunIcon, MoonIcon, ComputerDesktopIcon } from '@heroicons/react/24/outline';
 import LocaleSwitcher from './LocaleSwitcher';
 
+/**
+ * Renders identically on server and client — which icon is visible is decided in
+ * CSS from the `data-theme` attribute the inline head script sets before first
+ * paint. Gating this on a `mounted` flag instead made the control pop in after
+ * hydration, which read as a flash on a hard refresh.
+ *
+ * Defined at module scope rather than inside Header: a component created during
+ * render is a new type on every render, so React unmounts and remounts its
+ * subtree each time, discarding state and re-running effects.
+ */
+function ThemeToggle({
+  isMobile = false,
+  scrolled,
+  label,
+  onToggle,
+}: {
+  isMobile?: boolean;
+  scrolled: boolean;
+  label: string;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      onClick={onToggle}
+      className={`${
+        isMobile
+          ? 'flex items-center justify-center'
+          : `flex items-center justify-center p-2 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 ${
+              scrolled ? 'scale-90' : 'scale-100'
+            }`
+      } cursor-pointer`}
+      aria-label={label}
+    >
+      <div className={`relative ${isMobile ? 'w-5 h-5' : scrolled ? 'w-5 h-5' : 'w-6 h-6'}`}>
+        {/* Sun Icon (light mode) */}
+        <SunIcon className="w-full h-full absolute inset-0 theme-icon theme-icon-light" />
+        {/* Moon Icon (dark mode) */}
+        <MoonIcon className="w-full h-full absolute inset-0 theme-icon theme-icon-dark" />
+        {/* Computer Icon (system theme) */}
+        <ComputerDesktopIcon className="w-full h-full absolute inset-0 theme-icon theme-icon-system" />
+      </div>
+    </button>
+  );
+}
+
 export default function Header() {
   const t = useTranslations('Header');
   const pathname = usePathname();
@@ -95,33 +140,6 @@ export default function Header() {
     return () => window.removeEventListener('resize', close);
   }, []);
 
-  // Renders identically on server and client — which icon is visible is decided
-  // in CSS from the `data-theme` attribute the inline head script sets before
-  // first paint. Gating this on a `mounted` flag instead made the control pop in
-  // after hydration, which read as a flash on a hard refresh.
-  const ThemeToggle = ({ isMobile = false }: { isMobile?: boolean }) => (
-    <button
-      onClick={toggleTheme}
-      className={`${
-        isMobile
-          ? 'flex items-center justify-center'
-          : `flex items-center justify-center p-2 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 ${
-              scrolled ? 'scale-90' : 'scale-100'
-            }`
-      } cursor-pointer`}
-      aria-label={t('toggleTheme')}
-    >
-      <div className={`relative ${isMobile ? 'w-5 h-5' : scrolled ? 'w-5 h-5' : 'w-6 h-6'}`}>
-        {/* Sun Icon (light mode) */}
-        <SunIcon className="w-full h-full absolute inset-0 theme-icon theme-icon-light" />
-        {/* Moon Icon (dark mode) */}
-        <MoonIcon className="w-full h-full absolute inset-0 theme-icon theme-icon-dark" />
-        {/* Computer Icon (system theme) */}
-        <ComputerDesktopIcon className="w-full h-full absolute inset-0 theme-icon theme-icon-system" />
-      </div>
-    </button>
-  );
-
   return (
     <header
       role="banner"
@@ -196,7 +214,7 @@ export default function Header() {
                 </Link>
               );
             })}
-            <ThemeToggle />
+            <ThemeToggle scrolled={scrolled} label={t('toggleTheme')} onToggle={toggleTheme} />
             <div className={`transition-all duration-300 ${scrolled ? 'scale-90' : 'scale-100'}`}>
               <LocaleSwitcher />
             </div>
@@ -259,7 +277,7 @@ export default function Header() {
                   <span className="text-gray-700 dark:text-gray-200 text-sm font-medium">
                     {t('theme')}
                   </span>
-                  <ThemeToggle isMobile />
+                  <ThemeToggle isMobile scrolled={scrolled} label={t('toggleTheme')} onToggle={toggleTheme} />
                 </div>
               </div>
 
