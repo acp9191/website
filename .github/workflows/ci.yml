@@ -1,18 +1,18 @@
-name: Lint
+name: CI
 
 on:
   pull_request:
 
 # A new push to the same PR makes the previous run irrelevant.
 concurrency:
-  group: lint-${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
-  lint:
+  checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -28,4 +28,11 @@ jobs:
       - run: npm ci
 
       # The script passes --max-warnings 0, so warnings fail the run too.
-      - run: npm run lint
+      - name: Lint
+        run: npm run lint
+
+      # `!cancelled()` so a lint failure still reports type errors in the same
+      # run, rather than hiding them behind a second push.
+      - name: Typecheck
+        if: '!cancelled()'
+        run: npm run typecheck
