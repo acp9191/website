@@ -6,7 +6,10 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint . --max-warnings 0",
-    "typecheck": "tsc --noEmit"
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "check:content": "node scripts/check-content.mjs"
   },
   "engines": {
     "node": "24.x"

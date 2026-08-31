@@ -1,6 +1,6 @@
 {
   "Home": {
-    "title": "Hi 👋 I'm Avery",
+    "title": "Hi <wave>👋</wave> I'm Avery",
     "description": "I'm a software engineer who loves good tools, good music, and clean code."
   },
   "Header": {
@@ -19,9 +19,7 @@
   },
   "Footer": {
     "copyright": "© {year} Avery Peterson. All rights reserved.",
-    "builtWith": "Built with",
-    "styledWith": ", styled with",
-    "deployedVia": ", deployed via"
+    "builtWith": "Built with <nextjs>Next.js</nextjs>, styled with <tailwind>Tailwind CSS</tailwind>, deployed via <vercel>Vercel</vercel>"
   },
   "About": {
     "title": "🙋‍♂️ About Me",
@@ -30,49 +28,41 @@
     "description2": "I enjoy clean code, great design, and making things that feel intentional.",
     "description3": "Outside of work, you'll usually find me listening to music, reading something new, or running through the city."
   },
+  "Gallery": {
+    "genre": "Genre",
+    "year": "Year",
+    "reset": "Reset",
+    "scrollToTop": "Scroll to top",
+    "filterBy": "Filter by {label}"
+  },
   "Movies": {
     "title": "🎬 Favorite Movies",
     "subtitle": "Worthy of a rewatch in any season",
-    "allGenres": "Genre",
-    "allYears": "Year",
-    "allDirectors": "Director",
+    "director": "Director",
     "movie": "movie",
     "movies": "movies",
-    "reset": "Reset",
-    "coverAlt": "{title} movie poster",
-    "watchTrailer": "Watch Trailer",
     "all": "All",
-    "scrollToTop": "Scroll to top",
-    "filterBy": "Filter by {label}"
+    "coverAlt": "{title} movie poster",
+    "watchTrailer": "Watch Trailer"
   },
   "Music": {
     "title": "🎧 Favorite Albums",
     "subtitle": "A personal canon of lasting favorites",
-    "allGenres": "Genre",
-    "allYears": "Year",
-    "allArtists": "Artist",
+    "artist": "Artist",
     "album": "album",
     "albums": "albums",
-    "reset": "Reset",
-    "coverAlt": "{title} album cover",
-    "listenOnSpotify": "Listen on Spotify",
     "all": "All",
-    "scrollToTop": "Scroll to top",
-    "filterBy": "Filter by {label}"
+    "coverAlt": "{title} album cover",
+    "listenOnSpotify": "Listen on Spotify"
   },
   "Books": {
     "title": "📚 Favorite Books",
     "subtitle": "Stories that have stuck with me",
-    "allGenres": "Genre",
-    "allYears": "Year",
-    "allAuthors": "Author",
+    "author": "Author",
     "book": "book",
     "books": "books",
-    "reset": "Reset",
-    "coverAlt": "{title} book cover",
     "all": "All",
-    "scrollToTop": "Scroll to top",
-    "filterBy": "Filter by {label}"
+    "coverAlt": "{title} book cover"
   },
   "NotFound": {
     "title": "Page not found",

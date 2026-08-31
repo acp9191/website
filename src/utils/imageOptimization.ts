@@ -3,8 +3,22 @@
  */
 
 /**
- * Generates an optimized Cloudinary URL with automatic format selection (WebP/AVIF)
- * and quality optimization
+ * Rewrites a Cloudinary delivery URL to request a transformed source.
+ *
+ * Note that this output is not what the browser downloads: it is the *source*
+ * Next's image optimizer fetches and re-encodes. That has two consequences
+ * worth keeping in mind when changing this function.
+ *
+ * `width` therefore has to cover the largest size the image will ever be
+ * displayed at, across every device pixel ratio — Next downscales from this
+ * source but never upscales past it, so asking for too little produces soft
+ * images on retina screens and no error anywhere. Asking for a generous width
+ * is close to free: the extra bytes travel Cloudinary → optimizer once, server
+ * side, and the result is cached for `minimumCacheTTL`.
+ *
+ * There is deliberately no `dpr_auto` here. It resolves from the requester's
+ * DPR client hint, and the requester is Next's server-side fetch, which sends
+ * none — so it always collapsed to 1x while reading as if it did something.
  *
  * Note: Only specify width OR height to maintain aspect ratio, not both
  */
@@ -30,10 +44,9 @@ export function getOptimizedImageUrl(
   // Build transformation parameters
   const transformations: string[] = [];
 
-  // Auto format selection (WebP/AVIF when supported)
+  // Auto format selection, and quality tuning that shrinks the source the
+  // optimizer has to pull without a visible quality cost.
   transformations.push('f_auto');
-
-  // Auto quality optimization (good balance of quality and file size)
   transformations.push('q_auto:good');
 
   // Add width if specified (maintains aspect ratio)
@@ -48,9 +61,6 @@ export function getOptimizedImageUrl(
   else if (width && height) {
     transformations.push(`w_${width}`);
   }
-
-  // Responsive images with DPR support for retina displays
-  transformations.push('dpr_auto');
 
   // Build the final URL
   const transformString = transformations.join(',');
@@ -70,3 +80,12 @@ export function getBlurPlaceholderUrl(_cloudinaryUrl?: string): string {
   // Using base64 ensures it loads immediately without any network request
   return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJhIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZTBlNGU5O3N0b3Atb3BhY2l0eToxIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojYjJiN2JkO3N0b3Atb3BhY2l0eToxIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSJ1cmwoI2EpIi8+PC9zdmc+';
 }
+
+/**
+ * The one headshot used on the home and about pages.
+ *
+ * Shared so the two pages cannot drift onto different versions of the same
+ * asset — the URL is version-pinned, so a re-upload changes it.
+ */
+export const HEADSHOT_URL =
+  'https://res.cloudinary.com/acp/image/upload/v1754157313/acp_headshot_nhlged.jpg';

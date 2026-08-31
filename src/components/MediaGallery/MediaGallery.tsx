@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { MediaItem, FilterConfig } from './types';
 import { MediaGalleryHeader } from './MediaGalleryHeader';
@@ -22,22 +22,32 @@ export default function MediaGallery({
   translationNamespace,
 }: MediaGalleryProps) {
   const t = useTranslations(translationNamespace);
+  // Labels shared by all three galleries live in their own namespace so they
+  // are not repeated identically in Music, Movies and Books.
+  const tGallery = useTranslations('Gallery');
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   // Custom hooks
   const filterState = useMediaGalleryFilters();
   const { headerVisible, headerRef } = useIntersectionObserver();
 
-  const filtered = items.filter((item) => {
-    const categoryMatch =
-      filterState.selectedCategory === 'All' ||
-      item.categories.includes(filterState.selectedCategory);
-    const subtitleMatch =
-      filterState.selectedSubtitle === 'All' || item.subtitle === filterState.selectedSubtitle;
-    const yearMatch = filterState.selectedYear === 'All' || item.year === filterState.selectedYear;
-    return categoryMatch && subtitleMatch && yearMatch;
-  });
+  // Memoised because this component also re-renders on scroll, when the
+  // scroll-to-top button crosses its threshold, and that has nothing to do
+  // with the filters.
+  const filtered = useMemo(
+    () =>
+      items.filter((item) => {
+        const categoryMatch =
+          filterState.selectedCategory === 'All' ||
+          item.categories.includes(filterState.selectedCategory);
+        const subtitleMatch =
+          filterState.selectedSubtitle === 'All' || item.subtitle === filterState.selectedSubtitle;
+        const yearMatch =
+          filterState.selectedYear === 'All' || item.year === filterState.selectedYear;
+        return categoryMatch && subtitleMatch && yearMatch;
+      }),
+    [items, filterState.selectedCategory, filterState.selectedSubtitle, filterState.selectedYear]
+  );
 
   // Scroll to top button visibility
   useEffect(() => {
@@ -45,45 +55,24 @@ export default function MediaGallery({
       setShowScrollTop(window.scrollY > 400);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const scrollToTop = () => {
+    // `behavior: 'smooth'` is a scripted scroll, so it ignores the
+    // `prefers-reduced-motion` handling in globals.css and has to ask directly.
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     window.scrollTo({
       top: 0,
-      behavior: 'smooth',
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
     });
   };
 
-  // Prevent upward scrolling beyond the top of the container
-  useEffect(() => {
-    const preventUpwardScroll = () => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        // If the container's top is above the viewport, scroll to bring it back
-        if (rect.top > 0) {
-          window.scrollTo({
-            top: window.scrollY - rect.top,
-            behavior: 'auto',
-          });
-        }
-      }
-    };
-
-    // Check on mount and after animations
-    const timeouts = [0, 100, 300, 500, 1000].map((delay) =>
-      setTimeout(preventUpwardScroll, delay)
-    );
-
-    return () => {
-      timeouts.forEach(clearTimeout);
-    };
-  }, []);
-
   return (
-    <div ref={containerRef} className="max-w-7xl mx-auto">
-      <div style={{ minHeight: '100vh' }}>
+    <div className="max-w-7xl mx-auto">
+      <div className="min-h-dvh">
         <MediaGalleryHeader
           ref={headerRef}
           visible={headerVisible}
@@ -105,6 +94,7 @@ export default function MediaGallery({
             filterState={filterState}
             filtered={filtered}
             t={t}
+            tGallery={tGallery}
           />
 
           {/* Remounting on filter change resets the grid's reveal state without
@@ -117,7 +107,11 @@ export default function MediaGallery({
         </div>
       </div>
 
-      <ScrollToTopButton show={showScrollTop} onClick={scrollToTop} label={t('scrollToTop')} />
+      <ScrollToTopButton
+        show={showScrollTop}
+        onClick={scrollToTop}
+        label={tGallery('scrollToTop')}
+      />
     </div>
   );
 }

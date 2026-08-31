@@ -1,6 +1,6 @@
 {
   "Home": {
-    "title": "Hola 👋 Soy Avery",
+    "title": "Hola <wave>👋</wave> Soy Avery",
     "description": "Soy un ingeniero de software que ama las buenas herramientas, la buena música y el código limpio."
   },
   "Header": {
@@ -19,9 +19,7 @@
   },
   "Footer": {
     "copyright": "© {year} Avery Peterson. Todos los derechos reservados.",
-    "builtWith": "Construido con",
-    "styledWith": ", estilizado con",
-    "deployedVia": ", desplegado via"
+    "builtWith": "Construido con <nextjs>Next.js</nextjs>, estilizado con <tailwind>Tailwind CSS</tailwind>, desplegado vía <vercel>Vercel</vercel>"
   },
   "About": {
     "title": "🙋‍♂️ Acerca de mí",
@@ -30,49 +28,41 @@
     "description2": "Disfruto del código limpio, el gran diseño y hacer cosas que se sientan intencionales.",
     "description3": "Fuera del trabajo, generalmente me encontrarás escuchando música, leyendo algo nuevo o corriendo por la ciudad."
   },
+  "Gallery": {
+    "genre": "Género",
+    "year": "Año",
+    "reset": "Reiniciar",
+    "scrollToTop": "Volver arriba",
+    "filterBy": "Filtrar por {label}"
+  },
   "Movies": {
     "title": "🎬 Películas Favoritas",
     "subtitle": "Digno de un rewatch en cualquier temporada",
-    "allGenres": "Género",
-    "allYears": "Año",
-    "allDirectors": "Director",
+    "director": "Director",
     "movie": "película",
     "movies": "películas",
-    "reset": "Reiniciar",
-    "coverAlt": "Póster de la película {title}",
-    "watchTrailer": "Ver Tráiler",
     "all": "Todas",
-    "scrollToTop": "Volver arriba",
-    "filterBy": "Filtrar por {label}"
+    "coverAlt": "Póster de la película {title}",
+    "watchTrailer": "Ver Tráiler"
   },
   "Music": {
     "title": "🎧 Álbumes Favoritos",
     "subtitle": "Un canon personal de favoritos duraderos",
-    "allGenres": "Género",
-    "allYears": "Año",
-    "allArtists": "Artista",
+    "artist": "Artista",
     "album": "álbum",
     "albums": "álbumes",
-    "reset": "Reiniciar",
-    "coverAlt": "Portada del álbum {title}",
-    "listenOnSpotify": "Escuchar en Spotify",
     "all": "Todos",
-    "scrollToTop": "Volver arriba",
-    "filterBy": "Filtrar por {label}"
+    "coverAlt": "Portada del álbum {title}",
+    "listenOnSpotify": "Escuchar en Spotify"
   },
   "Books": {
     "title": "📚 Libros Favoritos",
     "subtitle": "Una colección de lecturas memorables",
-    "allGenres": "Género",
-    "allYears": "Año",
-    "allAuthors": "Autor",
+    "author": "Autor",
     "book": "libro",
     "books": "libros",
-    "reset": "Reiniciar",
-    "coverAlt": "{title} portada del libro",
     "all": "Todos",
-    "scrollToTop": "Volver arriba",
-    "filterBy": "Filtrar por {label}"
+    "coverAlt": "{title} portada del libro"
   },
   "NotFound": {
     "title": "Página no encontrada",

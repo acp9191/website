@@ -20,10 +20,7 @@ export default function BookGallery({ books }: { books: ContentEntry[] }) {
   }));
 
   const filterConfig: FilterConfig = {
-    categoryLabel: 'allGenres',
-    subtitleLabel: 'allAuthors',
-    yearLabel: 'allYears',
-    resetLabel: 'reset',
+    subtitleLabel: 'author',
     itemSingular: 'book',
     itemPlural: 'books',
     aspectRatio: 'auto',

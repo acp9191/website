@@ -39,18 +39,21 @@ const nextConfig: NextConfig = {
               // 'unsafe-inline' is still needed for the inline theme script in
               // the document head. 'unsafe-eval' is not: a production Next build
               // does not eval.
-              "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://challenges.cloudflare.com", // Allow Vercel Analytics and Cloudflare Turnstile
+              "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com", // Allow Vercel Analytics
               "style-src 'self' 'unsafe-inline'", // unsafe-inline needed for Tailwind
               "img-src 'self' data: https: blob:", // Allow images from Cloudinary and data URIs
               "font-src 'self' data:",
               "connect-src 'self' https://res.cloudinary.com https://va.vercel-scripts.com https://vitals.vercel-insights.com", // Allow Vercel Analytics
-              "frame-src 'self' https://www.youtube.com https://open.spotify.com https://challenges.cloudflare.com", // Embedded content and Cloudflare Turnstile
+              // Nothing is embedded: YouTube trailers and Spotify albums are
+              // plain outbound links, not iframes. This previously also allowed
+              // Cloudflare Turnstile, which the site has never used.
+              "frame-src 'none'",
               "media-src 'self' https://res.cloudinary.com",
               "object-src 'none'", // Prevent Flash/Java
               "base-uri 'self'",
               "form-action 'self'",
               "frame-ancestors 'none'", // Prevent clickjacking
-              "upgrade-insecure-requests", // Force HTTPS
+              'upgrade-insecure-requests', // Force HTTPS
             ].join('; '),
           },
           {

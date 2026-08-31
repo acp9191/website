@@ -15,15 +15,25 @@ export interface MediaItem {
   };
 }
 
+/**
+ * What differs between the three galleries.
+ *
+ * The genre, year and reset labels used to live here too, as keys repeated
+ * identically in the Music, Movies and Books namespaces. They are the same
+ * words in every gallery, so they now come from the shared `Gallery` namespace
+ * and only the genuinely per-gallery keys remain.
+ */
 export interface FilterConfig {
-  categoryLabel: string;
+  /** Key in the gallery's own namespace naming the subtitle field, e.g. 'artist'. */
   subtitleLabel: string;
-  yearLabel: string;
-  resetLabel: string;
+  /** Keys in the gallery's own namespace for the item noun, e.g. 'album' / 'albums'. */
   itemSingular: string;
   itemPlural: string;
   aspectRatio: 'square' | 'portrait' | 'auto';
 }
+
+/** next-intl's translator, narrowed to what the gallery components need. */
+export type Translate = (key: string, values?: Record<string, string | number>) => string;
 
 export interface FilterState {
   selectedCategory: string;

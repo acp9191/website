@@ -29,10 +29,7 @@ export default function MusicGallery({ albums }: { albums: ContentEntry[] }) {
 
   // Configure filters for music
   const filterConfig: FilterConfig = {
-    categoryLabel: 'allGenres',
-    subtitleLabel: 'allArtists',
-    yearLabel: 'allYears',
-    resetLabel: 'reset',
+    subtitleLabel: 'artist',
     itemSingular: 'album',
     itemPlural: 'albums',
     aspectRatio: 'square', // Album covers are typically square

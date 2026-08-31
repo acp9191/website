@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6-blue)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38bdf8)](https://tailwindcss.com/)
 
 A modern, multilingual personal website featuring a Progressive Web App (PWA) with offline support, built with Next.js 16 and Tailwind CSS v4.
@@ -38,7 +38,7 @@ Three fully-featured galleries for showcasing favorites:
 
 - **Offline support** - Works without internet after first visit
 - **Installable** - Add to home screen on mobile/desktop
-- **Smart caching** - Automatic caching with Workbox (static assets, images, pages)
+- **Smart caching** - Automatic caching with Serwist (static assets, images, pages)
 - **Window controls overlay** for native app experience on desktop
 - **Protocol handlers** for custom URL schemes (`web+avery://`)
 - **App manifest** with screenshots for rich install UI
@@ -59,6 +59,7 @@ Three fully-featured galleries for showcasing favorites:
 - **Screen reader friendly** - Decorative icons hidden from screen readers
 - **Focus management** - Clear focus indicators and logical tab order
 - **Color contrast** - Aims for WCAG AA contrast in both light and dark modes
+- **Reduced motion** - `prefers-reduced-motion` collapses every animation, stagger and smooth scroll
 
 ### 🛡️ Security
 
@@ -72,17 +73,18 @@ Three fully-featured galleries for showcasing favorites:
 
 - **TypeScript** for type safety
 - **Tailwind CSS v4** for styling
-- **Next.js 16 App Router** with server components and Turbopack
+- **Next.js 16 App Router** with server components (Turbopack in dev)
 - **Automatic dependency updates** via Dependabot
 - **Content-driven** - Markdown files with YAML frontmatter
 - **Path aliases** (`@/`) for clean imports
+- **CI on every PR** - lint, types, formatting, content validation and a full build
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js 18+
-- npm or yarn
+- Node.js 24 (see `.nvmrc`; `engines.node` pins the same major)
+- npm
 
 ### Installation
 
@@ -103,12 +105,18 @@ Open [http://localhost:3000](http://localhost:3000) to view the site.
 ### Available Scripts
 
 ```bash
-npm run dev        # Start development server (PWA disabled)
-npm run build      # Build for production
-npm start          # Start production server (PWA enabled)
-npm run lint       # ESLint (next/core-web-vitals)
-npm run typecheck  # tsc --noEmit
+npm run dev           # Start development server (PWA disabled)
+npm run build         # Build for production (PWA enabled, type-checked)
+npm start             # Start production server
+npm run lint          # ESLint
+npm run typecheck     # tsc --noEmit
+npm run format        # Prettier, writing changes
+npm run format:check  # Prettier, failing instead of writing
+npm run check:content # Validate content frontmatter and genre spellings
 ```
+
+`build` passes `--webpack` deliberately: Serwist's service-worker compilation
+does not run under Turbopack. `next dev` is unaffected and still uses Turbopack.
 
 ## 📁 Project Structure
 
@@ -136,7 +144,10 @@ avery-site/
 │   ├── i18n/
 │   │   └── routing.ts    # Locale configuration
 │   └── proxy.ts          # Next.js proxy for i18n routing
+├── scripts/
+│   └── check-content.mjs # Frontmatter + genre validation (runs in CI)
 ├── .github/
+│   ├── workflows/ci.yml  # Lint, types, format, content, build on every PR
 │   └── dependabot.yml    # Automatic dependency updates
 └── next.config.ts        # Next.js + PWA configuration
 ```
@@ -168,7 +179,7 @@ Create a new file in `content/movies/movie-name.md`:
 ---
 title: 'Movie Title'
 director: 'Director Name'
-cover: 'https://res.cloudinary.com/acp/image/upload/...'
+poster: 'https://res.cloudinary.com/acp/image/upload/...'
 year: 2024
 genres: ['Drama', 'Thriller']
 trailer: 'https://youtube.com/watch?v=...'
@@ -176,6 +187,9 @@ trailer: 'https://youtube.com/watch?v=...'
 
 Your movie review here.
 ```
+
+Note the image field: movies use `poster`, albums and books use `cover`.
+`npm run check:content` catches it when they are mixed up.
 
 ### Books
 
@@ -204,11 +218,21 @@ Edit the JSON files in `messages/`:
     "home": "Home",
     "about": "About"
   },
+  "Gallery": {
+    "genre": "Genre"
+  },
   "Music": {
-    "title": "Favorite Albums"
+    "title": "Favorite Albums",
+    "artist": "Artist"
   }
 }
 ```
+
+Labels shared by all three galleries (genre, year, reset, scroll-to-top,
+"filter by") live in the `Gallery` namespace rather than being repeated in
+`Music`, `Movies` and `Books`. The `all` sentinel is deliberately _not_ shared:
+in gendered languages it agrees with the noun it stands in for (Spanish uses
+"Todas" for películas but "Todos" for álbumes).
 
 ## 🎯 PWA Configuration
 
@@ -246,20 +270,35 @@ vercel
 | ------------------- | --------------------------------------------- |
 | **Next.js 16**      | React framework with App Router and Turbopack |
 | **React 19**        | UI library                                    |
-| **TypeScript 5**    | Type safety                                   |
+| **TypeScript 6**    | Type safety                                   |
 | **Tailwind CSS v4** | Styling                                       |
-| **next-intl 4.4**   | Internationalization                          |
-| **Workbox**         | Progressive Web App caching strategies        |
+| **next-intl 4.14**  | Internationalization                          |
+| **Serwist**         | Progressive Web App caching strategies        |
 | **gray-matter**     | Markdown frontmatter parsing                  |
-| **Headless UI**     | Accessible UI components                      |
-| **Hero Icons**      | Icon library                                  |
+| **Heroicons**       | Icon library                                  |
 | **Cloudinary**      | Image hosting and optimization                |
 
 ## 🤖 Automation
 
 - **Dependabot** - Automatic dependency updates every Monday
-- **Service Worker** - Auto-generated on build with Workbox
+- **Service Worker** - Auto-generated on build with Serwist
 - **Type Checking** - Runs during production builds
+
+### Continuous Integration
+
+`.github/workflows/ci.yml` runs on every pull request. Each step runs even when
+an earlier one fails, so a single push reports every problem at once:
+
+| Step      | Command                 |
+| --------- | ----------------------- |
+| Lint      | `npm run lint`          |
+| Typecheck | `npm run typecheck`     |
+| Format    | `npm run format:check`  |
+| Content   | `npm run check:content` |
+| Build     | `npm run build`         |
+
+The build step is not redundant with the other four: the Serwist service-worker
+compile and the prerender of all 28 localized pages only happen there.
 
 ## 🐛 Troubleshooting
 

@@ -1,23 +1,29 @@
 import { NextResponse } from 'next/server';
 import { routing } from '@/src/i18n/routing';
-
-const baseUrl = 'https://avery-peterson.com';
+import { SITE_URL, localePath } from '@/src/lib/metadata';
 
 const staticPaths = ['', '/about', '/favorites/music', '/favorites/books', '/favorites/movies'];
 
 /**
- * `localePrefix` is 'as-needed', so the default locale lives at unprefixed
- * paths — /about, not /en/about. Emitting the prefixed form for every locale
- * advertised a URL that 307s, which is exactly what a sitemap should not do.
+ * Absolute URL for one page in one locale.
+ *
+ * `localePath` is the same helper the pages use to build their canonicals, so
+ * the sitemap cannot drift from them. That matters here: `localePrefix` is
+ * 'as-needed', and emitting the prefixed form for the default locale advertised
+ * a URL that 307s — exactly what a sitemap should not do.
  */
-function localizedUrl(locale: string, path: string) {
-  const prefix = locale === routing.defaultLocale ? '' : `/${locale}`;
-  // The home page of the default locale is the bare origin.
-  return `${baseUrl}${prefix}${path}` || baseUrl;
-}
+const localizedUrl = (locale: string, path: string) => {
+  const relative = localePath(locale, path);
+  // Match how Next resolves each page's canonical against `metadataBase`: the
+  // root is the bare origin, not a trailing slash. Advertising a URL here that
+  // differs by a slash from the canonical the page declares is the same class
+  // of mistake as advertising one that redirects.
+  return relative === '/' ? SITE_URL : `${SITE_URL}${relative}`;
+};
 
 export async function GET() {
-  // Content is static, so a single build-time timestamp is honest here: it is
+  // This route prerenders, so the timestamp is fixed at build time. Since the
+  // content is static markdown compiled into the build, that is honest: it is
   // the last moment the pages could have changed.
   const lastmod = new Date().toISOString();
 

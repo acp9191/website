@@ -5,12 +5,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ```bash
-npm run dev        # Start development server on http://localhost:3000
-npm run build      # Build for production (includes type checking)
-npm start          # Start production server
-npm run lint       # ESLint (next/core-web-vitals)
-npm run typecheck  # tsc --noEmit
+npm run dev           # Start development server on http://localhost:3000
+npm run build         # Build for production (includes type checking)
+npm start             # Start production server
+npm run lint          # ESLint
+npm run typecheck     # tsc --noEmit
+npm run format        # Prettier, writing changes
+npm run format:check  # Prettier, failing instead of writing
+npm run check:content # Validate content frontmatter and genre spellings
 ```
+
+`build` passes `--webpack` on purpose: Serwist's service-worker compilation does
+not run under Turbopack. `next dev` still uses Turbopack.
+
+CI (`.github/workflows/ci.yml`) runs lint, typecheck, format:check,
+check:content and build on every PR, each step guarded by `if: !cancelled()` so
+one push surfaces every failure.
 
 ## Project Architecture
 
@@ -18,11 +28,13 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 
 ### Tech Stack
 
-- **Framework**: Next.js 16 (App Router with Turbopack)
+- **Framework**: Next.js 16 (App Router; Turbopack in dev, webpack for builds)
 - **Styling**: Tailwind CSS v4
 - **Internationalization**: next-intl 4.8 (en, es, fr, it, de)
 - **PWA**: Service worker with Serwist (disabled in dev, enabled in production)
 - **Content**: Markdown files with gray-matter frontmatter parsing
+- **Linting**: ESLint 10 with plugins composed directly in `eslint.config.mjs`
+  (not `eslint-config-next`, which cannot run on ESLint 10 — see the comment there)
 
 ### Key Architectural Patterns
 
@@ -40,6 +52,9 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 - Each file has YAML frontmatter (title, artist/author/director, image URL, year, genres, optional external links)
 - Loaded by `loadContent(collection)` in `src/lib/content.ts`, which parses every `.md` in the directory and sorts by title
 - Markdown body becomes the description
+- `scripts/check-content.mjs` validates required fields, rejects unknown ones
+  (most often the wrong image key) and flags genre values that differ only by
+  case or punctuation, since those silently split one filter entry into two
 - Server components read files at build/request time using `fs/promises` and `gray-matter`
 
 **Media Gallery System**
@@ -47,11 +62,13 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 - Reusable `MediaGallery` component (`src/components/MediaGallery/`) powers all three galleries
 - Three specialized page components: `MusicGallery.tsx`, `MovieGallery.tsx`, `BookGallery.tsx`
 - Each page loads its content directory, transforms to `MediaItem[]`, and renders `MediaGallery`
-- Filtering system with three dimensions (category/genre, subtitle/artist/director/author, year)
+- Filtering system with three dimensions (category/genre, subtitle/artist/director/author, year); the three combine with AND
+- `FilterDropdown` is one component with a `variant` of `sidebar` or `bar`, used by both the desktop sidebar and the mobile filter row
 - Responsive design with separate desktop/mobile filter layouts
 - Custom hooks in `src/components/MediaGallery/hooks/`:
   - `useMediaGalleryFilters`: Filter state management
   - `useIntersectionObserver`: Header visibility detection
+  - `useListbox`: Keyboard, focus and dismissal behaviour for the filter dropdowns
 
 **Theme System**
 
@@ -103,12 +120,20 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 
 - Update `messages/{locale}.json` files when adding UI text
 - Each gallery has its own translation namespace (Music, Movies, Books)
-- Component props accept `translationNamespace` to scope translations
+- Labels identical across all three galleries (genre, year, reset, scrollToTop,
+  filterBy) live in the shared `Gallery` namespace instead of being repeated
+- `all` stays per-gallery on purpose: in gendered languages the "All" sentinel
+  agrees with the noun it stands in for (es: "Todas" películas, "Todos" álbumes)
+- Component props accept `translationNamespace` to scope translations; gallery
+  components receive both `t` (their namespace) and `tGallery` (the shared one)
 - Header/Footer translations in respective namespaces
+- Prefer `t.rich` over splicing markup into translated strings
 
 ### Build Notes
 
 - TypeScript strict mode is enabled (`tsconfig.json`)
+- Prettier owns formatting; `.prettierignore` excludes generated and tool-owned
+  files (including this one, which `next dev` rewrites)
 - Service worker generated in `public/sw.js` during production build
 - Sitemap generated at `/sitemap.xml` via route handler in `src/app/sitemap.xml/route.ts`
 - PWA features only work in production mode (`npm start`), not development (`npm run dev`)

@@ -1,17 +1,16 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
-import { getOptimizedImageUrl, getBlurPlaceholderUrl } from '@/src/utils/imageOptimization';
+import {
+  getOptimizedImageUrl,
+  getBlurPlaceholderUrl,
+  HEADSHOT_URL,
+} from '@/src/utils/imageOptimization';
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
 
   const t = await getTranslations('Home');
-
-  const title = t('title').replace(
-    '👋',
-    '<span class="inline-block animate-wave select-none">👋</span>'
-  );
 
   return (
     <section className="space-y-6 px-4">
@@ -20,23 +19,32 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         style={{ animationDelay: '100ms' }}
       >
         <Image
-          src={getOptimizedImageUrl('https://res.cloudinary.com/acp/image/upload/v1754157313/acp_headshot_nhlged.jpg')}
+          src={getOptimizedImageUrl(HEADSHOT_URL)}
           alt="Avery Peterson headshot"
           width={400}
           height={400}
           className="rounded-xl shadow-md w-full h-auto"
           priority={true}
           placeholder="blur"
-          blurDataURL={getBlurPlaceholderUrl('https://res.cloudinary.com/acp/image/upload/v1754157313/acp_headshot_nhlged.jpg')}
+          blurDataURL={getBlurPlaceholderUrl(HEADSHOT_URL)}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
         />
       </div>
 
+      {/*
+        The waving hand is marked up in the message itself rather than spliced
+        into it here. String-replacing the emoji meant piping a translated
+        string through dangerouslySetInnerHTML, and it broke silently the
+        moment a translation rendered the greeting without that exact emoji.
+      */}
       <h1
         className="text-4xl font-bold text-center animate-fade-up"
         style={{ animationDelay: '200ms' }}
-        dangerouslySetInnerHTML={{ __html: title }}
-      />
+      >
+        {t.rich('title', {
+          wave: (chunks) => <span className="inline-block animate-wave select-none">{chunks}</span>,
+        })}
+      </h1>
 
       <p
         className="text-lg text-gray-600 dark:text-gray-400 text-center animate-fade-up"

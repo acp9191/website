@@ -1,9 +1,32 @@
 'use client';
 import { Link, usePathname } from '@/src/i18n/navigation';
 import { useTranslations } from 'next-intl';
-import { useState, useRef, useEffect } from 'react';
-import { Bars3Icon, XMarkIcon, SunIcon, MoonIcon, ComputerDesktopIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect, useId } from 'react';
+import {
+  Bars3Icon,
+  XMarkIcon,
+  SunIcon,
+  MoonIcon,
+  ComputerDesktopIcon,
+} from '@heroicons/react/24/outline';
 import LocaleSwitcher from './LocaleSwitcher';
+
+type Theme = 'light' | 'dark' | 'system';
+
+/**
+ * Mirrors the validation in the inline head script: anything that is not a
+ * recognised preference is treated as 'system'.
+ *
+ * Without it the two disagreed. The script normalises before writing
+ * `data-theme`, so a stale or hand-edited `localStorage.theme` left the
+ * attribute — and therefore the icon — on 'system' while React's state held the
+ * junk value, and the first click advanced from the wrong point in the cycle.
+ */
+function readStoredTheme(): Theme {
+  if (typeof window === 'undefined') return 'system';
+  const saved = localStorage.getItem('theme');
+  return saved === 'dark' || saved === 'light' || saved === 'system' ? saved : 'system';
+}
 
 /**
  * Renders identically on server and client — which icon is visible is decided in
@@ -54,16 +77,9 @@ export default function Header() {
   const t = useTranslations('Header');
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>(() => {
-    // Initialize from localStorage immediately
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | 'system' | null;
-      return savedTheme || 'system';
-    }
-    return 'system';
-  });
+  const [theme, setTheme] = useState<Theme>(readStoredTheme);
   const [scrolled, setScrolled] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuId = useId();
 
   // The inline script in the document head already applied the `dark` class and
   // the `data-theme` attribute before first paint, and the state initializer
@@ -95,7 +111,6 @@ export default function Header() {
   // match keeps the parent link highlighted on any subpage.
   const isActiveLink = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
-
   // Scroll effect
   useEffect(() => {
     const handleScroll = () => {
@@ -109,7 +124,7 @@ export default function Header() {
 
   const toggleTheme = () => {
     // Cycle through: light → dark → system
-    let newTheme: 'light' | 'dark' | 'system';
+    let newTheme: Theme;
     if (theme === 'light') {
       newTheme = 'dark';
     } else if (theme === 'dark') {
@@ -142,7 +157,6 @@ export default function Header() {
 
   return (
     <header
-      role="banner"
       className={`sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 transition-all duration-300 ease-out ${
         scrolled ? 'shadow-md backdrop-blur-sm bg-white/95 dark:bg-gray-900/95' : 'shadow-xs'
       }`}
@@ -168,6 +182,8 @@ export default function Header() {
             }`}
             onClick={() => setMenuOpen((prev) => !prev)}
             aria-label={t('toggleMenu')}
+            aria-expanded={menuOpen}
+            aria-controls={mobileMenuId}
           >
             {/* Hamburger Icon */}
             <Bars3Icon
@@ -184,7 +200,7 @@ export default function Header() {
           </button>
 
           {/* Desktop nav */}
-          <nav className="hidden sm:flex gap-4 items-center" role="navigation" aria-label={t('mainNavigation')}>
+          <nav className="hidden sm:flex gap-4 items-center" aria-label={t('mainNavigation')}>
             {links.map(({ href, label }) => {
               const isActive = isActiveLink(href);
               return (
@@ -223,13 +239,20 @@ export default function Header() {
 
         {/* Mobile nav - improved animation */}
         <div className="sm:hidden overflow-hidden">
+          {/*
+            Collapsing is `max-height` and opacity only, which hides the menu
+            visually but leaves its links, the theme toggle and the language
+            select in the tab order and the accessibility tree. `inert` removes
+            them from both while the menu is shut, without breaking the slide.
+          */}
           <div
-            ref={menuRef}
+            id={mobileMenuId}
+            inert={!menuOpen}
             className={`transition-all duration-300 ease-out ${
               menuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
             }`}
           >
-            <nav className="flex flex-col gap-2 py-4" role="navigation" aria-label={t('mobileNavigation')}>
+            <nav className="flex flex-col gap-2 py-4" aria-label={t('mobileNavigation')}>
               {links.map(({ href, label }, index) => {
                 const isActive = isActiveLink(href);
                 return (
@@ -277,7 +300,12 @@ export default function Header() {
                   <span className="text-gray-700 dark:text-gray-200 text-sm font-medium">
                     {t('theme')}
                   </span>
-                  <ThemeToggle isMobile scrolled={scrolled} label={t('toggleTheme')} onToggle={toggleTheme} />
+                  <ThemeToggle
+                    isMobile
+                    scrolled={scrolled}
+                    label={t('toggleTheme')}
+                    onToggle={toggleTheme}
+                  />
                 </div>
               </div>
 

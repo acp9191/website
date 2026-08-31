@@ -1,6 +1,6 @@
 {
   "Home": {
-    "title": "Ciao 👋 Sono Avery",
+    "title": "Ciao <wave>👋</wave> Sono Avery",
     "description": "Sono un ingegnere del software che ama i buoni strumenti, la buona musica e il codice pulito."
   },
   "Header": {
@@ -19,9 +19,7 @@
   },
   "Footer": {
     "copyright": "© {year} Avery Peterson. Tutti i diritti riservati.",
-    "builtWith": "Costruito con",
-    "styledWith": ", stilizzato con",
-    "deployedVia": ", distribuito tramite"
+    "builtWith": "Costruito con <nextjs>Next.js</nextjs>, stilizzato con <tailwind>Tailwind CSS</tailwind>, distribuito tramite <vercel>Vercel</vercel>"
   },
   "About": {
     "title": "🙋‍♂️ Chi sono",
@@ -30,49 +28,41 @@
     "description2": "Mi piace il codice pulito, il grande design e fare cose che sembrano intenzionali.",
     "description3": "Fuori dal lavoro, di solito mi troverai ad ascoltare musica, leggere qualcosa di nuovo o correre per la città."
   },
-  "Movies": {
-    "title": "🎬 Film Preferiti",
-    "subtitle": "Digno di un rewatch in qualsiasi stagione",
-    "allGenres": "Genere",
-    "allYears": "Anno",
-    "allDirectors": "Regista",
-    "movie": "film",
-    "movies": "film",
+  "Gallery": {
+    "genre": "Genere",
+    "year": "Anno",
     "reset": "Reimposta",
-    "coverAlt": "Locandina del film {title}",
-    "watchTrailer": "Guarda il Trailer",
-    "all": "Tutti",
     "scrollToTop": "Torna su",
     "filterBy": "Filtra per {label}"
+  },
+  "Movies": {
+    "title": "🎬 Film Preferiti",
+    "subtitle": "Degno di un rewatch in qualsiasi stagione",
+    "director": "Regista",
+    "movie": "film",
+    "movies": "film",
+    "all": "Tutti",
+    "coverAlt": "Locandina del film {title}",
+    "watchTrailer": "Guarda il Trailer"
   },
   "Music": {
     "title": "🎧 Album Preferiti",
     "subtitle": "Un canone personale di preferiti duraturi",
-    "allGenres": "Genere",
-    "allYears": "Anno",
-    "allArtists": "Artista",
+    "artist": "Artista",
     "album": "album",
     "albums": "album",
-    "reset": "Reimposta",
-    "coverAlt": "Copertina dell'album {title}",
-    "listenOnSpotify": "Ascolta su Spotify",
     "all": "Tutti",
-    "scrollToTop": "Torna su",
-    "filterBy": "Filtra per {label}"
+    "coverAlt": "Copertina dell'album {title}",
+    "listenOnSpotify": "Ascolta su Spotify"
   },
   "Books": {
     "title": "📚 Libri Preferiti",
     "subtitle": "Un canone personale di letture durature",
-    "allGenres": "Genere",
-    "allYears": "Anno",
-    "allAuthors": "Autore",
+    "author": "Autore",
     "book": "libro",
     "books": "libri",
-    "reset": "Reimposta",
-    "coverAlt": "{title} copertina del libro",
     "all": "Tutti",
-    "scrollToTop": "Torna su",
-    "filterBy": "Filtra per {label}"
+    "coverAlt": "{title} copertina del libro"
   },
   "NotFound": {
     "title": "Pagina non trovata",

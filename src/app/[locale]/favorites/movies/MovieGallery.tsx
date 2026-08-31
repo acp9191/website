@@ -28,10 +28,7 @@ export default function MovieGallery({ movies }: { movies: ContentEntry[] }) {
   }));
 
   const filterConfig: FilterConfig = {
-    categoryLabel: 'allGenres',
-    subtitleLabel: 'allDirectors',
-    yearLabel: 'allYears',
-    resetLabel: 'reset',
+    subtitleLabel: 'director',
     itemSingular: 'movie',
     itemPlural: 'movies',
     aspectRatio: 'auto',
