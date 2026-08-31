@@ -10,6 +10,8 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { SITE_NAME, SITE_URL, buildMetadata } from '@/src/lib/metadata';
+import { THEME_INIT_SCRIPT } from '@/src/lib/theme';
+import ThemeSync from '@/src/components/ThemeSync';
 
 // Font optimization with next/font
 const inter = Inter({
@@ -68,31 +70,15 @@ export default async function RootLayout({
         {/*
           Must stay a raw <script> here in <head>, ahead of the stylesheet, or
           the browser paints a light background before the theme is resolved.
-          React logs a dev-only warning about script tags when a client-side
-          locale switch re-renders this layout; that is cosmetic, and moving
-          the script to <body> to silence it reintroduces the flash.
+
+          It only covers the first paint of a document. Switching locale remounts
+          this layout without a new document, and React rebuilds <html> from its
+          own props, dropping what this wrote — ThemeSync in <body> puts it back.
         */}
         <script
-          // This script sets the initial theme based on user preference or saved setting
-          // It runs before the React app hydrates to ensure the correct theme is applied immediately
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                const savedTheme = localStorage.getItem('theme');
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                const pref = savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : 'system';
-                const isDark = pref === 'system' ? prefersDark : pref === 'dark';
-
-                if (isDark) {
-                  document.documentElement.classList.add('dark');
-                }
-
-                // Record the stored preference so the theme toggle can paint the
-                // right icon from CSS alone, before React hydrates.
-                document.documentElement.dataset.theme = pref;
-              } catch (e) {}
-            `,
-          }}
+          // Sets the initial theme from the stored preference before the React
+          // app hydrates, so the correct colours are painted on the first frame.
+          dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
         />
         <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png"></link>
         <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png"></link>
@@ -105,6 +91,11 @@ export default async function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"></meta>
       </head>
       <body>
+        {/*
+          Restores the theme after React remounts this layout — which switching
+          locale does, because `[locale]` sits above it. See ThemeSync.
+        */}
+        <ThemeSync />
         <NextIntlClientProvider>
           <ClientLayout>{children}</ClientLayout>
         </NextIntlClientProvider>

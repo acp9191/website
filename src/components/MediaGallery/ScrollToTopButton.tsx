@@ -10,6 +10,10 @@ export function ScrollToTopButton({ show, onClick, label }: ScrollToTopButtonPro
   return (
     <button
       onClick={onClick}
+      // The button is only faded out, not unmounted, so it stays in the tab
+      // order and the accessibility tree while invisible. `inert` takes it out
+      // of both without disturbing the fade.
+      inert={!show}
       className={clsx(
         'fixed bottom-6 right-6 p-3 rounded-full bg-black hover:bg-gray-800 text-white shadow-lg transition-all duration-300 z-30 cursor-pointer',
         {
@@ -19,7 +23,13 @@ export function ScrollToTopButton({ show, onClick, label }: ScrollToTopButtonPro
       )}
       aria-label={label}
     >
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <svg
+        className="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
         <path
           strokeLinecap="round"
           strokeLinejoin="round"

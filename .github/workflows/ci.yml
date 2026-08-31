@@ -27,12 +27,30 @@ jobs:
       # pins and fails if package.json and the lockfile have drifted apart.
       - run: npm ci
 
+      # Every check below runs even if an earlier one failed, so one push
+      # reports every problem rather than revealing them one at a time.
+
       # The script passes --max-warnings 0, so warnings fail the run too.
       - name: Lint
         run: npm run lint
 
-      # `!cancelled()` so a lint failure still reports type errors in the same
-      # run, rather than hiding them behind a second push.
       - name: Typecheck
         if: '!cancelled()'
         run: npm run typecheck
+
+      - name: Format
+        if: '!cancelled()'
+        run: npm run format:check
+
+      # Frontmatter mistakes do not fail a build — a movie whose image key is
+      # `cover` rather than `poster` just renders a card with no image.
+      - name: Content
+        if: '!cancelled()'
+        run: npm run check:content
+
+      # Lint and typecheck between them miss anything that only breaks while
+      # building: the Serwist service-worker compile, and the prerender of all
+      # 28 localized pages.
+      - name: Build
+        if: '!cancelled()'
+        run: npm run build

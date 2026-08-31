@@ -5,7 +5,6 @@ import BookGallery from './BookGallery';
 import type { Metadata } from 'next';
 import { buildMetadata } from '@/src/lib/metadata';
 
-
 export async function generateMetadata({
   params,
 }: {

@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { useListbox, type FilterValue } from './hooks/useListbox';
 import clsx from 'clsx';
 import { AnimatedCounter } from '../AnimatedCounter';
-import { MediaItem, FilterConfig, FilterState } from './types';
+import FilterDropdown, { type FilterValue } from './FilterDropdown';
+import { MediaItem, FilterConfig, FilterState, Translate } from './types';
 
 interface MobileFiltersProps {
   filterConfig: FilterConfig;
@@ -14,7 +14,10 @@ interface MobileFiltersProps {
     hasActiveFilters: boolean;
   };
   filtered: MediaItem[];
-  t: (key: string, values?: Record<string, string | number>) => string;
+  /** Translator for the gallery's own namespace (Music / Movies / Books). */
+  t: Translate;
+  /** Translator for the shared `Gallery` namespace. */
+  tGallery: Translate;
 }
 
 export function MobileFilters({
@@ -23,6 +26,7 @@ export function MobileFilters({
   filterData,
   filtered,
   t,
+  tGallery,
 }: MobileFiltersProps) {
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [subtitleDropdownOpen, setSubtitleDropdownOpen] = useState(false);
@@ -121,7 +125,13 @@ export function MobileFilters({
                 }
               )}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -129,27 +139,28 @@ export function MobileFilters({
                   d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                 />
               </svg>
-              <span>{t(filterConfig.resetLabel)}</span>
+              <span>{tGallery('reset')}</span>
             </button>
           </div>
         </div>
 
-        {/* Mobile filter dropdowns in a row */}
+        {/*
+          Same control as the desktop sidebar, in its `bar` dress. Only one
+          panel may be open at a time here, since they sit side by side and
+          overlap when open — hence `onOpen` closing the siblings.
+        */}
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-1">
-          <MobileFilterButton
-            label={
-              filterState.selectedCategory === 'All'
-                ? t(filterConfig.categoryLabel)
-                : filterState.selectedCategory
-            }
-            options={['All', ...filterData.allCategories]}
+          <FilterDropdown
+            variant="bar"
+            label={tGallery('genre')}
+            ariaLabel={tGallery('filterBy', { label: tGallery('genre') })}
             allLabel={t('all')}
-            ariaLabel={t('filterBy', { label: t(filterConfig.categoryLabel) })}
+            options={['All', ...filterData.allCategories]}
             selectedValue={filterState.selectedCategory}
             onSelect={handleCategorySelect}
             isOpen={categoryDropdownOpen}
             setIsOpen={setCategoryDropdownOpen}
-            closeOthers={() => {
+            onOpen={() => {
               setSubtitleDropdownOpen(false);
               setYearDropdownOpen(false);
             }}
@@ -157,20 +168,17 @@ export function MobileFilters({
             delay="400ms"
           />
 
-          <MobileFilterButton
-            label={
-              filterState.selectedSubtitle === 'All'
-                ? t(filterConfig.subtitleLabel)
-                : filterState.selectedSubtitle
-            }
-            options={['All', ...filterData.allSubtitles]}
+          <FilterDropdown
+            variant="bar"
+            label={t(filterConfig.subtitleLabel)}
+            ariaLabel={tGallery('filterBy', { label: t(filterConfig.subtitleLabel) })}
             allLabel={t('all')}
-            ariaLabel={t('filterBy', { label: t(filterConfig.subtitleLabel) })}
+            options={['All', ...filterData.allSubtitles]}
             selectedValue={filterState.selectedSubtitle}
             onSelect={handleSubtitleSelect}
             isOpen={subtitleDropdownOpen}
             setIsOpen={setSubtitleDropdownOpen}
-            closeOthers={() => {
+            onOpen={() => {
               setCategoryDropdownOpen(false);
               setYearDropdownOpen(false);
             }}
@@ -178,20 +186,17 @@ export function MobileFilters({
             delay="500ms"
           />
 
-          <MobileFilterButton
-            label={
-              filterState.selectedYear === 'All'
-                ? t(filterConfig.yearLabel)
-                : filterState.selectedYear.toString()
-            }
-            options={['All', ...filterData.allYears]}
+          <FilterDropdown
+            variant="bar"
+            label={tGallery('year')}
+            ariaLabel={tGallery('filterBy', { label: tGallery('year') })}
             allLabel={t('all')}
-            ariaLabel={t('filterBy', { label: t(filterConfig.yearLabel) })}
+            options={['All', ...filterData.allYears]}
             selectedValue={filterState.selectedYear}
             onSelect={handleYearSelect}
             isOpen={yearDropdownOpen}
             setIsOpen={setYearDropdownOpen}
-            closeOthers={() => {
+            onOpen={() => {
               setCategoryDropdownOpen(false);
               setSubtitleDropdownOpen(false);
             }}
@@ -200,137 +205,6 @@ export function MobileFilters({
           />
         </div>
       </div>
-    </div>
-  );
-}
-
-interface MobileFilterButtonProps {
-  label: string;
-  /** Localized aria-label for the trigger. */
-  ariaLabel: string;
-  /** Localized text for the "All" sentinel; the stored value stays 'All'. */
-  allLabel: string;
-  options: FilterValue[];
-  selectedValue: FilterValue;
-  onSelect: (value: FilterValue) => void;
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  closeOthers: () => void;
-  visible: boolean;
-  delay: string;
-}
-
-function MobileFilterButton({
-  label,
-  ariaLabel,
-  allLabel,
-  options,
-  selectedValue,
-  onSelect,
-  isOpen,
-  setIsOpen,
-  closeOthers,
-  visible,
-  delay,
-}: MobileFilterButtonProps) {
-  const {
-    containerRef,
-    triggerRef,
-    listRef,
-    listboxId,
-    handleSelect,
-    handleTriggerKeyDown,
-    handleOptionKeyDown,
-  } = useListbox({ isOpen, setIsOpen, options, selectedValue, onSelect });
-
-  const display = (value: FilterValue) => (value === 'All' ? allLabel : value);
-
-  const handleToggle = () => {
-    if (!isOpen) {
-      closeOthers();
-    }
-    setIsOpen(!isOpen);
-  };
-
-  return (
-    <div
-      ref={containerRef}
-      className={clsx('relative w-full sm:flex-1 transition-all duration-700 ease-out', {
-        'opacity-100 translate-y-0': visible,
-        'opacity-0 translate-y-4': !visible,
-        'z-50': isOpen, // Higher z-index when dropdown is open
-      })}
-      style={{ transitionDelay: delay }}
-    >
-      <button
-        ref={triggerRef}
-        type="button"
-        onClick={handleToggle}
-        onKeyDown={handleTriggerKeyDown}
-        className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-medium bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm hover:shadow-md cursor-pointer relative z-10"
-        role="combobox"
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-        aria-controls={listboxId}
-        aria-label={ariaLabel}
-      >
-        <span className="truncate text-left min-w-0">{label}</span>
-        <svg
-          className={`w-4 h-4 transition-transform duration-200 flex-shrink-0 ${
-            isOpen ? 'rotate-180' : ''
-          }`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-
-      {isOpen && (
-        <div
-          ref={listRef}
-          id={listboxId}
-          role="listbox"
-          aria-label={ariaLabel}
-          className="absolute left-0 w-full sm:w-64 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl z-[9999] max-h-64 overflow-y-auto"
-        >
-          <div className="py-1">
-            {options.map((option) => (
-              <button
-                key={option}
-                type="button"
-                role="option"
-                aria-selected={selectedValue === option}
-                onClick={() => handleSelect(option)}
-                onKeyDown={(event) => handleOptionKeyDown(event, option)}
-                className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700 focus:outline-none transition-colors flex items-center justify-between cursor-pointer ${
-                  selectedValue === option
-                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                    : 'text-gray-900 dark:text-gray-100'
-                }`}
-              >
-                <span className="truncate min-w-0">{display(option)}</span>
-                {selectedValue === option && (
-                  <svg
-                    className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0 ml-2"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

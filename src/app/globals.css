@@ -64,14 +64,24 @@ body {
 
 /* Slide up only (no opacity) — safe for LCP elements since transform doesn't affect visibility */
 @keyframes slideUp {
-  from { transform: translateY(2rem); }
-  to { transform: translateY(0); }
+  from {
+    transform: translateY(2rem);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 /* Fade + slide up — for non-LCP elements (text, etc.) */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(1rem); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-slide-up {
@@ -112,4 +122,35 @@ body {
 :root:not([data-theme]) .theme-icon-system {
   opacity: 1;
   transform: rotate(0deg) scale(1);
+}
+
+/*
+  Reduced motion.
+
+  Almost every animation here is decorative: the waving hand loops forever, and
+  each page reveals its content through staggered opacity/transform transitions
+  driven by IntersectionObserver. Collapsing the durations rather than removing
+  the rules keeps all of that behaviour intact — elements still get their
+  "revealed" classes and still end up visible, they just arrive instantly.
+
+  The delays have to go too, or a reader who asked for no motion still waits out
+  a 900ms stagger before the filter panel appears.
+
+  This does not cover `window.scrollTo({ behavior: 'smooth' })`, which ignores
+  the CSS property; the scroll-to-top button checks the media query itself.
+*/
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
 }

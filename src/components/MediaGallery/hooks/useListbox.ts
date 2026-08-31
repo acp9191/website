@@ -14,14 +14,10 @@ export type FilterValue = string | number;
 export function useListbox({
   isOpen,
   setIsOpen,
-  options,
-  selectedValue,
   onSelect,
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  options: FilterValue[];
-  selectedValue: FilterValue;
   onSelect: (value: FilterValue) => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -48,13 +44,23 @@ export function useListbox({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen, setIsOpen]);
 
-  // Move focus into the list when it opens, onto the current selection
+  /*
+    Move focus into the list when it opens, onto the current selection.
+
+    Which option is selected is read back from the rendered `aria-selected`
+    rather than taken as an argument. Callers build `options` inline
+    (`['All', ...allGenres]`), so it was a new array identity on every render of
+    the gallery — and as an effect dependency that re-ran this on renders that
+    had nothing to do with opening. Anything re-rendering the gallery while a
+    dropdown was open, such as the scroll position crossing the scroll-to-top
+    threshold, snatched focus back from whatever option the user had arrowed to.
+  */
   useEffect(() => {
     if (!isOpen) return;
     const list = items();
-    const selectedIndex = options.findIndex((o) => o === selectedValue);
-    list[selectedIndex >= 0 ? selectedIndex : 0]?.focus();
-  }, [isOpen, items, options, selectedValue]);
+    const selected = list.find((option) => option.getAttribute('aria-selected') === 'true');
+    (selected ?? list[0])?.focus();
+  }, [isOpen, items]);
 
   const close = useCallback(
     (returnFocus = true) => {

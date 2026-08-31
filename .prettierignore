@@ -1,0 +1,13 @@
+# Generated or tool-owned. Reformatting these only produces a diff that the
+# tool reintroduces the next time it runs — which, with `format:check` in CI,
+# means a red build nobody caused.
+.next/
+node_modules/
+next-env.d.ts
+package-lock.json
+public/sw.js
+public/sw.js.map
+public/workbox-*.js
+
+# Rewritten by `next dev` (see the note at the bottom of the file).
+CLAUDE.md

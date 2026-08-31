@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import { AnimatedCounter } from '../AnimatedCounter';
 import FilterDropdown, { FilterValue } from './FilterDropdown';
-import { MediaItem, FilterConfig, FilterState } from './types';
+import { MediaItem, FilterConfig, FilterState, Translate } from './types';
 
 interface DesktopFiltersProps {
   filterConfig: FilterConfig;
@@ -14,7 +14,10 @@ interface DesktopFiltersProps {
     hasActiveFilters: boolean;
   };
   filtered: MediaItem[];
-  t: (key: string, values?: Record<string, string | number>) => string;
+  /** Translator for the gallery's own namespace (Music / Movies / Books). */
+  t: Translate;
+  /** Translator for the shared `Gallery` namespace. */
+  tGallery: Translate;
 }
 
 export function DesktopFilters({
@@ -23,6 +26,7 @@ export function DesktopFilters({
   filterData,
   filtered,
   t,
+  tGallery,
 }: DesktopFiltersProps) {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [sidebarSticky, setSidebarSticky] = useState(false);
@@ -30,7 +34,6 @@ export function DesktopFilters({
   const [subtitleDropdownOpen, setSubtitleDropdownOpen] = useState(false);
   const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
 
-  const sidebarRef = useRef<HTMLDivElement>(null);
   const sidebarSentinelRef = useRef<HTMLDivElement>(null);
   const sidebarVisibilityRef = useRef<HTMLDivElement>(null);
 
@@ -93,7 +96,6 @@ export function DesktopFilters({
       <div ref={sidebarSentinelRef} className="h-0" />
 
       <div
-        ref={sidebarRef}
         className={clsx('w-72 transition-all duration-300 ease-out', {
           'sticky top-20': sidebarSticky,
           relative: !sidebarSticky,
@@ -145,8 +147,8 @@ export function DesktopFilters({
           <div className="space-y-4">
             {/* Filter Dropdowns */}
             <FilterDropdown
-              label={t(filterConfig.categoryLabel)}
-              ariaLabel={t('filterBy', { label: t(filterConfig.categoryLabel) })}
+              label={tGallery('genre')}
+              ariaLabel={tGallery('filterBy', { label: tGallery('genre') })}
               allLabel={t('all')}
               selectedValue={filterState.selectedCategory}
               options={['All', ...filterData.allCategories]}
@@ -159,7 +161,7 @@ export function DesktopFilters({
 
             <FilterDropdown
               label={t(filterConfig.subtitleLabel)}
-              ariaLabel={t('filterBy', { label: t(filterConfig.subtitleLabel) })}
+              ariaLabel={tGallery('filterBy', { label: t(filterConfig.subtitleLabel) })}
               allLabel={t('all')}
               selectedValue={filterState.selectedSubtitle}
               options={['All', ...filterData.allSubtitles]}
@@ -171,8 +173,8 @@ export function DesktopFilters({
             />
 
             <FilterDropdown
-              label={t(filterConfig.yearLabel)}
-              ariaLabel={t('filterBy', { label: t(filterConfig.yearLabel) })}
+              label={tGallery('year')}
+              ariaLabel={tGallery('filterBy', { label: tGallery('year') })}
               allLabel={t('all')}
               selectedValue={filterState.selectedYear}
               options={['All', ...filterData.allYears]}
@@ -223,7 +225,7 @@ export function DesktopFilters({
                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                   />
                 </svg>
-                <span>{t(filterConfig.resetLabel)}</span>
+                <span>{tGallery('reset')}</span>
               </button>
             </div>
           </div>

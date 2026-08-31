@@ -1,4 +1,5 @@
-import { MediaItem, FilterConfig, FilterState } from './types';
+import { useMemo } from 'react';
+import { MediaItem, FilterConfig, FilterState, Translate } from './types';
 import { DesktopFilters } from './DesktopFilters';
 import { MobileFilters } from './MobileFilters';
 
@@ -7,7 +8,10 @@ interface MediaGalleryFiltersProps {
   filterConfig: FilterConfig;
   filterState: FilterState;
   filtered: MediaItem[];
-  t: (key: string, values?: Record<string, string | number>) => string;
+  /** Translator for the gallery's own namespace (Music / Movies / Books). */
+  t: Translate;
+  /** Translator for the shared `Gallery` namespace. */
+  tGallery: Translate;
 }
 
 export function MediaGalleryFilters({
@@ -16,15 +20,22 @@ export function MediaGalleryFilters({
   filterState,
   filtered,
   t,
+  tGallery,
 }: MediaGalleryFiltersProps) {
-  const allCategories = Array.from(new Set(items.flatMap((item) => item.categories))).sort();
-  const allSubtitles = Array.from(new Set(items.map((item) => item.subtitle))).sort();
-  const allYears = Array.from(new Set(items.map((item) => item.year))).sort((a, b) => b - a);
+  // The option lists depend only on the full item set, never on the current
+  // selection, so they should not be rebuilt when a filter changes — let alone
+  // on the scroll-driven re-renders that reach this component from the gallery.
+  const options = useMemo(
+    () => ({
+      allCategories: Array.from(new Set(items.flatMap((item) => item.categories))).sort(),
+      allSubtitles: Array.from(new Set(items.map((item) => item.subtitle))).sort(),
+      allYears: Array.from(new Set(items.map((item) => item.year))).sort((a, b) => b - a),
+    }),
+    [items]
+  );
 
   const filterData = {
-    allCategories,
-    allSubtitles,
-    allYears,
+    ...options,
     hasActiveFilters:
       filterState.selectedCategory !== 'All' ||
       filterState.selectedSubtitle !== 'All' ||
@@ -39,6 +50,7 @@ export function MediaGalleryFilters({
         filterData={filterData}
         filtered={filtered}
         t={t}
+        tGallery={tGallery}
       />
       <MobileFilters
         filterConfig={filterConfig}
@@ -46,6 +58,7 @@ export function MediaGalleryFilters({
         filterData={filterData}
         filtered={filtered}
         t={t}
+        tGallery={tGallery}
       />
     </>
   );

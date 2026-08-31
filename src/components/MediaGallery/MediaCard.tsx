@@ -9,8 +9,20 @@ interface MediaCardProps {
   priority?: boolean;
 }
 
-export default function MediaCard({ item, filterConfig, priority = false }: MediaCardProps) {
+/*
+  Width of the source handed to Next's image optimizer — not what any browser
+  downloads.
 
+  A cover occupies at most a full phone screen (~430 CSS px) or a ~400px card
+  on desktop, which is ~1290px of pixels on a 3x display. The previous 600px
+  source silently capped album art below that: Next downscales from the source
+  but never upscales past it, so every retina screen got a soft image. Oversized
+  is cheap here — the extra bytes move Cloudinary to optimizer once, server
+  side, and the result is cached for a year.
+*/
+const COVER_SOURCE_WIDTH = 1280;
+
+export default function MediaCard({ item, filterConfig, priority = false }: MediaCardProps) {
   // Get aspect ratio classes based on config
   const getAspectRatioClasses = () => {
     switch (filterConfig.aspectRatio) {
@@ -25,33 +37,29 @@ export default function MediaCard({ item, filterConfig, priority = false }: Medi
     }
   };
 
-  // Optimize the image URL with Cloudinary transformations
-  // For fill images (grid items), specify a reasonable max width based on expected display size
-  // For auto aspect ratio images, specify width to optimize file size
-  const getOptimizedWidth = () => {
-    if (filterConfig.aspectRatio === 'auto') {
-      return 800; // Larger width for better quality on auto images
-    }
-    // For grid items, max width is ~33vw on desktop, so ~600px is reasonable
-    // This optimizes file size while maintaining quality
-    return 600;
-  };
-
   const optimizedImageUrl = getOptimizedImageUrl(
     item.cover,
-    getOptimizedWidth(),
+    COVER_SOURCE_WIDTH,
     undefined // Never force height to maintain aspect ratio
   );
 
   // Generate blur placeholder
   const blurDataURL = getBlurPlaceholderUrl(item.cover);
 
-  // Calculate responsive sizes based on aspect ratio
+  /*
+    What the slot actually measures, so the browser stops picking srcset
+    candidates far larger than it can use.
+
+    The grid is one column, then two at `sm`, then three at `lg`. From `lg` up
+    those three columns share a `max-w-7xl` row with a fixed 288px sidebar, so
+    the column stops growing at roughly 320px however wide the viewport gets —
+    the old `33vw` claimed 630px of it on a 1920px display.
+  */
   const getSizes = () => {
     if (filterConfig.aspectRatio === 'auto') {
       return '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px';
     }
-    return '(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw';
+    return '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 320px';
   };
 
   return (
