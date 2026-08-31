@@ -10,23 +10,7 @@ import {
   ComputerDesktopIcon,
 } from '@heroicons/react/24/outline';
 import LocaleSwitcher from './LocaleSwitcher';
-
-type Theme = 'light' | 'dark' | 'system';
-
-/**
- * Mirrors the validation in the inline head script: anything that is not a
- * recognised preference is treated as 'system'.
- *
- * Without it the two disagreed. The script normalises before writing
- * `data-theme`, so a stale or hand-edited `localStorage.theme` left the
- * attribute — and therefore the icon — on 'system' while React's state held the
- * junk value, and the first click advanced from the wrong point in the cycle.
- */
-function readStoredTheme(): Theme {
-  if (typeof window === 'undefined') return 'system';
-  const saved = localStorage.getItem('theme');
-  return saved === 'dark' || saved === 'light' || saved === 'system' ? saved : 'system';
-}
+import { type Theme, readStoredTheme, storeTheme, applyTheme } from '@/src/lib/theme';
 
 /**
  * Renders identically on server and client — which icon is visible is decided in
@@ -134,18 +118,8 @@ export default function Header() {
     }
 
     setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-
-    // Keep the attribute in sync so the CSS shows the matching icon.
-    document.documentElement.dataset.theme = newTheme;
-
-    // Apply the actual dark mode based on the new theme
-    if (newTheme === 'system') {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      document.documentElement.classList.toggle('dark', prefersDark);
-    } else {
-      document.documentElement.classList.toggle('dark', newTheme === 'dark');
-    }
+    storeTheme(newTheme);
+    applyTheme(newTheme);
   };
 
   // Close menu on resize
