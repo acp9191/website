@@ -11,8 +11,10 @@
  * 'Hip Hop' are both valid strings, they just split one genre into two entries
  * in the gallery filter.
  */
+import { execFile } from 'node:child_process';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { promisify } from 'node:util';
 import matter from 'gray-matter';
 
 const COLLECTIONS = {
@@ -40,6 +42,8 @@ for (const [collection, { creator, image }] of Object.entries(COLLECTIONS)) {
 
   // genre key -> the set of spellings seen for it in this collection
   const genreSpellings = new Map();
+  // title -> the files claiming it, so one entry cannot render twice
+  const titles = new Map();
 
   for (const file of files) {
     const where = `content/${collection}/${file}`;
@@ -58,6 +62,11 @@ for (const [collection, { creator, image }] of Object.entries(COLLECTIONS)) {
           `${where}: unknown field '${key}' (expected one of ${[...allowed].join(', ')})`
         );
       }
+    }
+
+    if (typeof data.title === 'string') {
+      if (!titles.has(data.title)) titles.set(data.title, []);
+      titles.get(data.title).push(where);
     }
 
     if (data.year !== undefined && !Number.isInteger(data.year)) {
@@ -84,6 +93,14 @@ for (const [collection, { creator, image }] of Object.entries(COLLECTIONS)) {
     if (content.trim() === '') errors.push(`${where}: empty body (used as the description)`);
   }
 
+  for (const [title, files] of titles) {
+    if (files.length > 1) {
+      errors.push(
+        `${collection}: '${title}' is defined in ${files.length} files — ${files.join(', ')}`
+      );
+    }
+  }
+
   for (const spellings of genreSpellings.values()) {
     if (spellings.size > 1) {
       warnings.push(
@@ -93,6 +110,35 @@ for (const [collection, { creator, image }] of Object.entries(COLLECTIONS)) {
       );
     }
   }
+}
+
+/*
+  Paths that differ only in case.
+
+  macOS is case-insensitive by default, so a rename like `thereWIllBeBlood.md`
+  to `thereWillBeBlood.md` leaves one file on disk while git happily tracks
+  both. Nothing local notices; on the case-sensitive filesystem every Linux
+  build uses, both files exist and the entry renders twice.
+
+  This reads the index rather than the working tree, because the working tree
+  is exactly what cannot show the problem on the machine most likely to create
+  it.
+*/
+try {
+  const { stdout } = await promisify(execFile)('git', ['ls-files', '--', 'content']);
+  const seen = new Map();
+  for (const file of stdout.split('\n').filter(Boolean)) {
+    const key = file.toLowerCase();
+    if (!seen.has(key)) seen.set(key, []);
+    seen.get(key).push(file);
+  }
+  for (const paths of seen.values()) {
+    if (paths.length > 1) {
+      errors.push(`git tracks paths differing only in case: ${paths.join(' and ')}`);
+    }
+  }
+} catch {
+  // Not a git checkout, or git is unavailable — the other checks still stand.
 }
 
 for (const warning of warnings) console.warn(`warning  ${warning}`);
