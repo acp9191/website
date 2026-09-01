@@ -70,16 +70,15 @@ export function getOptimizedImageUrl(
 /**
  * A fixed inline blur placeholder, identical for every image.
  *
- * This is deliberately not derived from the source image: a shared gradient
- * costs no extra request and loads instantly. The parameter is kept so call
- * sites read naturally alongside `getOptimizedImageUrl`, but it is unused.
+ * Deliberately not derived from the source image: a shared gradient costs no
+ * extra request and loads instantly. It used to be returned by a function that
+ * took the image URL and ignored it, which made every call site look like it
+ * was computing something per-image.
+ *
+ * A 10x10 gray gradient, base64 so it needs no network request.
  */
-export function getBlurPlaceholderUrl(_cloudinaryUrl?: string): string {
-  // Return an inline base64 SVG placeholder that loads instantly
-  // This is a 10x10 gray gradient that creates a subtle blur effect
-  // Using base64 ensures it loads immediately without any network request
-  return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJhIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZTBlNGU5O3N0b3Atb3BhY2l0eToxIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojYjJiN2JkO3N0b3Atb3BhY2l0eToxIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSJ1cmwoI2EpIi8+PC9zdmc+';
-}
+export const BLUR_PLACEHOLDER =
+  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJhIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZTBlNGU5O3N0b3Atb3BhY2l0eToxIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojYjJiN2JkO3N0b3Atb3BhY2l0eToxIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSJ1cmwoI2EpIi8+PC9zdmc+';
 
 /**
  * The one headshot used on the home and about pages.

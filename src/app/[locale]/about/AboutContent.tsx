@@ -1,45 +1,16 @@
 'use client';
 import { useTranslations } from 'next-intl';
-import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import clsx from 'clsx';
+import { useRevealOnScroll } from '@/src/hooks/useRevealOnScroll';
 import {
   getOptimizedImageUrl,
-  getBlurPlaceholderUrl,
+  BLUR_PLACEHOLDER,
   HEADSHOT_URL,
 } from '@/src/utils/imageOptimization';
 export default function AboutContent() {
   const t = useTranslations('About');
-  const [isVisible, setIsVisible] = useState(false);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  // Set up Intersection Observer for fade-in animation
-  useEffect(() => {
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-          }
-        });
-      },
-      {
-        threshold: 0.1,
-        rootMargin: '50px',
-      }
-    );
-
-    if (contentRef.current) {
-      observerRef.current.observe(contentRef.current);
-    }
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, []);
+  const { visible: isVisible, ref: contentRef } = useRevealOnScroll<HTMLElement>();
 
   return (
     <section
@@ -67,7 +38,7 @@ export default function AboutContent() {
           className="rounded-xl shadow-md w-full h-auto"
           priority={true}
           placeholder="blur"
-          blurDataURL={getBlurPlaceholderUrl(HEADSHOT_URL)}
+          blurDataURL={BLUR_PLACEHOLDER}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
         />
       </div>

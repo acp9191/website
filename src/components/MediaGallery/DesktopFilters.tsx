@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
+import { useRevealOnScroll } from '@/src/hooks/useRevealOnScroll';
 import { AnimatedCounter } from '../AnimatedCounter';
 import FilterDropdown, { FilterValue } from './FilterDropdown';
 import { MediaItem, FilterConfig, FilterState, Translate } from './types';
@@ -28,29 +29,24 @@ export function DesktopFilters({
   t,
   tGallery,
 }: DesktopFiltersProps) {
-  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const { visible: sidebarVisible, ref: sidebarVisibilityRef } = useRevealOnScroll();
   const [sidebarSticky, setSidebarSticky] = useState(false);
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [subtitleDropdownOpen, setSubtitleDropdownOpen] = useState(false);
   const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
 
   const sidebarSentinelRef = useRef<HTMLDivElement>(null);
-  const sidebarVisibilityRef = useRef<HTMLDivElement>(null);
 
-  // Set up intersection observers for sidebar
+  /*
+    The sticky sentinel is a genuinely different observer from the reveal one:
+    it toggles both ways as the sentinel crosses the header offset, rather than
+    latching once, so it stays here rather than moving into useRevealOnScroll.
+  */
   useEffect(() => {
-    const sidebarVisibilityObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setSidebarVisible(true);
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: '50px' }
-    );
+    const sentinel = sidebarSentinelRef.current;
+    if (!sentinel) return;
 
-    const sidebarStickyObserver = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           setSidebarSticky(!entry.isIntersecting);
@@ -59,17 +55,8 @@ export function DesktopFilters({
       { threshold: 0, rootMargin: '-80px 0px 0px 0px' }
     );
 
-    if (sidebarVisibilityRef.current) {
-      sidebarVisibilityObserver.observe(sidebarVisibilityRef.current);
-    }
-    if (sidebarSentinelRef.current) {
-      sidebarStickyObserver.observe(sidebarSentinelRef.current);
-    }
-
-    return () => {
-      sidebarVisibilityObserver.disconnect();
-      sidebarStickyObserver.disconnect();
-    };
+    observer.observe(sentinel);
+    return () => observer.disconnect();
   }, []);
 
   /*

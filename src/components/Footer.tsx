@@ -2,6 +2,39 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
+import clsx from 'clsx';
+
+/**
+ * `invertInDark` is for the monochrome marks only — inverting a brand colour
+ * (Spotify green, Instagram's gradient, the LinkedIn blue) would misrender it.
+ */
+const SOCIAL_LINKS = [
+  {
+    href: 'https://github.com/acp9191',
+    label: 'GitHub',
+    icon: '/icons/github.svg',
+    invertInDark: true,
+  },
+  {
+    href: 'https://open.spotify.com/user/acp9191',
+    label: 'Spotify',
+    icon: '/icons/spotify.svg',
+    invertInDark: false,
+  },
+  {
+    href: 'https://linkedin.com/in/acp',
+    label: 'LinkedIn',
+    icon: '/icons/linkedin.png',
+    invertInDark: false,
+  },
+  {
+    href: 'https://www.instagram.com/acp.jpg',
+    label: 'Instagram',
+    icon: '/icons/instagram.svg',
+    invertInDark: false,
+  },
+  { href: 'https://x.com/acp9191', label: 'X', icon: '/icons/x.svg', invertInDark: true },
+] as const;
 
 /**
  * One of the three product links inside the "built with" sentence.
@@ -28,81 +61,24 @@ export default function Footer() {
   return (
     <footer className="text-center text-sm text-gray-500 dark:text-gray-400 mt-8 space-y-4 py-3">
       <div className="flex justify-center gap-4 mb-4">
-        <a
-          href="https://github.com/acp9191"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="GitHub"
-          className="hover:opacity-75 transition-opacity"
-        >
-          <Image
-            src="/icons/github.svg"
-            alt="GitHub"
-            width={20}
-            height={20}
-            className="w-5 h-5 dark:invert"
-          />
-        </a>
-        <a
-          href="https://open.spotify.com/user/acp9191"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Spotify"
-          className="hover:opacity-75 transition-opacity"
-        >
-          <Image
-            src="/icons/spotify.svg"
-            alt="Spotify"
-            width={20}
-            height={20}
-            className="w-5 h-5"
-          />
-        </a>
-        <a
-          href="https://linkedin.com/in/acp"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="LinkedIn"
-          className="hover:opacity-75 transition-opacity"
-        >
-          <Image
-            src="/icons/linkedin.png"
-            alt="LinkedIn"
-            width={20}
-            height={20}
-            className="w-5 h-5"
-          />
-        </a>
-        <a
-          href="https://www.instagram.com/acp.jpg"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Instagram"
-          className="hover:opacity-75 transition-opacity"
-        >
-          <Image
-            src="/icons/instagram.svg"
-            alt="Instagram"
-            width={20}
-            height={20}
-            className="w-5 h-5"
-          />
-        </a>
-        <a
-          href="https://x.com/acp9191"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="X"
-          className="hover:opacity-75 transition-opacity"
-        >
-          <Image
-            src="/icons/x.svg"
-            alt="X"
-            width={20}
-            height={20}
-            className="w-5 h-5 dark:invert"
-          />
-        </a>
+        {SOCIAL_LINKS.map(({ href, label, icon, invertInDark }) => (
+          <a
+            key={label}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={label}
+            className="hover:opacity-75 transition-opacity"
+          >
+            <Image
+              src={icon}
+              alt={label}
+              width={20}
+              height={20}
+              className={clsx('w-5 h-5', invertInDark && 'dark:invert')}
+            />
+          </a>
+        ))}
       </div>
 
       <div className="space-y-2">

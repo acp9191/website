@@ -15,6 +15,11 @@ npm run format:check  # Prettier, failing instead of writing
 npm run check:content # Validate content frontmatter and genre spellings
 ```
 
+`postbuild` runs `scripts/check-sw.mjs`, which fails the build if no service
+worker was emitted. `@serwist/next` only runs under webpack; a bare `next build`
+uses Turbopack, skips it, and still exits 0 — so the `--webpack` flag is
+load-bearing and this is what makes removing it fail loudly.
+
 `build` passes `--webpack` on purpose: Serwist's service-worker compilation does
 not run under Turbopack. `next dev` still uses Turbopack.
 
@@ -69,6 +74,8 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
   - `useMediaGalleryFilters`: Filter state management
   - `useIntersectionObserver`: Header visibility detection
   - `useListbox`: Keyboard, focus and dismissal behaviour for the filter dropdowns
+- `src/hooks/useRevealOnScroll.ts` is the single reveal-on-scroll observer, used
+  by the about page, the gallery header and both filter layouts
 
 **Theme System**
 
@@ -81,6 +88,19 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 
 - All media covers hosted on Cloudinary (`res.cloudinary.com/acp`)
 - Next.js Image component configured for Cloudinary domain in `next.config.ts`
+- `getOptimizedImageUrl` returns the *source* handed to Next's optimizer, not
+  what the browser downloads; `deviceSizes` is capped at that source width so
+  the srcset carries no candidates that resolve to a smaller image
+
+**Fonts**
+
+- Inter is loaded by `next/font` in the root layout, which defines
+  `--font-inter` on `<html>` as `"Inter", "Inter Fallback"` — the second face
+  carries metric overrides that prevent layout shift on swap
+- `globals.css` feeds that variable to Tailwind's `--font-sans` via
+  `@theme inline`. Never redeclare `--font-inter` in CSS: `:root` and
+  next/font's class have equal specificity, so doing so overwrites the
+  metric-matched fallback and reintroduces the shift
 
 **PWA Architecture**
 
@@ -132,10 +152,23 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 ### Build Notes
 
 - TypeScript strict mode is enabled (`tsconfig.json`)
+- `SITE_URL` in `src/lib/metadata.ts` must match the host that actually serves
+  the site (currently `www`); the apex redirects to it, and pointing canonicals
+  at a redirecting host is what this constant exists to avoid
+- `npm run typecheck` includes `.next/types`, so a stale build directory can
+  report errors for deleted routes — `rm -rf .next` if that happens
 - Prettier owns formatting; `.prettierignore` excludes generated and tool-owned
   files (including this one, which `next dev` rewrites)
 - Service worker generated in `public/sw.js` during production build
-- Sitemap generated at `/sitemap.xml` via route handler in `src/app/sitemap.xml/route.ts`
+- `sitemap.xml`, `robots.txt`, `manifest.webmanifest` and the icons are all
+  metadata routes/files under `src/app/`, not hand-written files in `public/`:
+  - `src/app/sitemap.ts` — returns `MetadataRoute.Sitemap`; Next renders the XML
+    including the `xhtml:link` hreflang alternates
+  - `src/app/robots.ts`, `src/app/manifest.ts` — typed against their specs
+  - `src/app/favicon.ico`, `icon.png`, `apple-icon.png` — the file convention,
+    which is also what makes a root `/favicon.ico` request resolve
+  - `theme-color` and the apple-web-app meta tags come from the `viewport` and
+    `metadata.appleWebApp` exports in `src/app/[locale]/layout.tsx`
 - PWA features only work in production mode (`npm start`), not development (`npm run dev`)
 
 ### Testing PWA

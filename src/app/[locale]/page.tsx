@@ -2,7 +2,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 import {
   getOptimizedImageUrl,
-  getBlurPlaceholderUrl,
+  BLUR_PLACEHOLDER,
   HEADSHOT_URL,
 } from '@/src/utils/imageOptimization';
 
@@ -26,7 +26,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
           className="rounded-xl shadow-md w-full h-auto"
           priority={true}
           placeholder="blur"
-          blurDataURL={getBlurPlaceholderUrl(HEADSHOT_URL)}
+          blurDataURL={BLUR_PLACEHOLDER}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
         />
       </div>
