@@ -22,16 +22,21 @@ export type Frontmatter = {
 };
 
 export type ContentEntry = Frontmatter & {
+  /** Stable identifier taken directly from the markdown filename. */
+  slug: string;
   /** The markdown body, used as the card description. */
   description: string;
 };
+
+export const CONTENT_COLLECTIONS = ['albums', 'books', 'movies'] as const;
+export type ContentCollection = (typeof CONTENT_COLLECTIONS)[number];
 
 /**
  * Reads every markdown file in a content directory and parses its frontmatter.
  * Entries are sorted by title so the grid order does not depend on the
  * filesystem's readdir order.
  */
-export async function loadContent(collection: string): Promise<ContentEntry[]> {
+export async function loadContent(collection: ContentCollection): Promise<ContentEntry[]> {
   const dir = path.join(process.cwd(), 'content', collection);
   const files = await fs.readdir(dir);
 
@@ -41,9 +46,20 @@ export async function loadContent(collection: string): Promise<ContentEntry[]> {
       .map(async (filename) => {
         const fileContent = await fs.readFile(path.join(dir, filename), 'utf-8');
         const { data, content } = matter(fileContent);
-        return { ...(data as Frontmatter), description: content };
+        return {
+          ...(data as Frontmatter),
+          slug: path.basename(filename, path.extname(filename)),
+          description: content.trim(),
+        };
       })
   );
 
   return entries.sort((a, b) => a.title.localeCompare(b.title));
+}
+
+export async function loadContentEntry(
+  collection: ContentCollection,
+  slug: string
+): Promise<ContentEntry | undefined> {
+  return (await loadContent(collection)).find((entry) => entry.slug === slug);
 }

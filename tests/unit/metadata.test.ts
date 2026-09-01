@@ -6,6 +6,7 @@ import { SITE_URL, localePath, alternatesFor } from '@/src/lib/metadata';
 import sitemap from '@/src/app/sitemap';
 import robots from '@/src/app/robots';
 import manifest from '@/src/app/manifest';
+import { loadContent } from '@/src/lib/content';
 
 describe('SITE_URL', () => {
   it('is an absolute https origin with no trailing slash and no path', () => {
@@ -61,12 +62,15 @@ describe('alternatesFor', () => {
 describe('sitemap', () => {
   const entries = sitemap();
 
-  it('covers every path in every locale', () => {
-    expect(entries).toHaveLength(5 * routing.locales.length);
+  it('covers every static and media detail path in every locale', async () => {
+    const mediaCount = (
+      await Promise.all([loadContent('albums'), loadContent('books'), loadContent('movies')])
+    ).reduce((total, collection) => total + collection.length, 0);
+    expect(await entries).toHaveLength((5 + mediaCount) * routing.locales.length);
   });
 
-  it('emits absolute URLs on SITE_URL only', () => {
-    for (const { url } of entries) expect(url.startsWith(SITE_URL)).toBe(true);
+  it('emits absolute URLs on SITE_URL only', async () => {
+    for (const { url } of await entries) expect(url.startsWith(SITE_URL)).toBe(true);
   });
 
   /*
@@ -74,23 +78,23 @@ describe('sitemap', () => {
     a canonical of '/' against metadataBase. Advertising it with a trailing
     slash is the same class of mistake as advertising a URL that redirects.
   */
-  it('has no trailing slashes and no doubled separators', () => {
-    for (const { url } of entries) {
+  it('has no trailing slashes and no doubled separators', async () => {
+    for (const { url } of await entries) {
       expect(url, url).not.toMatch(/\/$/);
       expect(url.replace(SITE_URL, ''), url).not.toMatch(/\/\//);
     }
   });
 
-  it('gives every entry a complete hreflang set', () => {
-    for (const entry of entries) {
+  it('gives every entry a complete hreflang set', async () => {
+    for (const entry of await entries) {
       expect(Object.keys(entry.alternates?.languages ?? {}).sort()).toEqual(
         [...routing.locales, 'x-default'].sort()
       );
     }
   });
 
-  it('lists no URL twice', () => {
-    const urls = entries.map((e) => e.url);
+  it('lists no URL twice', async () => {
+    const urls = (await entries).map((e) => e.url);
     expect(new Set(urls).size).toBe(urls.length);
   });
 });

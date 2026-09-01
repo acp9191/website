@@ -1,9 +1,11 @@
 // app/favorites/books/page.tsx
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { loadContent } from '@/src/lib/content';
 import BookGallery from './BookGallery';
 import type { Metadata } from 'next';
 import { buildMetadata } from '@/src/lib/metadata';
+import JsonLd from '@/src/components/JsonLd';
+import { collectionJsonLd } from '@/src/lib/structuredData';
 
 export async function generateMetadata({
   params,
@@ -19,6 +21,20 @@ export default async function BookPage({ params }: { params: Promise<{ locale: s
   setRequestLocale(locale);
 
   const books = await loadContent('books');
+  const t = await getTranslations({ locale, namespace: 'Books' });
 
-  return <BookGallery books={books} />;
+  return (
+    <>
+      <JsonLd
+        data={collectionJsonLd({
+          section: 'books',
+          entries: books,
+          locale,
+          name: t('title'),
+          description: t('subtitle'),
+        })}
+      />
+      <BookGallery books={books} />
+    </>
+  );
 }

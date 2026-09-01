@@ -1,6 +1,7 @@
 import { expect, request as apiRequest, test } from '@playwright/test';
 import { SITE_URL } from '@/src/lib/metadata';
 import { routing } from '@/src/i18n/routing';
+import { loadContent } from '@/src/lib/content';
 
 const PAGES = ['/', '/about', '/favorites/music', '/favorites/books', '/favorites/movies'];
 
@@ -56,20 +57,96 @@ for (const path of PAGES) {
 }
 
 test('every sitemap URL resolves without a redirect', async ({ request }) => {
+  test.setTimeout(60_000);
   const xml = await (await request.get('/sitemap.xml')).text();
   const locs = Array.from(xml.matchAll(/<loc>([^<]+)<\/loc>/g), (m) => m[1]);
+  const mediaCount = (
+    await Promise.all([loadContent('albums'), loadContent('books'), loadContent('movies')])
+  ).reduce((total, collection) => total + collection.length, 0);
 
-  expect(locs.length).toBe(PAGES.length * routing.locales.length);
+  expect(locs.length).toBe((PAGES.length + mediaCount) * routing.locales.length);
 
+  const pathsByLocale = Object.fromEntries(
+    routing.locales.map((locale) => [locale, [] as string[]])
+  );
   for (const loc of locs) {
     expect(loc.startsWith(SITE_URL), `${loc} should sit on SITE_URL`).toBe(true);
-    expect((await fetchFresh(pathOf(loc))).status, `${loc} should resolve directly`).toBe(200);
+    const path = pathOf(loc);
+    const locale = routing.locales.find(
+      (candidate) =>
+        candidate !== routing.defaultLocale &&
+        (path === `/${candidate}` || path.startsWith(`/${candidate}/`))
+    );
+    pathsByLocale[locale ?? routing.defaultLocale].push(path);
   }
+
+  // One cookie jar per locale is enough isolation: every URL in a group agrees
+  // with the NEXT_LOCALE preference set by the first request in that group.
+  await Promise.all(
+    Object.values(pathsByLocale).map(async (paths) => {
+      const context = await apiRequest.newContext({ baseURL: 'http://localhost:3000' });
+      try {
+        for (const path of paths) {
+          expect(
+            (await context.get(path, { maxRedirects: 0 })).status(),
+            `${path} should resolve directly`
+          ).toBe(200);
+        }
+      } finally {
+        await context.dispose();
+      }
+    })
+  );
 });
 
 test('robots points at the sitemap on the same origin the pages claim', async ({ request }) => {
   const body = await (await request.get('/robots.txt')).text();
   expect(body).toContain(`Sitemap: ${SITE_URL}/sitemap.xml`);
+});
+
+test('a localized detail page aligns its canonical and JSON-LD identity', async ({ page }) => {
+  const path = '/es/favorites/music/swimming';
+  const url = `${SITE_URL}${path}`;
+  await page.goto(path);
+
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', url);
+  const scripts = await page.locator('script[type="application/ld+json"]').allTextContents();
+  const data = scripts
+    .map((script) => JSON.parse(script))
+    .find((value) => value['@type'] === 'MusicAlbum');
+  expect(data).toMatchObject({
+    '@type': 'MusicAlbum',
+    '@id': `${url}#item`,
+    url,
+    inLanguage: 'en',
+  });
+  await expect(page.locator('link[rel="alternate"][hreflang="en"]')).toHaveAttribute(
+    'href',
+    `${SITE_URL}/favorites/music/swimming`
+  );
+});
+
+test('the versioned content API returns normalized records and JSON errors', async ({
+  request,
+}) => {
+  const response = await request.get('/api/v1/content/music');
+  expect(response.status()).toBe(200);
+  expect(response.headers()['cache-control']).toContain('s-maxage=86400');
+  await expect(response.json()).resolves.toMatchObject({
+    schemaVersion: 1,
+    collection: 'music',
+    language: 'en',
+    items: expect.arrayContaining([
+      expect.objectContaining({
+        id: 'swimming',
+        url: `${SITE_URL}/favorites/music/swimming`,
+      }),
+    ]),
+  });
+
+  const missing = await request.get('/api/v1/content/games');
+  expect(missing.status()).toBe(404);
+  expect(await missing.json()).toEqual({ error: 'Collection not found' });
 });
 
 test('the head carries the icons and PWA tags Next generates', async ({ page }) => {

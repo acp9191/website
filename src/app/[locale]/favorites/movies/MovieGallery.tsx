@@ -9,6 +9,7 @@ export default function MovieGallery({ movies }: { movies: ContentEntry[] }) {
   const t = useTranslations('Movies');
 
   const mediaItems: MediaItem[] = movies.map((movie) => ({
+    href: `/favorites/movies/${movie.slug}`,
     title: movie.title,
     subtitle: movie.director ?? '',
     // Movies name their image `poster`; albums and books use `cover`.

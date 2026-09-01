@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { routing } from '@/src/i18n/routing';
+import type { ContentEntry } from '@/src/lib/content';
 
 /*
   The host that actually serves the site.
@@ -100,6 +101,43 @@ export async function buildMetadata({
       description,
       creator: '@acp9191',
       images: [`${SITE_URL}/og-image.jpg`],
+    },
+  };
+}
+
+export function buildMediaMetadata({
+  locale,
+  entry,
+  path,
+  image,
+}: {
+  locale: string;
+  entry: ContentEntry;
+  path: string;
+  image: string;
+}): Metadata {
+  const url = `${SITE_URL}${localePath(locale, path)}`;
+  const description = entry.description.slice(0, 160);
+
+  return {
+    title: entry.title,
+    description,
+    alternates: alternatesFor(locale, path),
+    openGraph: {
+      title: `${entry.title} | ${SITE_NAME}`,
+      description,
+      url,
+      siteName: SITE_NAME,
+      images: [{ url: image, alt: entry.title }],
+      locale: OG_LOCALES[locale] ?? OG_LOCALES[routing.defaultLocale],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${entry.title} | ${SITE_NAME}`,
+      description,
+      creator: '@acp9191',
+      images: [image],
     },
   };
 }
