@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import { buildMetadata } from '@/src/lib/metadata';
 import JsonLd from '@/src/components/JsonLd';
 import { collectionJsonLd } from '@/src/lib/structuredData';
+import { parseFilterParams } from '@/src/lib/galleryFilters';
 
 export async function generateMetadata({
   params,
@@ -16,9 +17,18 @@ export async function generateMetadata({
   return buildMetadata({ locale, path: '/favorites/music', titleKey: 'music' });
 }
 
-export default async function MusicPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function MusicPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const query = await searchParams;
+  const initialParams = parseFilterParams(query, 'artist');
 
   const albums = await loadContent('albums');
   const t = await getTranslations({ locale, namespace: 'Music' });
@@ -34,7 +44,7 @@ export default async function MusicPage({ params }: { params: Promise<{ locale: 
           description: t('subtitle'),
         })}
       />
-      <MusicGallery albums={albums} />
+      <MusicGallery albums={albums} initialParams={initialParams} />
     </>
   );
 }

@@ -9,17 +9,21 @@ import { MediaGalleryGrid } from './MediaGalleryGrid';
 import { ScrollToTopButton } from './ScrollToTopButton';
 import { useMediaGalleryFilters } from './hooks/useMediaGalleryFilters';
 import { useRevealOnScroll } from '@/src/hooks/useRevealOnScroll';
+import type { MediaFilterParams } from '@/src/lib/galleryFilters';
 
 interface MediaGalleryProps {
   items: MediaItem[];
   filterConfig: FilterConfig;
   translationNamespace: string;
+  /** Filter selection carried by the page's query string (server-read). */
+  initialParams: MediaFilterParams;
 }
 
 export default function MediaGallery({
   items,
   filterConfig,
   translationNamespace,
+  initialParams,
 }: MediaGalleryProps) {
   const t = useTranslations(translationNamespace);
   // Labels shared by all three galleries live in their own namespace so they
@@ -28,7 +32,7 @@ export default function MediaGallery({
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Custom hooks
-  const filterState = useMediaGalleryFilters();
+  const filterState = useMediaGalleryFilters(initialParams, filterConfig.subtitleLabel);
   const { visible: headerVisible, ref: headerRef } = useRevealOnScroll();
 
   // Memoised because this component also re-renders on scroll, when the

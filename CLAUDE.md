@@ -71,6 +71,14 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 - Three specialized page components: `MusicGallery.tsx`, `MovieGallery.tsx`, `BookGallery.tsx`
 - Each page loads its content directory, transforms to `MediaItem[]`, and renders `MediaGallery`
 - Filtering system with three dimensions (category/genre, subtitle/artist/director/author, year); the three combine with AND
+- Filters live in the URL (`/favorites/music?genre=Neo-Soul&artist=Mac%20Miller&year=2018`),
+  so a filtered view is reproducible and bookmarkable: pages parse `searchParams`
+  for the initial selection, and `useMediaGalleryFilters` rewrites the query on
+  every change via `router.replace`. The mapping lives in one place,
+  `src/lib/galleryFilters.ts`. Only filtered-out values appear as params — there
+  is no "All" in a URL, and the sitemap lists no filter combinations. The three
+  gallery index pages are the only ones that read `searchParams`, which is what
+  makes them dynamic at request time while the `[slug]` pages stay SSG.
 - `FilterDropdown` is one component with a `variant` of `sidebar` or `bar`, used by both the desktop sidebar and the mobile filter row
 - Responsive design with separate desktop/mobile filter layouts
 - Custom hooks in `src/components/MediaGallery/hooks/`:
