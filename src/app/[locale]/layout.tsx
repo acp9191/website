@@ -8,7 +8,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/src/i18n/routing';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { SITE_NAME, SITE_URL, buildMetadata } from '@/src/lib/metadata';
 import { THEME_INIT_SCRIPT } from '@/src/lib/theme';
 import ThemeSync from '@/src/components/ThemeSync';
@@ -19,6 +19,17 @@ const inter = Inter({
   display: 'swap',
   variable: '--font-inter',
 });
+
+/**
+ * Emitted as the pair of media-scoped <meta name="theme-color"> tags that used
+ * to be written by hand in <head>.
+ */
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+  ],
+};
 
 /**
  * Site-wide defaults. Per-page titles, descriptions, canonicals and hreflang
@@ -37,6 +48,14 @@ export async function generateMetadata({
     title: {
       default: SITE_NAME,
       template: `%s | ${SITE_NAME}`,
+    },
+    manifest: '/manifest.webmanifest',
+    // Replaces the hand-written mobile-web-app-capable and
+    // apple-mobile-web-app-* meta tags.
+    appleWebApp: {
+      capable: true,
+      title: SITE_NAME,
+      statusBarStyle: 'black-translucent',
     },
     ...(await buildMetadata({ locale, path: '' })),
   };
@@ -80,15 +99,6 @@ export default async function RootLayout({
           // app hydrates, so the correct colours are painted on the first frame.
           dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
         />
-        <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png"></link>
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png"></link>
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png"></link>
-        <link rel="manifest" href="/manifest.json"></link>
-        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"></meta>
-        <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"></meta>
-        <meta name="mobile-web-app-capable" content="yes"></meta>
-        <meta name="apple-mobile-web-app-capable" content="yes"></meta>
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"></meta>
       </head>
       <body>
         {/*

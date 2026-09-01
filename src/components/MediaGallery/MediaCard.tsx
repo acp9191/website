@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import clsx from 'clsx';
 import { MediaItem, FilterConfig } from './types';
-import { getOptimizedImageUrl, getBlurPlaceholderUrl } from '@/src/utils/imageOptimization';
+import { getOptimizedImageUrl, BLUR_PLACEHOLDER } from '@/src/utils/imageOptimization';
 
 interface MediaCardProps {
   item: MediaItem;
@@ -23,19 +23,10 @@ interface MediaCardProps {
 const COVER_SOURCE_WIDTH = 1280;
 
 export default function MediaCard({ item, filterConfig, priority = false }: MediaCardProps) {
-  // Get aspect ratio classes based on config
-  const getAspectRatioClasses = () => {
-    switch (filterConfig.aspectRatio) {
-      case 'square':
-        return 'aspect-square';
-      case 'portrait':
-        return 'aspect-[3/4]'; // Common movie poster/book ratio
-      case 'auto':
-        return 'aspect-auto'; // Let the image determine the aspect ratio
-      default:
-        return 'aspect-square';
-    }
-  };
+  // Book and film art varies in proportion, so it is sized intrinsically;
+  // album art is square and fills a ratio-locked box.
+  const isAuto = filterConfig.aspectRatio === 'auto';
+  const aspectClass = filterConfig.aspectRatio === 'portrait' ? 'aspect-[3/4]' : 'aspect-square';
 
   const optimizedImageUrl = getOptimizedImageUrl(
     item.cover,
@@ -43,24 +34,17 @@ export default function MediaCard({ item, filterConfig, priority = false }: Medi
     undefined // Never force height to maintain aspect ratio
   );
 
-  // Generate blur placeholder
-  const blurDataURL = getBlurPlaceholderUrl(item.cover);
-
   /*
     What the slot actually measures, so the browser stops picking srcset
     candidates far larger than it can use.
 
     The grid is one column, then two at `sm`, then three at `lg`. From `lg` up
     those three columns share a `max-w-7xl` row with a fixed 288px sidebar, so
-    the column stops growing at roughly 320px however wide the viewport gets —
-    the old `33vw` claimed 630px of it on a 1920px display.
+    the column stops growing at roughly 320px however wide the viewport gets.
   */
-  const getSizes = () => {
-    if (filterConfig.aspectRatio === 'auto') {
-      return '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px';
-    }
-    return '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 320px';
-  };
+  const sizes = isAuto
+    ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px'
+    : '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 320px';
 
   return (
     <div className="rounded-lg bg-white dark:bg-gray-800 shadow-md transition-all duration-500 overflow-hidden flex flex-col w-full h-full">
@@ -68,35 +52,25 @@ export default function MediaCard({ item, filterConfig, priority = false }: Medi
         <div
           className={clsx(
             'relative w-full overflow-hidden rounded-md',
-            filterConfig.aspectRatio === 'auto' ? 'h-auto' : getAspectRatioClasses()
+            isAuto ? 'h-auto' : aspectClass
           )}
         >
-          {filterConfig.aspectRatio === 'auto' ? (
-            <Image
-              src={optimizedImageUrl}
-              alt={item.coverAlt}
-              width={400}
-              height={600}
-              sizes={getSizes()}
-              placeholder="blur"
-              blurDataURL={blurDataURL}
-              priority={priority}
-              loading={priority ? undefined : 'lazy'}
-              className="rounded-md w-full h-auto"
-            />
-          ) : (
-            <Image
-              src={optimizedImageUrl}
-              alt={item.coverAlt}
-              fill
-              sizes={getSizes()}
-              placeholder="blur"
-              blurDataURL={blurDataURL}
-              priority={priority}
-              loading={priority ? undefined : 'lazy'}
-              className="rounded-md object-cover"
-            />
-          )}
+          {/*
+            One <Image>, two layouts. Square covers fill a ratio-locked box;
+            book and film art keeps its own proportions, so it is sized
+            intrinsically instead. `loading` is not set: it already defaults to
+            lazy whenever `priority` is false.
+          */}
+          <Image
+            {...(isAuto ? { width: 400, height: 600 } : { fill: true })}
+            src={optimizedImageUrl}
+            alt={item.coverAlt}
+            sizes={sizes}
+            placeholder="blur"
+            blurDataURL={BLUR_PLACEHOLDER}
+            priority={priority}
+            className={clsx('rounded-md', isAuto ? 'w-full h-auto' : 'object-cover')}
+          />
         </div>
       </div>
 

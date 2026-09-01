@@ -2,7 +2,18 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { routing } from '@/src/i18n/routing';
 
-export const SITE_URL = 'https://avery-peterson.com';
+/*
+  The host that actually serves the site.
+
+  This must match it exactly. The apex domain 307s to www, so while this said
+  'https://avery-peterson.com' every canonical, hreflang, OpenGraph url, sitemap
+  <loc> and robots Sitemap line pointed at a URL that redirects — the site was
+  telling crawlers its canonical address was one it does not serve from.
+
+  If the apex is meant to be canonical instead, the fix is the other direction:
+  change the redirect in the Vercel project's domain settings and put this back.
+*/
+export const SITE_URL = 'https://www.avery-peterson.com';
 export const SITE_NAME = 'Avery Peterson';
 
 /** OpenGraph wants a full locale tag, not the bare language code. */

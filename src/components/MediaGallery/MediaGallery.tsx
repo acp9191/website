@@ -8,7 +8,7 @@ import { MediaGalleryFilters } from './MediaGalleryFilters';
 import { MediaGalleryGrid } from './MediaGalleryGrid';
 import { ScrollToTopButton } from './ScrollToTopButton';
 import { useMediaGalleryFilters } from './hooks/useMediaGalleryFilters';
-import { useIntersectionObserver } from './hooks/useIntersectionObserver';
+import { useRevealOnScroll } from '@/src/hooks/useRevealOnScroll';
 
 interface MediaGalleryProps {
   items: MediaItem[];
@@ -29,7 +29,7 @@ export default function MediaGallery({
 
   // Custom hooks
   const filterState = useMediaGalleryFilters();
-  const { headerVisible, headerRef } = useIntersectionObserver();
+  const { visible: headerVisible, ref: headerRef } = useRevealOnScroll();
 
   // Memoised because this component also re-renders on scroll, when the
   // scroll-to-top button crosses its threshold, and that has nothing to do

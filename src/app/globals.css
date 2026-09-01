@@ -2,13 +2,23 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Font family using next/font optimized Inter */
-:root {
-  --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
-}
+/*
+  Inter, as loaded by next/font in the root layout.
 
-body {
-  font-family: var(--font-inter);
+  `next/font` defines --font-inter on <html> as `"Inter", "Inter Fallback"`,
+  where the second face is generated with metric overrides so the swap from
+  fallback to webfont does not shift the layout. Redeclaring --font-inter here
+  used to overwrite that: :root and next/font's class have equal specificity and
+  this file won, so the chain fell back to system-ui and the metric-matched face
+  was never used — reintroducing exactly the shift next/font exists to prevent.
+
+  Feeding it to Tailwind's --font-sans instead means the token has one owner.
+  Tailwind's preflight already points <html> at --font-sans, so this also
+  replaces the hand-written `body { font-family }` rule and makes the `font-sans`
+  utility resolve to Inter.
+*/
+@theme inline {
+  --font-sans: var(--font-inter);
 }
 
 /*

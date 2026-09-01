@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import clsx from 'clsx';
+import { useRevealOnScroll } from '@/src/hooks/useRevealOnScroll';
 import { AnimatedCounter } from '../AnimatedCounter';
 import FilterDropdown, { type FilterValue } from './FilterDropdown';
 import { MediaItem, FilterConfig, FilterState, Translate } from './types';
@@ -31,30 +32,7 @@ export function MobileFilters({
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [subtitleDropdownOpen, setSubtitleDropdownOpen] = useState(false);
   const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const filtersRef = useRef<HTMLDivElement>(null);
-
-  // Set up intersection observer for fade-in animation
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisible(true);
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: '50px' }
-    );
-
-    if (filtersRef.current) {
-      observer.observe(filtersRef.current);
-    }
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  const { visible, ref: filtersRef } = useRevealOnScroll();
 
   // The three filters combine; MediaGallery already ANDs them. Clearing the
   // siblings here made that unreachable and silently discarded the user's

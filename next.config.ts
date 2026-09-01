@@ -18,8 +18,15 @@ const nextConfig: NextConfig = {
     ],
     // Enable image optimization features
     formats: ['image/avif', 'image/webp'],
-    // Device sizes for responsive images
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    /*
+      Capped at the width of the source MediaCard requests from Cloudinary.
+
+      Next never upscales past the source, so the 1920/2048/3840 entries this
+      list used to carry were candidates that resolved to the same 1280px image
+      under a larger label — nine URLs per <img>, three of them decorative, on a
+      page with 27 covers.
+    */
+    deviceSizes: [640, 750, 828, 1080, 1280],
     // Image sizes for different breakpoints
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     // Cloudinary URLs are version-pinned and immutable, so the optimized
