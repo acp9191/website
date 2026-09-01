@@ -1,9 +1,11 @@
 // app/favorites/movies/page.tsx
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { loadContent } from '@/src/lib/content';
 import MovieGallery from './MovieGallery';
 import type { Metadata } from 'next';
 import { buildMetadata } from '@/src/lib/metadata';
+import JsonLd from '@/src/components/JsonLd';
+import { collectionJsonLd } from '@/src/lib/structuredData';
 
 export async function generateMetadata({
   params,
@@ -19,6 +21,20 @@ export default async function MoviePage({ params }: { params: Promise<{ locale: 
   setRequestLocale(locale);
 
   const movies = await loadContent('movies');
+  const t = await getTranslations({ locale, namespace: 'Movies' });
 
-  return <MovieGallery movies={movies} />;
+  return (
+    <>
+      <JsonLd
+        data={collectionJsonLd({
+          section: 'movies',
+          entries: movies,
+          locale,
+          name: t('title'),
+          description: t('subtitle'),
+        })}
+      />
+      <MovieGallery movies={movies} />
+    </>
+  );
 }

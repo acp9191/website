@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { routing } from '@/src/i18n/routing';
 import { SITE_URL, localePath } from '@/src/lib/metadata';
+import { loadContent } from '@/src/lib/content';
+import { MEDIA_CONFIG, MEDIA_SECTIONS, mediaItemPath } from '@/src/lib/media';
 
 const staticPaths = ['', '/about', '/favorites/music', '/favorites/books', '/favorites/movies'];
 
@@ -24,12 +26,21 @@ function localizedUrl(locale: string, path: string): string {
  * included — from this data, so the escaping and namespace declarations are no
  * longer this file's problem.
  */
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // The content is markdown compiled into the build, so a build-time timestamp
   // is honest: it is the last moment these pages could have changed.
   const lastModified = new Date();
 
-  return staticPaths.flatMap((path) =>
+  const itemPaths = (
+    await Promise.all(
+      MEDIA_SECTIONS.map(async (section) => {
+        const entries = await loadContent(MEDIA_CONFIG[section].contentCollection);
+        return entries.map((entry) => mediaItemPath(section, entry.slug));
+      })
+    )
+  ).flat();
+
+  return [...staticPaths, ...itemPaths].flatMap((path) =>
     routing.locales.map((locale) => ({
       url: localizedUrl(locale, path),
       lastModified,

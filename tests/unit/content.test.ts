@@ -23,6 +23,13 @@ describe.each(COLLECTIONS)('$name', ({ name, creator, image }) => {
     expect(titles).toEqual([...titles].sort((a, b) => a.localeCompare(b)));
   });
 
+  it('uses each markdown filename as a stable unique slug', async () => {
+    const slugs = (await loadContent(name)).map((entry) => entry.slug);
+    expect(slugs.every(Boolean)).toBe(true);
+    expect(slugs.every((slug) => /^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(slug))).toBe(true);
+    expect(new Set(slugs).size).toBe(slugs.length);
+  });
+
   it('gives every entry the image field this gallery reads', async () => {
     const missing = (await loadContent(name))
       .filter((entry) => !entry[image])

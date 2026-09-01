@@ -1,9 +1,11 @@
 // app/favorites/music/page.tsx
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { loadContent } from '@/src/lib/content';
 import MusicGallery from './MusicGallery';
 import type { Metadata } from 'next';
 import { buildMetadata } from '@/src/lib/metadata';
+import JsonLd from '@/src/components/JsonLd';
+import { collectionJsonLd } from '@/src/lib/structuredData';
 
 export async function generateMetadata({
   params,
@@ -19,6 +21,20 @@ export default async function MusicPage({ params }: { params: Promise<{ locale: 
   setRequestLocale(locale);
 
   const albums = await loadContent('albums');
+  const t = await getTranslations({ locale, namespace: 'Music' });
 
-  return <MusicGallery albums={albums} />;
+  return (
+    <>
+      <JsonLd
+        data={collectionJsonLd({
+          section: 'music',
+          entries: albums,
+          locale,
+          name: t('title'),
+          description: t('subtitle'),
+        })}
+      />
+      <MusicGallery albums={albums} />
+    </>
+  );
 }

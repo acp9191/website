@@ -10,6 +10,7 @@ export default function MusicGallery({ albums }: { albums: ContentEntry[] }) {
 
   // Convert albums to MediaItem format
   const mediaItems: MediaItem[] = albums.map((album) => ({
+    href: `/favorites/music/${album.slug}`,
     title: album.title,
     subtitle: album.artist ?? '',
     cover: album.cover ?? '',

@@ -9,6 +9,7 @@ export default function BookGallery({ books }: { books: ContentEntry[] }) {
   const t = useTranslations('Books');
 
   const mediaItems: MediaItem[] = books.map((book) => ({
+    href: `/favorites/books/${book.slug}`,
     title: book.title,
     subtitle: book.author ?? '',
     cover: book.cover ?? '',

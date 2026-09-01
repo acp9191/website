@@ -12,6 +12,8 @@ import type { Metadata, Viewport } from 'next';
 import { SITE_NAME, SITE_URL, buildMetadata } from '@/src/lib/metadata';
 import { THEME_INIT_SCRIPT } from '@/src/lib/theme';
 import ThemeSync from '@/src/components/ThemeSync';
+import JsonLd from '@/src/components/JsonLd';
+import { siteJsonLd } from '@/src/lib/structuredData';
 
 // Font optimization with next/font
 const inter = Inter({
@@ -85,6 +87,7 @@ export default async function RootLayout({
   return (
     <html suppressHydrationWarning lang={locale} className={inter.variable}>
       <head>
+        <JsonLd data={siteJsonLd()} />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
         {/*
           Must stay a raw <script> here in <head>, ahead of the stylesheet, or

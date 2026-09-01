@@ -1,4 +1,5 @@
 export interface MediaItem {
+  href: string;
   title: string;
   subtitle: string;
   cover: string;

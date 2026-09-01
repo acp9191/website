@@ -47,6 +47,10 @@ for (const [collection, { creator, image }] of Object.entries(COLLECTIONS)) {
 
   for (const file of files) {
     const where = `content/${collection}/${file}`;
+    const slug = path.basename(file, path.extname(file));
+    if (!/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(slug)) {
+      errors.push(`${where}: filename must be a URL-safe slug using letters, numbers, _ or -`);
+    }
     const { data, content } = matter(await readFile(path.join(dir, file), 'utf-8'));
 
     const required = ['title', creator, image, 'year', 'genres'];
