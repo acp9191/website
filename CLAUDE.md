@@ -13,6 +13,9 @@ npm run typecheck     # tsc --noEmit
 npm run format        # Prettier, writing changes
 npm run format:check  # Prettier, failing instead of writing
 npm run check:content # Validate content frontmatter and genre spellings
+npm run test          # Vitest, unit and invariant tests
+npm run test:watch    # Vitest in watch mode
+npm run test:e2e      # Playwright, needs a build first (see below)
 ```
 
 `postbuild` runs `scripts/check-sw.mjs`, which fails the build if no service
@@ -170,6 +173,49 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
   - `theme-color` and the apple-web-app meta tags come from the `viewport` and
     `metadata.appleWebApp` exports in `src/app/[locale]/layout.tsx`
 - PWA features only work in production mode (`npm start`), not development (`npm run dev`)
+
+## Testing
+
+Two suites, split by what they can actually observe.
+
+**`npm run test` — Vitest, `tests/unit/`.** Pure invariants, no DOM, no server:
+
+- `messages.test.ts` — the five locale files have identical keys, no blank
+  strings, and every ICU placeholder and rich-text tag survives translation. A
+  translator dropping `{title}` or `<wave>` is otherwise silent.
+- `theme.test.ts` — `normalizeTheme` rejects junk, and the inline `<head>`
+  script is executed against a stub DOM and asserted to agree with it. That
+  duplication has drifted before, and a comment was not enough to stop it.
+- `metadata.test.ts` — the `localePrefix: 'as-needed'` rules, and the sitemap /
+  robots / manifest routes as pure functions, including that the manifest's
+  icons exist on disk.
+- `content.test.ts` — every entry has the image key its own gallery reads, no
+  duplicate titles, sorted output.
+
+**`npm run test:e2e` — Playwright, `tests/e2e/`.** Runs against a production
+build, because that is the only place several of these bugs exist: the service
+worker is disabled in dev, and the theme-on-locale-switch bug needs a
+client-side navigation that only happens in a build. Run `npm run build` first;
+CI builds in its own step.
+
+- `theme.spec.ts` — the theme survives a locale switch. Each case also asserts
+  **which kind of navigation** it performed: adding a locale prefix is
+  client-side and remounts the layout (where the bug lived), while dropping the
+  prefix is a full page load where the inline script covers it anyway. Without
+  that assertion two cases would pass for the wrong reason.
+- `a11y.spec.ts` — nothing hidden by opacity stays focusable, and an unrelated
+  re-render does not steal focus from an open dropdown.
+- `metadata.spec.ts` — every canonical, hreflang and sitemap URL resolves
+  without a redirect. Fetched from a fresh request context each time: the proxy
+  redirects on a stored locale preference, and a shared cookie jar makes correct
+  behaviour look broken.
+- `assets.spec.ts` — the files browsers request unprompted are served, the
+  metric-matched font fallback is the one in use, no srcset candidate exceeds
+  the source width, and the CSP carries no origins the site does not use.
+
+When adding a test for a bug, check it fails against the bug. Every test here
+was verified that way — the fix reverted, the test observed to fail, the fix
+restored.
 
 ### Testing PWA
 
