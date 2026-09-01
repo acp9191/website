@@ -114,6 +114,8 @@ npm run typecheck     # tsc --noEmit
 npm run format        # Prettier, writing changes
 npm run format:check  # Prettier, failing instead of writing
 npm run check:content # Validate content frontmatter and genre spellings
+npm run test          # Vitest (unit + invariants)
+npm run test:e2e      # Playwright (needs `npm run build` first)
 ```
 
 `postbuild` fails the build if no service worker was emitted — `@serwist/next`
@@ -122,6 +124,17 @@ still exits 0.
 
 `build` passes `--webpack` deliberately: Serwist's service-worker compilation
 does not run under Turbopack. `next dev` is unaffected and still uses Turbopack.
+
+## 🧪 Tests
+
+| Suite                          | Runner     | Covers                                                                                      |
+| ------------------------------ | ---------- | ------------------------------------------------------------------------------------------- |
+| `tests/unit/` (`npm run test`) | Vitest     | Locale key/placeholder parity, theme normalization, sitemap & manifest rules, content shape |
+| `tests/e2e/` (`test:e2e`)      | Playwright | Theme across locale switches, focus & inert behaviour, canonical/hreflang, fonts, assets    |
+
+The end-to-end suite runs against a production build rather than `next dev`:
+the service worker is disabled in development, and the theme-on-locale-switch
+regression only reproduces on a client-side navigation in a real build.
 
 ## 📁 Project Structure
 
@@ -154,8 +167,12 @@ avery-site/
 │   ├── i18n/
 │   │   └── routing.ts    # Locale configuration
 │   └── proxy.ts          # Next.js proxy for i18n routing
+├── tests/
+│   ├── unit/             # Vitest
+│   └── e2e/              # Playwright
 ├── scripts/
-│   └── check-content.mjs # Frontmatter + genre validation (runs in CI)
+│   ├── check-content.mjs # Frontmatter + genre validation (runs in CI)
+│   └── check-sw.mjs      # Fails the build if no service worker was emitted
 ├── .github/
 │   ├── workflows/ci.yml  # Lint, types, format, content, build on every PR
 │   └── dependabot.yml    # Automatic dependency updates
