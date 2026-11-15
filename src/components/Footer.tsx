@@ -5,7 +5,7 @@ import clsx from 'clsx';
 
 /**
  * `invertInDark` is for the monochrome marks only — inverting a brand colour
- * (Spotify green, Instagram's gradient, the LinkedIn blue) would misrender it.
+ * (Spotify green, Instagram's gradient, the LinkedIn blue, Strava orange) would misrender it.
  */
 const SOCIAL_LINKS = [
   {
@@ -30,6 +30,12 @@ const SOCIAL_LINKS = [
     href: 'https://www.instagram.com/acp.jpg',
     label: 'Instagram',
     icon: '/icons/instagram.svg',
+    invertInDark: false,
+  },
+  {
+    href: 'https://www.strava.com/athletes/65729171',
+    label: 'Strava',
+    icon: '/icons/strava.svg',
     invertInDark: false,
   },
   { href: 'https://x.com/acp9191', label: 'X', icon: '/icons/x.svg', invertInDark: true },
