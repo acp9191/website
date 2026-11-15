@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo, useSyncExternalStore } from 'react';
 import { useTranslations } from 'next-intl';
 import { MediaItem, FilterConfig } from './types';
 import { MediaGalleryHeader } from './MediaGalleryHeader';
@@ -9,6 +9,15 @@ import { MediaGalleryGrid } from './MediaGalleryGrid';
 import { ScrollToTopButton } from './ScrollToTopButton';
 import { useMediaGalleryFilters } from './hooks/useMediaGalleryFilters';
 import { useRevealOnScroll } from '@/src/hooks/useRevealOnScroll';
+
+function subscribeToScroll(onChange: () => void) {
+  window.addEventListener('scroll', onChange, { passive: true });
+  return () => window.removeEventListener('scroll', onChange);
+}
+
+// A boolean snapshot, so the gallery re-renders only when the threshold is
+// crossed, not on every scroll event.
+const pastScrollTopThreshold = () => window.scrollY > 400;
 
 interface MediaGalleryProps {
   items: MediaItem[];
@@ -25,7 +34,15 @@ export default function MediaGallery({
   // Labels shared by all three galleries live in their own namespace so they
   // are not repeated identically in Music, Movies and Books.
   const tGallery = useTranslations('Gallery');
-  const [showScrollTop, setShowScrollTop] = useState(false);
+  // Read from the scroll position itself rather than from scroll events: a
+  // page already scrolled when it hydrates fires no further event, and the
+  // button stayed hidden. The server snapshot is `false`, so hydration matches
+  // the HTML and React re-renders straight away with the real position.
+  const showScrollTop = useSyncExternalStore(
+    subscribeToScroll,
+    pastScrollTopThreshold,
+    () => false
+  );
 
   // Custom hooks
   const filterState = useMediaGalleryFilters();
@@ -48,16 +65,6 @@ export default function MediaGallery({
       }),
     [items, filterState.selectedCategory, filterState.selectedSubtitle, filterState.selectedYear]
   );
-
-  // Scroll to top button visibility
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 400);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const scrollToTop = () => {
     // `behavior: 'smooth'` is a scripted scroll, so it ignores the
