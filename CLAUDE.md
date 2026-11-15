@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm run dev           # Start development server on http://localhost:3000
 npm run build         # Build for production (includes type checking)
 npm start             # Start production server
-npm run lint          # ESLint
+npm run lint          # Oxlint
 npm run typecheck     # tsc --noEmit
 npm run format        # Prettier, writing changes
 npm run format:check  # Prettier, failing instead of writing
@@ -41,8 +41,18 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 - **Internationalization**: next-intl 4 (en, es, fr, it, de)
 - **PWA**: Service worker with Serwist (disabled in dev, enabled in production)
 - **Content**: Markdown files with gray-matter frontmatter parsing
-- **Linting**: ESLint 10 with plugins composed directly in `eslint.config.mjs`
-  (not `eslint-config-next`, which cannot run on ESLint 10 — see the comment there)
+- **Linting**: Oxlint, configured in `.oxlintrc.json` with its `typescript`,
+  `react`, `nextjs` and `jsx-a11y` plugins. Replaced ESLint, partly because
+  typescript-eslint cannot load under TypeScript 7. Oxlint's default
+  `correctness` category does most of the work; the config only adds the old
+  ESLint rules that fall outside it, and switches off one false positive (see
+  the comments in the file). The `react` plugin carries
+  the React Compiler rules (`static-components`, `set-state-in-effect`,
+  `purity`) that used to come from eslint-plugin-react-hooks; they caught real
+  bugs here, so keep them. Oxlint is native and never loads the `typescript`
+  package
+- **TypeScript**: 7 (native `tsc`). It ships no JS API, which nothing here needs:
+  Next 16.4 type-checks by spawning `tsc` rather than calling the API
 
 ### Key Architectural Patterns
 
@@ -105,7 +115,12 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 
 - Dark mode implemented with Tailwind's dark class strategy
 - Initial theme set via inline script in `src/app/[locale]/layout.tsx` (prevents flash)
-- Theme toggle in `ClientLayout` component persists to localStorage
+- Theme toggle in `Header` persists to localStorage
+- `SiteLayout` (header, main, footer) is a server component; `Header` is a
+  client component on its own, while `Footer` must stay on the server — it
+  reads the copyright year at module load, and a `'use client'` on either file
+  would make the browser recompute it and break hydration after New Year
+  (`footer.spec.ts`)
 - PWA theme-color meta tags respect user's color scheme preference
 
 **Image Hosting**
@@ -240,6 +255,9 @@ CI builds in its own step.
 - `assets.spec.ts` — the files browsers request unprompted are served, the
   metric-matched font fallback is the one in use, no srcset candidate exceeds
   the source width, and the CSP carries no origins the site does not use.
+- `footer.spec.ts` — with the browser's clock frozen in the year after the
+  build, the footer still shows the build's year and hydration reports no
+  mismatch.
 
 When adding a test for a bug, check it fails against the bug. Every test here
 was verified that way — the fix reverted, the test observed to fail, the fix

@@ -6,7 +6,7 @@
     "build": "next build --webpack",
     "postbuild": "node scripts/check-sw.mjs",
     "start": "next start",
-    "lint": "eslint . --max-warnings 0",
+    "lint": "oxlint --deny-warnings",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
@@ -32,26 +32,19 @@
     "serwist": "^9.5.12"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "^16.4.6",
     "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.6.6",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
-    "eslint": "^10.9.1",
-    "eslint-plugin-jsx-a11y": "^6.10.2",
-    "eslint-plugin-react-hooks": "^7.1.1",
+    "oxlint": "^1.93.0",
     "postcss": "^8.5.26",
     "prettier": "^3.9.6",
     "tailwindcss": "^4.3.3",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.68.0",
+    "typescript": "^7.0.2",
     "vitest": "^4.1.11"
   },
   "overrides": {
-    "eslint-plugin-jsx-a11y": {
-      "eslint": "$eslint"
-    },
     "zod": "^4.6.6"
   },
   "allowScripts": {
