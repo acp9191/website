@@ -11,6 +11,7 @@ import {
 } from '@heroicons/react/24/outline';
 import LocaleSwitcher from './LocaleSwitcher';
 import { type Theme, readStoredTheme, storeTheme, applyTheme } from '@/src/lib/theme';
+import { useScrolledPast } from '@/src/hooks/useScrolledPast';
 
 /**
  * Renders identically on server and client — which icon is visible is decided in
@@ -62,7 +63,9 @@ export default function Header() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState<Theme>(readStoredTheme);
-  const [scrolled, setScrolled] = useState(false);
+  // Compact header once scrolled. Read from the position rather than from
+  // scroll events, so a page already scrolled when it hydrates is compact too.
+  const scrolled = useScrolledPast(20);
   const mobileMenuId = useId();
 
   // The inline script in the document head already applied the `dark` class and
@@ -95,17 +98,6 @@ export default function Header() {
   // match keeps the parent link highlighted on any subpage.
   const isActiveLink = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
-  // Scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      setScrolled(scrollY > 20); // Trigger after 20px of scroll
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   const toggleTheme = () => {
     // Cycle through: light → dark → system
     let newTheme: Theme;
@@ -122,11 +114,21 @@ export default function Header() {
     applyTheme(newTheme);
   };
 
-  // Close menu on resize
+  /*
+    Close the menu when the viewport widens past the `sm` breakpoint, where the
+    desktop nav takes over and the mobile menu is hidden.
+
+    This used to close on any `resize`, which mobile browsers fire whenever
+    their address bar collapses or reappears — so scrolling with the menu open
+    shut it. Width crossing the breakpoint is the only resize that matters.
+  */
   useEffect(() => {
-    const close = () => setMenuOpen(false);
-    window.addEventListener('resize', close);
-    return () => window.removeEventListener('resize', close);
+    const desktop = window.matchMedia('(min-width: 640px)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (e.matches) setMenuOpen(false);
+    };
+    desktop.addEventListener('change', handleChange);
+    return () => desktop.removeEventListener('change', handleChange);
   }, []);
 
   return (

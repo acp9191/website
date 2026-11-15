@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useSyncExternalStore } from 'react';
+import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { MediaItem, FilterConfig } from './types';
 import { MediaGalleryHeader } from './MediaGalleryHeader';
@@ -9,15 +9,7 @@ import { MediaGalleryGrid } from './MediaGalleryGrid';
 import { ScrollToTopButton } from './ScrollToTopButton';
 import { useMediaGalleryFilters } from './hooks/useMediaGalleryFilters';
 import { useRevealOnScroll } from '@/src/hooks/useRevealOnScroll';
-
-function subscribeToScroll(onChange: () => void) {
-  window.addEventListener('scroll', onChange, { passive: true });
-  return () => window.removeEventListener('scroll', onChange);
-}
-
-// A boolean snapshot, so the gallery re-renders only when the threshold is
-// crossed, not on every scroll event.
-const pastScrollTopThreshold = () => window.scrollY > 400;
+import { useScrolledPast } from '@/src/hooks/useScrolledPast';
 
 interface MediaGalleryProps {
   items: MediaItem[];
@@ -34,15 +26,8 @@ export default function MediaGallery({
   // Labels shared by all three galleries live in their own namespace so they
   // are not repeated identically in Music, Movies and Books.
   const tGallery = useTranslations('Gallery');
-  // Read from the scroll position itself rather than from scroll events: a
-  // page already scrolled when it hydrates fires no further event, and the
-  // button stayed hidden. The server snapshot is `false`, so hydration matches
-  // the HTML and React re-renders straight away with the real position.
-  const showScrollTop = useSyncExternalStore(
-    subscribeToScroll,
-    pastScrollTopThreshold,
-    () => false
-  );
+  // See useScrolledPast for why this is not driven by scroll events.
+  const showScrollTop = useScrolledPast(400);
 
   // Custom hooks
   const filterState = useMediaGalleryFilters();

@@ -10,6 +10,7 @@ import {
 } from '@/src/lib/media';
 import { HEADSHOT_URL } from '@/src/utils/imageOptimization';
 import { SITE_NAME, SITE_URL } from '@/src/lib/metadata';
+import { SOCIAL_LINKS } from '@/src/lib/social';
 
 export type JsonLdValue = Record<string, unknown>;
 
@@ -26,12 +27,7 @@ export function siteJsonLd(): JsonLdValue {
         name: SITE_NAME,
         url: SITE_URL,
         image: HEADSHOT_URL,
-        sameAs: [
-          'https://github.com/acp9191',
-          'https://linkedin.com/in/acp',
-          'https://www.instagram.com/acp.jpg',
-          'https://x.com/acp9191',
-        ],
+        sameAs: SOCIAL_LINKS.map(({ href }) => href),
       },
       {
         '@type': 'WebSite',

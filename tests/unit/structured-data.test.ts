@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { loadContent } from '@/src/lib/content';
 import { collectionJsonLd, mediaJsonLd, siteJsonLd } from '@/src/lib/structuredData';
+import { SOCIAL_LINKS } from '@/src/lib/social';
 
 describe('structured data', () => {
   it('identifies the person and website with stable graph IDs', () => {
@@ -11,6 +12,15 @@ describe('structured data', () => {
         expect.objectContaining({ '@type': 'WebSite', '@id': expect.stringMatching(/#website$/) }),
       ])
     );
+  });
+
+  // The footer and the JSON-LD used to keep separate lists, and the JSON-LD
+  // fell two profiles behind.
+  it('lists every footer profile in the Person sameAs', () => {
+    const person = (siteJsonLd()['@graph'] as Record<string, unknown>[]).find(
+      (node) => node['@type'] === 'Person'
+    );
+    expect(person?.sameAs).toEqual(SOCIAL_LINKS.map(({ href }) => href));
   });
 
   it('uses media-specific Schema.org types and creator properties', async () => {
