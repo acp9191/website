@@ -4,8 +4,15 @@ import { useTranslations } from 'next-intl';
 import MediaGallery from '@/src/components/MediaGallery/MediaGallery';
 import { MediaItem, FilterConfig } from '@/src/components/MediaGallery/types';
 import { ContentEntry } from '@/src/lib/content';
+import type { MediaFilterParams } from '@/src/lib/galleryFilters';
 
-export default function MovieGallery({ movies }: { movies: ContentEntry[] }) {
+export default function MovieGallery({
+  movies,
+  initialParams = {},
+}: {
+  movies: ContentEntry[];
+  initialParams?: MediaFilterParams;
+}) {
   const t = useTranslations('Movies');
 
   const mediaItems: MediaItem[] = movies.map((movie) => ({
@@ -36,6 +43,11 @@ export default function MovieGallery({ movies }: { movies: ContentEntry[] }) {
   };
 
   return (
-    <MediaGallery items={mediaItems} filterConfig={filterConfig} translationNamespace="Movies" />
+    <MediaGallery
+      items={mediaItems}
+      filterConfig={filterConfig}
+      translationNamespace="Movies"
+      initialParams={initialParams}
+    />
   );
 }

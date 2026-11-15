@@ -4,8 +4,15 @@ import { useTranslations } from 'next-intl';
 import MediaGallery from '@/src/components/MediaGallery/MediaGallery';
 import { MediaItem, FilterConfig } from '@/src/components/MediaGallery/types';
 import { ContentEntry } from '@/src/lib/content';
+import type { MediaFilterParams } from '@/src/lib/galleryFilters';
 
-export default function MusicGallery({ albums }: { albums: ContentEntry[] }) {
+export default function MusicGallery({
+  albums,
+  initialParams = {},
+}: {
+  albums: ContentEntry[];
+  initialParams?: MediaFilterParams;
+}) {
   const t = useTranslations('Music');
 
   // Convert albums to MediaItem format
@@ -37,6 +44,11 @@ export default function MusicGallery({ albums }: { albums: ContentEntry[] }) {
   };
 
   return (
-    <MediaGallery items={mediaItems} filterConfig={filterConfig} translationNamespace="Music" />
+    <MediaGallery
+      items={mediaItems}
+      filterConfig={filterConfig}
+      translationNamespace="Music"
+      initialParams={initialParams}
+    />
   );
 }

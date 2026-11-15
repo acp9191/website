@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import { buildMetadata } from '@/src/lib/metadata';
 import JsonLd from '@/src/components/JsonLd';
 import { collectionJsonLd } from '@/src/lib/structuredData';
+import { parseFilterParams } from '@/src/lib/galleryFilters';
 
 export async function generateMetadata({
   params,
@@ -16,9 +17,18 @@ export async function generateMetadata({
   return buildMetadata({ locale, path: '/favorites/books', titleKey: 'books' });
 }
 
-export default async function BookPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function BookPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const query = await searchParams;
+  const initialParams = parseFilterParams(query, 'author');
 
   const books = await loadContent('books');
   const t = await getTranslations({ locale, namespace: 'Books' });
@@ -34,7 +44,7 @@ export default async function BookPage({ params }: { params: Promise<{ locale: s
           description: t('subtitle'),
         })}
       />
-      <BookGallery books={books} />
+      <BookGallery books={books} initialParams={initialParams} />
     </>
   );
 }
