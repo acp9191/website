@@ -40,7 +40,6 @@ Three fully-featured galleries for showcasing favorites:
 - **Installable** - Add to home screen on mobile/desktop
 - **Smart caching** - Automatic caching with Serwist (static assets, images, pages)
 - **Window controls overlay** for native app experience on desktop
-- **Protocol handlers** for custom URL schemes (`web+avery://`)
 - **App manifest** with screenshots for rich install UI, generated from a typed
   `app/manifest.ts` and served at `/manifest.webmanifest`
 
@@ -291,7 +290,7 @@ npm i -g vercel
 vercel
 ```
 
-**Important**: PWA features (offline mode, protocol handlers) require HTTPS to work properly.
+**Important**: PWA features (offline mode, installation) require HTTPS to work properly.
 
 ## 📦 Tech Stack
 

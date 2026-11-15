@@ -17,6 +17,19 @@ import type { ContentEntry } from '@/src/lib/content';
 export const SITE_URL = 'https://www.avery-peterson.com';
 export const SITE_NAME = 'Avery Peterson';
 
+/**
+ * The site-wide share image, as declared to OpenGraph and Twitter.
+ *
+ * The dimensions are a claim about the file in public/, not a request: crawlers
+ * lay out the preview from them. The file was once a 1 MB 1024×1024 square
+ * under this 1200×630 label, so `metadata.test.ts` now reads the real file.
+ */
+export const OG_IMAGE = {
+  path: '/og-image.jpg',
+  width: 1200,
+  height: 630,
+} as const;
+
 /** OpenGraph wants a full locale tag, not the bare language code. */
 const OG_LOCALES: Record<string, string> = {
   en: 'en_US',
@@ -86,9 +99,9 @@ export async function buildMetadata({
       siteName: SITE_NAME,
       images: [
         {
-          url: `${SITE_URL}/og-image.jpg`,
-          width: 1200,
-          height: 630,
+          url: `${SITE_URL}${OG_IMAGE.path}`,
+          width: OG_IMAGE.width,
+          height: OG_IMAGE.height,
           alt: SITE_NAME,
         },
       ],
@@ -100,7 +113,7 @@ export async function buildMetadata({
       title: titleKey ? `${title} | ${SITE_NAME}` : SITE_NAME,
       description,
       creator: '@acp9191',
-      images: [`${SITE_URL}/og-image.jpg`],
+      images: [`${SITE_URL}${OG_IMAGE.path}`],
     },
   };
 }

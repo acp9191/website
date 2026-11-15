@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { routing } from '@/src/i18n/routing';
-import { SITE_URL, localePath, alternatesFor } from '@/src/lib/metadata';
+import { SITE_URL, OG_IMAGE, localePath, alternatesFor } from '@/src/lib/metadata';
 import sitemap from '@/src/app/sitemap';
 import robots from '@/src/app/robots';
 import manifest from '@/src/app/manifest';
@@ -127,5 +127,36 @@ describe('manifest', () => {
     expect(m.start_url).toBeTruthy();
     expect(m.display).toBe('standalone');
     expect(m.icons?.length).toBeGreaterThan(0);
+  });
+});
+
+/** Width and height from a JPEG's start-of-frame segment. */
+function jpegSize(buffer: Buffer): { width: number; height: number } {
+  let offset = 2; // past the SOI marker
+  while (offset < buffer.length) {
+    const marker = buffer[offset + 1];
+    const length = buffer.readUInt16BE(offset + 2);
+    // SOF0–SOF15, excluding DHT (C4), JPG (C8) and DAC (CC)
+    if (marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker)) {
+      return { height: buffer.readUInt16BE(offset + 5), width: buffer.readUInt16BE(offset + 7) };
+    }
+    offset += 2 + length;
+  }
+  throw new Error('no SOF segment found');
+}
+
+describe('OpenGraph image', () => {
+  const file = path.join(process.cwd(), 'public', OG_IMAGE.path);
+
+  it('has the dimensions the metadata declares', () => {
+    expect(jpegSize(readFileSync(file))).toEqual({
+      width: OG_IMAGE.width,
+      height: OG_IMAGE.height,
+    });
+  });
+
+  // Some platforms (WhatsApp among them) drop preview images much over 300 KB.
+  it('is small enough for every link-preview crawler', () => {
+    expect(statSync(file).size).toBeLessThan(300 * 1024);
   });
 });

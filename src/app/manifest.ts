@@ -38,12 +38,6 @@ export default function manifest(): MetadataRoute.Manifest {
     display_override: ['window-controls-overlay'],
     orientation: 'portrait-primary',
     categories: ['personal', 'portfolio'],
-    protocol_handlers: [
-      {
-        protocol: 'web+avery',
-        url: '/?action=%s',
-      },
-    ],
     screenshots: [
       {
         src: '/screenshots/desktop-home.png',
