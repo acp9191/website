@@ -43,9 +43,10 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 - **Content**: Markdown files with gray-matter frontmatter parsing
 - **Linting**: Oxlint, configured in `.oxlintrc.json` with its `typescript`,
   `react`, `nextjs` and `jsx-a11y` plugins. Replaced ESLint, partly because
-  typescript-eslint cannot load under TypeScript 7. The rule list was generated
-  from the old ESLint config's resolved rules, so it is explicit: default
-  categories are off and only the listed rules run. The `react` plugin carries
+  typescript-eslint cannot load under TypeScript 7. Oxlint's default
+  `correctness` category does most of the work; the config only adds the old
+  ESLint rules that fall outside it, and switches off one false positive (see
+  the comments in the file). The `react` plugin carries
   the React Compiler rules (`static-components`, `set-state-in-effect`,
   `purity`) that used to come from eslint-plugin-react-hooks; they caught real
   bugs here, so keep them. Oxlint is native and never loads the `typescript`
