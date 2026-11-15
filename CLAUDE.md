@@ -38,7 +38,7 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 
 - **Framework**: Next.js 16 (App Router; Turbopack in dev, webpack for builds)
 - **Styling**: Tailwind CSS v4
-- **Internationalization**: next-intl 4.8 (en, es, fr, it, de)
+- **Internationalization**: next-intl 4 (en, es, fr, it, de)
 - **PWA**: Service worker with Serwist (disabled in dev, enabled in production)
 - **Content**: Markdown files with gray-matter frontmatter parsing
 - **Linting**: ESLint 10 with plugins composed directly in `eslint.config.mjs`
@@ -58,8 +58,13 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 
 - Content stored as Markdown files in `content/{albums,movies,books}/`
 - Each file has YAML frontmatter (title, artist/author/director, image URL, year, genres, optional external links)
-- Loaded by `loadContent(collection)` in `src/lib/content.ts`, which parses every `.md` in the directory and sorts by title
-- Markdown body becomes the description
+- Loaded by `loadContent(collection)` in `src/lib/content.ts`, which parses every `.md` in the directory and sorts by title;
+  `collection` is typed as one of `CONTENT_COLLECTIONS`
+- Each entry gets a `slug` from its filename — this is its detail-page URL and API identifier, so renaming a file changes a public URL
+- Markdown body (trimmed) becomes the description
+- Two names exist for each collection: the content directory (`albums`, `books`, `movies`) and the URL section
+  (`music`, `books`, `movies`). `MEDIA_CONFIG` in `src/lib/media.ts` maps one to the other, along with each
+  section's schema.org type, creator key, image key and translation namespace
 - `scripts/check-content.mjs` validates required fields, rejects unknown ones
   (most often the wrong image key) and flags genre values that differ only by
   case or punctuation, since those silently split one filter entry into two
@@ -79,6 +84,22 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
   - `useListbox`: Keyboard, focus and dismissal behaviour for the filter dropdowns
 - `src/hooks/useRevealOnScroll.ts` is the single reveal-on-scroll observer, used
   by the about page, the gallery header and both filter layouts
+
+**Detail Pages, Structured Data and the Content API**
+
+- Each item has a statically generated page at `favorites/{music,books,movies}/[slug]`
+  (`dynamicParams = false`, so unknown slugs 404). The three route files are thin
+  wrappers around `MediaDetailPage` / `mediaMetadata` / `mediaStaticParams` in
+  `src/components/MediaDetailPage.tsx`, which renders `MediaDetail`
+- Per-item metadata comes from `buildMediaMetadata` in `src/lib/metadata.ts`
+- JSON-LD is built in `src/lib/structuredData.ts` and emitted by `src/components/JsonLd.tsx`:
+  the root layout carries the site graph (`Person` + `WebSite`, with stable `#person` / `#website`
+  IDs); gallery and detail pages add their collection or item
+- `GET /api/v1/content` (every item, plus per-collection counts) and
+  `GET /api/v1/content/{music,books,movies}` serve the content as versioned JSON
+  (`schemaVersion: 1`, English only), built by `src/lib/contentApi.ts`. Changing the
+  item shape is a breaking change for consumers — bump `schemaVersion`
+- The sitemap includes every detail page in every locale
 
 **Theme System**
 
@@ -191,6 +212,12 @@ Two suites, split by what they can actually observe.
   icons exist on disk.
 - `content.test.ts` — every entry has the image key its own gallery reads, no
   duplicate titles, sorted output.
+- `content-api.test.ts` — the `/api/v1` payloads: versioned, every collection
+  present, item counts consistent, canonical IDs and URLs on every item.
+- `structured-data.test.ts` — the site graph keeps its stable `Person` /
+  `WebSite` IDs, and collections and items carry the right schema.org shape.
+  Collections link to the site through `isPartOf`; items are standalone, with
+  `@id` set to `{detail URL}#item`.
 
 **`npm run test:e2e` — Playwright, `tests/e2e/`.** Runs against a production
 build, because that is the only place several of these bugs exist: the service
@@ -206,7 +233,8 @@ CI builds in its own step.
 - `a11y.spec.ts` — nothing hidden by opacity stays focusable, and an unrelated
   re-render does not steal focus from an open dropdown.
 - `metadata.spec.ts` — every canonical, hreflang and sitemap URL resolves
-  without a redirect. Fetched from a fresh request context each time: the proxy
+  without a redirect, and a localized detail page's canonical agrees with its
+  JSON-LD identity. Fetched from a fresh request context each time: the proxy
   redirects on a stored locale preference, and a shared cookie jar makes correct
   behaviour look broken.
 - `assets.spec.ts` — the files browsers request unprompted are served, the
