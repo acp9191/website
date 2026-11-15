@@ -52,6 +52,34 @@ test.describe('controls hidden by opacity stay out of the tab order', () => {
     await page.evaluate(() => window.scrollTo(0, 800));
     await expect(button).not.toHaveAttribute('inert', '');
   });
+
+  /*
+    Visibility used to update only from scroll events, which the gallery starts
+    listening for after hydration. A page already scrolled by then — the reader
+    scrolled while scripts loaded, or came back to a restored position — got
+    no further event, so the button stayed hidden. The test above hit this
+    intermittently by scrolling right after load; holding the scripts back
+    makes the ordering certain.
+  */
+  test('the scroll-to-top button appears for a page scrolled before hydration', async ({
+    page,
+  }) => {
+    let release!: () => void;
+    const hydrationGate = new Promise<void>((resolve) => (release = resolve));
+    await page.route('**/_next/static/chunks/**', async (route) => {
+      await hydrationGate;
+      await route.continue();
+    });
+
+    await page.goto('/favorites/music', { waitUntil: 'domcontentloaded' });
+    await page.evaluate(() => window.scrollTo(0, 800));
+    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(400);
+
+    release();
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.locator('button.fixed.bottom-6')).not.toHaveAttribute('inert', '');
+  });
 });
 
 /*
