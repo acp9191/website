@@ -54,10 +54,6 @@ jobs:
         if: '!cancelled()'
         run: npm run test
 
-      # Lint and typecheck between them miss anything that only breaks while
-      # building: the Serwist service-worker compile, and the prerender of all
-      # 28 localized pages. `postbuild` also fails here if no service worker was
-      # emitted, which is what a bare Turbopack build silently does.
       # Next's incremental build cache. Keyed on the lockfile plus every source
       # file, falling back to the newest cache for the same lockfile, so a
       # typical PR push only recompiles what it touched.
@@ -69,6 +65,10 @@ jobs:
           key: next-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**', 'content/**', 'messages/**', 'next.config.ts') }}
           restore-keys: next-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
 
+      # Lint and typecheck between them miss anything that only breaks while
+      # building: the Serwist service-worker compile, and the prerender of every
+      # localized page. `postbuild` also fails here if no service worker was
+      # emitted, which is what a bare Turbopack build silently does.
       - name: Build
         if: '!cancelled()'
         run: npm run build

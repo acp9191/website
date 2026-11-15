@@ -196,7 +196,7 @@ export default function Header() {
 
                   {/* Active indicator dot */}
                   {isActive && (
-                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 dark:bg-blue-400 rounded-full" />
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-600 dark:bg-blue-400 rounded-full" />
                   )}
 
                   {/* Text with bounce */}
@@ -234,7 +234,7 @@ export default function Header() {
                     key={href}
                     href={href}
                     onClick={() => setMenuOpen(false)}
-                    className={`relative block px-4 py-3 rounded-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-md group overflow-hidden transform ${
+                    className={`relative block px-4 py-3 rounded-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-md group overflow-hidden ${
                       menuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
                     } ${
                       isActive
@@ -253,7 +253,7 @@ export default function Header() {
 
                     {/* Active indicator */}
                     {isActive && (
-                      <div className="absolute left-2 top-1/2 transform -translate-y-1/2 w-1 h-4 bg-blue-600 dark:bg-blue-400 rounded-full" />
+                      <div className="absolute left-2 top-1/2 -translate-y-1/2 w-1 h-4 bg-blue-600 dark:bg-blue-400 rounded-full" />
                     )}
 
                     <span className={`relative ${isActive ? 'ml-2' : ''}`}>{label}</span>
@@ -263,7 +263,7 @@ export default function Header() {
 
               {/* Theme toggle with staggered animation */}
               <div
-                className={`px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-lg transform transition-all duration-400 ${
+                className={`px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-lg transition-all duration-400 ${
                   menuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
                 }`}
                 style={{
@@ -285,7 +285,7 @@ export default function Header() {
 
               {/* Language switcher with staggered animation */}
               <div
-                className={`px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-lg transform transition-all duration-400 ${
+                className={`px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-lg transition-all duration-400 ${
                   menuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
                 }`}
                 style={{

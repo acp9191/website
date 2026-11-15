@@ -2,12 +2,12 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-6-blue)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-7-blue)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38bdf8)](https://tailwindcss.com/)
 
 A modern, multilingual personal website featuring a Progressive Web App (PWA) with offline support, built with Next.js 16 and Tailwind CSS v4.
 
-🔗 **[Live Site](https://avery-peterson.com)** | 📱 **Installable as PWA** | ♿ **Fully Accessible**
+🔗 **[Live Site](https://www.avery-peterson.com)** | 📱 **Installable as PWA** | ♿ **Fully Accessible**
 
 ## ✨ Features
 
@@ -72,19 +72,20 @@ Three fully-featured galleries for showcasing favorites:
 
 ### 🔧 Developer Experience
 
-- **TypeScript** for type safety
+- **TypeScript 7** (native `tsc`) for type safety
+- **Oxlint** for linting
 - **Tailwind CSS v4** for styling
 - **Next.js 16 App Router** with server components (Turbopack in dev)
 - **Automatic dependency updates** via Dependabot
 - **Content-driven** - Markdown files with YAML frontmatter
 - **Path aliases** (`@/`) for clean imports
-- **CI on every PR** - lint, types, formatting, content validation and a full build
+- **CI on every PR** - lint, types, formatting, content validation, unit tests, a full build and end-to-end tests
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js 24 (see `.nvmrc`; `engines.node` pins the same major)
+- Node.js 26 (see `.nvmrc`; `engines.node` pins the same major)
 - npm
 
 ### Installation
@@ -92,7 +93,7 @@ Three fully-featured galleries for showcasing favorites:
 ```bash
 # Clone the repository
 git clone https://github.com/acp9191/website.git
-cd avery-site
+cd website
 
 # Install dependencies
 npm install
@@ -109,7 +110,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the site.
 npm run dev           # Start development server (PWA disabled)
 npm run build         # Build for production (PWA enabled, type-checked)
 npm start             # Start production server
-npm run lint          # ESLint
+npm run lint          # Oxlint
 npm run typecheck     # tsc --noEmit
 npm run format        # Prettier, writing changes
 npm run format:check  # Prettier, failing instead of writing
@@ -139,7 +140,7 @@ regression only reproduces on a client-side navigation in a real build.
 ## 📁 Project Structure
 
 ```
-avery-site/
+website/
 ├── content/               # Markdown content files
 │   ├── albums/           # Music albums
 │   ├── movies/           # Movie reviews
@@ -161,7 +162,8 @@ avery-site/
 │   │   ├── MediaGallery/ # Reusable gallery system
 │   │   ├── Header.tsx    # Site header with nav
 │   │   ├── Footer.tsx    # Site footer
-│   │   └── ClientLayout.tsx # Theme provider
+│   │   ├── SiteLayout.tsx # Header, main and footer
+│   │   └── ThemeSync.tsx # Restores the theme after a locale switch
 │   ├── hooks/
 │   │   └── useRevealOnScroll.ts # Shared reveal-on-scroll observer
 │   ├── i18n/
@@ -174,8 +176,8 @@ avery-site/
 │   ├── check-content.mjs # Frontmatter + genre validation (runs in CI)
 │   └── check-sw.mjs      # Fails the build if no service worker was emitted
 ├── .github/
-│   ├── workflows/ci.yml  # Lint, types, format, content, build on every PR
-│   └── dependabot.yml    # Automatic dependency updates
+│   ├── workflows/ci.yml  # Lint, types, format, content, tests, build on every PR
+│   └── dependabot.yml    # Automatic npm and GitHub Actions updates
 └── next.config.ts        # Next.js + PWA configuration
 ```
 
@@ -297,7 +299,8 @@ vercel
 | ------------------- | --------------------------------------------- |
 | **Next.js 16**      | React framework with App Router and Turbopack |
 | **React 19**        | UI library                                    |
-| **TypeScript 6**    | Type safety                                   |
+| **TypeScript 7**    | Type safety                                   |
+| **Oxlint**          | Linting                                       |
 | **Tailwind CSS v4** | Styling                                       |
 | **next-intl 4.14**  | Internationalization                          |
 | **Serwist**         | Progressive Web App caching strategies        |
@@ -307,7 +310,7 @@ vercel
 
 ## 🤖 Automation
 
-- **Dependabot** - Automatic dependency updates every Monday
+- **Dependabot** - Automatic npm and GitHub Actions updates every Monday
 - **Service Worker** - Auto-generated on build with Serwist
 - **Type Checking** - Runs during production builds
 
@@ -316,16 +319,19 @@ vercel
 `.github/workflows/ci.yml` runs on every pull request. Each step runs even when
 an earlier one fails, so a single push reports every problem at once:
 
-| Step      | Command                 |
-| --------- | ----------------------- |
-| Lint      | `npm run lint`          |
-| Typecheck | `npm run typecheck`     |
-| Format    | `npm run format:check`  |
-| Content   | `npm run check:content` |
-| Build     | `npm run build`         |
+| Step             | Command                 |
+| ---------------- | ----------------------- |
+| Lint             | `npm run lint`          |
+| Typecheck        | `npm run typecheck`     |
+| Format           | `npm run format:check`  |
+| Content          | `npm run check:content` |
+| Unit tests       | `npm run test`          |
+| Build            | `npm run build`         |
+| End-to-end tests | `npm run test:e2e`      |
 
-The build step is not redundant with the other four: the Serwist service-worker
-compile and the prerender of all 28 localized pages only happen there.
+The build step is not redundant with lint and typecheck: the Serwist
+service-worker compile and the prerender of every localized page only happen
+there. The end-to-end tests then run against that build.
 
 ## 🐛 Troubleshooting
 
@@ -355,7 +361,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 **Avery Peterson**
 
-- Website: [avery-peterson.com](https://avery-peterson.com)
+- Website: [avery-peterson.com](https://www.avery-peterson.com)
 - GitHub: [@acp9191](https://github.com/acp9191)
 
 ---
