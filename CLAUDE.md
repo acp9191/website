@@ -155,7 +155,7 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
   serve documents pointing at the previous deploy's chunks. Keep this rule first
 - Everything else via `defaultCache` from `@serwist/next/worker`:
   - **Precaching**: Static assets (JS, CSS, fonts, icons) via `self.__SW_MANIFEST`
-  - **NetworkFirst**: Homepage, API routes, RSC data
+  - **NetworkFirst**: API routes, RSC data
   - **CacheFirst**: Static JS chunks, audio/video
   - **StaleWhileRevalidate**: Images, fonts, CSS
 - Key cache stores: `serwist-precache-v2`, `pages` (navigations), `next-image`, `pages-rsc-prefetch`
