@@ -27,8 +27,8 @@ load-bearing and this is what makes removing it fail loudly.
 not run under Turbopack. `next dev` still uses Turbopack.
 
 CI (`.github/workflows/ci.yml`) runs lint, typecheck, format:check,
-check:content and build on every PR, each step guarded by `if: !cancelled()` so
-one push surfaces every failure.
+check:content, unit tests, build and end-to-end tests on every PR, each step
+guarded by `if: !cancelled()` so one push surfaces every failure.
 
 ## Project Architecture
 

@@ -1,4 +1,3 @@
-// app/favorites/movies/page.tsx
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { loadContent } from '@/src/lib/content';
 import MovieGallery from './MovieGallery';

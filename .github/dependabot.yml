@@ -29,10 +29,26 @@ updates:
     labels:
       - 'dependencies'
       - 'automated'
-    # Assign reviewers (optional - uncomment and add your GitHub username)
-    # reviewers:
-    #   - "your-github-username"
     # Customize commit messages
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+
+  # Keep the actions pinned in .github/workflows up to date
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'America/New_York'
+    groups:
+      github-actions:
+        patterns:
+          - '*'
+    labels:
+      - 'dependencies'
+      - 'automated'
     commit-message:
       prefix: 'chore'
       include: 'scope'
