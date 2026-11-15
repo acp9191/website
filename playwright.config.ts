@@ -16,6 +16,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
+  // Playwright defaults to half the cores, which on the 4-core CI runner left
+  // two idle; these tests mostly wait on the server, not the CPU.
+  workers: process.env.CI ? '100%' : undefined,
   reporter: process.env.CI ? [['github'], ['list']] : [['list']],
   use: {
     baseURL: 'http://localhost:3000',
