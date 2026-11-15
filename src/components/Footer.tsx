@@ -1,4 +1,3 @@
-'use client';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
@@ -55,6 +54,15 @@ const footerLink = (href: string) => (chunks: ReactNode) => (
   </a>
 );
 
+/*
+  Read once, on the server, when this module loads — at build time for the
+  prerendered pages. This was a client component computing the year during
+  render, so after New Year the browser's year disagreed with the build's and
+  hydration mismatched. Now only the server computes it; the cost is that the
+  year rolls over on the next deploy rather than at midnight.
+*/
+const YEAR = new Date().getFullYear();
+
 export default function Footer() {
   const t = useTranslations('Footer');
 
@@ -89,7 +97,7 @@ export default function Footer() {
             vercel: footerLink('https://vercel.com'),
           })}
         </p>
-        <p>{t('copyright', { year: new Date().getFullYear() })}</p>
+        <p>{t('copyright', { year: YEAR })}</p>
       </div>
     </footer>
   );

@@ -30,7 +30,7 @@ jobs:
       # Every check below runs even if an earlier one failed, so one push
       # reports every problem rather than revealing them one at a time.
 
-      # The script passes --max-warnings 0, so warnings fail the run too.
+      # The script passes --deny-warnings, so warnings fail the run too.
       - name: Lint
         run: npm run lint
 

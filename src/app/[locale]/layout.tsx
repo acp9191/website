@@ -3,7 +3,7 @@ import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { Inter } from 'next/font/google';
 import '../globals.css';
-import ClientLayout from '@/src/components/ClientLayout';
+import SiteLayout from '@/src/components/SiteLayout';
 import { notFound } from 'next/navigation';
 import { routing } from '@/src/i18n/routing';
 import { Analytics } from '@vercel/analytics/react';
@@ -110,7 +110,7 @@ export default async function RootLayout({
         */}
         <ThemeSync />
         <NextIntlClientProvider>
-          <ClientLayout>{children}</ClientLayout>
+          <SiteLayout>{children}</SiteLayout>
         </NextIntlClientProvider>
         <Analytics />
         <SpeedInsights />
