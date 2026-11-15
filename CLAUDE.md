@@ -176,6 +176,15 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 ### Build Notes
 
 - TypeScript strict mode is enabled (`tsconfig.json`)
+- Two TypeScripts are installed on purpose. TypeScript 7 ships only a native
+  `tsc` and no JS API, and typescript-eslint refuses to load on it, so:
+  - `typescript` is aliased to `@typescript/typescript6`, the 6.0 API, which is
+    what typescript-eslint and `next build` resolve
+  - `@typescript/native` is aliased to `typescript@7` and supplies the `tsc`
+    binary that `npm run typecheck` runs
+  CI therefore type-checks with both (7 in `typecheck`, 6 in `build`). Drop the
+  `typescript` alias once typescript-eslint supports TS 7.1+
+  (typescript-eslint/typescript-eslint#10940).
 - `SITE_URL` in `src/lib/metadata.ts` must match the host that actually serves
   the site (currently `www`); the apex redirects to it, and pointing canonicals
   at a redirecting host is what this constant exists to avoid
