@@ -20,7 +20,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       >
         <Image
           src={getOptimizedImageUrl(HEADSHOT_URL)}
-          alt="Avery Peterson headshot"
+          alt={t('imageAlt')}
           width={400}
           height={400}
           className="rounded-xl shadow-md w-full h-auto"

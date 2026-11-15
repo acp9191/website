@@ -6,6 +6,8 @@
  * so a typo in frontmatter does not fail the build, it just renders a card with
  * a missing image or a blank subtitle. This script turns that into a CI error.
  *
+ * URL fields are checked against the host and shape the site depends on.
+ *
  * It also reports genre values that differ only by case, spacing or
  * punctuation. Those are not typos the type system can catch: 'Hip-Hop' and
  * 'Hip Hop' are both valid strings, they just split one genre into two entries
@@ -24,6 +26,19 @@ const COLLECTIONS = {
 };
 
 const OPTIONAL = new Set(['spotify', 'trailer']);
+
+/*
+  What each URL field must look like. These are not cosmetic: images are served
+  through next/image, whose `remotePatterns` allow Cloudinary only, so a cover
+  hosted anywhere else fails to render; and `spotify` becomes both a link and a
+  JSON-LD `sameAs`, where a `spotify:album:` URI is not a valid URL.
+*/
+const URL_FIELDS = {
+  cover: /^https:\/\/res\.cloudinary\.com\/acp\/image\/upload\//,
+  poster: /^https:\/\/res\.cloudinary\.com\/acp\/image\/upload\//,
+  spotify: /^https:\/\/open\.spotify\.com\/album\/\w+$/,
+  trailer: /^https:\/\/(www\.youtube\.com\/watch\?v=|youtu\.be\/)[\w-]+$/,
+};
 
 const errors = [];
 const warnings = [];
@@ -64,6 +79,14 @@ for (const [collection, { creator, image }] of Object.entries(COLLECTIONS)) {
         // The commonest form of this is using the other collection's image key.
         errors.push(
           `${where}: unknown field '${key}' (expected one of ${[...allowed].join(', ')})`
+        );
+      }
+    }
+
+    for (const [field, pattern] of Object.entries(URL_FIELDS)) {
+      if (data[field] !== undefined && !pattern.test(String(data[field]))) {
+        errors.push(
+          `${where}: '${field}' must match ${pattern}, got ${JSON.stringify(data[field])}`
         );
       }
     }

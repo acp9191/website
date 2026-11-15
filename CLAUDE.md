@@ -76,8 +76,10 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
   (`music`, `books`, `movies`). `MEDIA_CONFIG` in `src/lib/media.ts` maps one to the other, along with each
   section's schema.org type, creator key, image key and translation namespace
 - `scripts/check-content.mjs` validates required fields, rejects unknown ones
-  (most often the wrong image key) and flags genre values that differ only by
-  case or punctuation, since those silently split one filter entry into two
+  (most often the wrong image key), checks URL fields against the hosts the
+  site depends on (Cloudinary for images, `open.spotify.com` album URLs,
+  YouTube trailers) and flags genre values that differ only by case or
+  punctuation, since those silently split one filter entry into two
 - Server components read files at build/request time using `fs/promises` and `gray-matter`
 
 **Media Gallery System**
@@ -91,11 +93,16 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
 - Custom hooks in `src/components/MediaGallery/hooks/`:
   - `useMediaGalleryFilters`: Filter state management
   - `useListbox`: Keyboard, focus and dismissal behaviour for the filter dropdowns
-- `src/hooks/useRevealOnScroll.ts` is the single reveal-on-scroll observer, used
-  by the gallery header and both filter layouts. The home and about pages
-  animate in CSS instead (`animate-slide-up` / `animate-fade-up`): their
-  headshot is the LCP element, and an observer would hold it at opacity 0
-  until hydration
+- Entrance animations are CSS only, never an IntersectionObserver that hides
+  content until hydration: `animate-slide-up` (transform only, for LCP
+  images), `animate-fade-up` (text, filters) and `.reveal-on-scroll` (gallery
+  cards, a scroll-driven `view()` timeline that falls back to plainly visible).
+  Observers held the headshots, the gallery `<h1>` and the priority covers at
+  opacity 0 until the bundle ran, and showed nothing without JavaScript
+  (`gallery.spec.ts`, `header.spec.ts`)
+- The result count is announced from one `sr-only` `aria-live` region in
+  `MediaGallery`, not the visible badges: there are two of them and their
+  `AnimatedCounter` steps through every intermediate number
 - `src/hooks/useScrolledPast.ts` reads `window.scrollY` through
   `useSyncExternalStore`, not from scroll events, so a page already scrolled
   when it hydrates is handled. Both the compact header and the scroll-to-top
@@ -201,6 +208,10 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
   components receive both `t` (their namespace) and `tGallery` (the shared one)
 - Header/Footer translations in respective namespaces
 - Prefer `t.rich` over splicing markup into translated strings
+- Counts use ICU plurals (`{count, plural, one {album} other {albums}}`), never
+  `count === 1`: French takes the singular for 0
+- Page meta descriptions reuse text the page shows (`DESCRIPTION_KEYS` in
+  `src/lib/metadata.ts`); only the home page uses `Meta.description`
 
 ### Build Notes
 
@@ -234,7 +245,10 @@ Two suites, split by what they can actually observe.
 
 - `messages.test.ts` — the five locale files have identical keys, no blank
   strings, and every ICU placeholder and rich-text tag survives translation. A
-  translator dropping `{title}` or `<wave>` is otherwise silent.
+  translator dropping `{title}` or `<wave>` is otherwise silent. The
+  placeholder check is brace-depth aware, so plural branch text is not mistaken
+  for an argument; plurals must have `other`, and counts follow each locale's
+  plural rules.
 - `theme.test.ts` — `normalizeTheme` rejects junk, and the inline `<head>`
   script is executed against a stub DOM and asserted to agree with it. That
   duplication has drifted before, and a comment was not enough to stop it.
@@ -275,6 +289,10 @@ CI builds in its own step.
   hydration, the mobile menu survives the height-only resizes a mobile address
   bar causes, and the About headshot (its LCP element) is visible before any
   JavaScript runs.
+- `gallery.spec.ts` — the first cover is visible before hydration and every
+  card appears without JavaScript, a filter change is announced with the final
+  count, card titles are `<h2>`, the home alt text is translated, and every
+  page in every locale has its own meta description.
 - `footer.spec.ts` — with the browser's clock frozen in the year after the
   build, the footer still shows the build's year and hydration reports no
   mismatch.

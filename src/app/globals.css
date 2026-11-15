@@ -83,6 +83,30 @@
 }
 
 /*
+  Gallery cards fade up as they scroll into view, driven by the scroll position
+  in CSS rather than an IntersectionObserver.
+
+  The observer version rendered every card at opacity 0 in the server HTML and
+  revealed it only after hydration — so the above-the-fold covers, the page's
+  LCP, waited on the bundle, and without JavaScript no card ever appeared. A
+  view timeline needs no script: a card already in view on load is at the end
+  of its range and fully opaque on the first frame.
+
+  Where view timelines are unsupported, or the reader asked for reduced motion,
+  nothing applies and the cards are simply visible. `animation-timeline` comes
+  after the shorthand, which would otherwise reset it.
+*/
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal-on-scroll {
+      animation: fadeUp linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+
+/*
   Theme toggle icons.
 
   Which icon is showing is resolved from the `data-theme` attribute that the

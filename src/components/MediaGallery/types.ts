@@ -27,9 +27,13 @@ export interface MediaItem {
 export interface FilterConfig {
   /** Key in the gallery's own namespace naming the subtitle field, e.g. 'artist'. */
   subtitleLabel: string;
-  /** Keys in the gallery's own namespace for the item noun, e.g. 'album' / 'albums'. */
-  itemSingular: string;
-  itemPlural: string;
+  /**
+   * Key in the gallery's own namespace for the item noun, an ICU plural on
+   * `count` (e.g. `{count, plural, one {album} other {albums}}`). A plural
+   * rather than a singular/plural pair picked with `count === 1`, which is wrong
+   * in French, where 0 takes the singular.
+   */
+  countKey: string;
   aspectRatio: 'square' | 'portrait' | 'auto';
 }
 

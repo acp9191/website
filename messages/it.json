@@ -1,7 +1,8 @@
 {
   "Home": {
     "title": "Ciao <wave>👋</wave> Sono Avery",
-    "description": "Sono un ingegnere del software che ama i buoni strumenti, la buona musica e il codice pulito."
+    "description": "Sono un ingegnere del software che ama i buoni strumenti, la buona musica e il codice pulito.",
+    "imageAlt": "Ritratto di Avery Peterson"
   },
   "Header": {
     "title": "Avery Peterson",
@@ -39,8 +40,7 @@
     "title": "🎬 Film Preferiti",
     "subtitle": "Degno di un rewatch in qualsiasi stagione",
     "director": "Regista",
-    "movie": "film",
-    "movies": "film",
+    "count": "{count, plural, one {film} other {film}}",
     "all": "Tutti",
     "coverAlt": "Locandina del film {title}",
     "watchTrailer": "Guarda il Trailer"
@@ -49,8 +49,7 @@
     "title": "🎧 Album Preferiti",
     "subtitle": "Un canone personale di preferiti duraturi",
     "artist": "Artista",
-    "album": "album",
-    "albums": "album",
+    "count": "{count, plural, one {album} other {album}}",
     "all": "Tutti",
     "coverAlt": "Copertina dell'album {title}",
     "listenOnSpotify": "Ascolta su Spotify"
@@ -59,8 +58,7 @@
     "title": "📚 Libri Preferiti",
     "subtitle": "Un canone personale di letture durature",
     "author": "Autore",
-    "book": "libro",
-    "books": "libri",
+    "count": "{count, plural, one {libro} other {libri}}",
     "all": "Tutti",
     "coverAlt": "{title} copertina del libro"
   },

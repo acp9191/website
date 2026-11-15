@@ -67,6 +67,19 @@ export function alternatesFor(locale: string, path: string): Metadata['alternate
 }
 
 /**
+ * Where each page's meta description comes from: text the page already shows,
+ * so it is translated and specific to the page. Every page used to share
+ * `Meta.description`, which left search results unable to tell them apart. The
+ * home page, with no `titleKey`, keeps that site-wide description.
+ */
+const DESCRIPTION_KEYS = {
+  about: 'About.description1',
+  music: 'Music.subtitle',
+  books: 'Books.subtitle',
+  movies: 'Movies.subtitle',
+} as const;
+
+/**
  * Builds the metadata for a page: localized title and description, a canonical
  * and hreflang set for this exact path, and OpenGraph/Twitter cards to match.
  *
@@ -82,10 +95,10 @@ export async function buildMetadata({
   path: string;
   titleKey?: 'about' | 'music' | 'books' | 'movies';
 }): Promise<Metadata> {
-  const t = await getTranslations({ locale, namespace: 'Meta' });
+  const t = await getTranslations({ locale });
 
-  const title = titleKey ? t(titleKey) : SITE_NAME;
-  const description = t('description');
+  const title = titleKey ? t(`Meta.${titleKey}`) : SITE_NAME;
+  const description = t(titleKey ? DESCRIPTION_KEYS[titleKey] : 'Meta.description');
   const url = `${SITE_URL}${localePath(locale, path)}`;
 
   return {

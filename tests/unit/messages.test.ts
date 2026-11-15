@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { createTranslator } from 'next-intl';
 import { routing } from '@/src/i18n/routing';
 import en from '@/messages/en.json';
 import es from '@/messages/es.json';
@@ -23,9 +24,42 @@ function flatten(source: Messages): Record<string, string> {
   return out;
 }
 
-/** ICU placeholders, e.g. `{title}` in "{title} album cover". */
-const placeholdersIn = (value: string) =>
-  new Set(Array.from(value.matchAll(/\{(\w+)\}/g), (m) => m[1]));
+/**
+ * ICU arguments, e.g. `title` in "{title} album cover" and `count` in
+ * "{count, plural, one {album} other {albums}}".
+ *
+ * Arguments open at odd brace depths; even depths are a plural or select's
+ * branch text. A flat `{word}` regex would read the branches `{album}` and
+ * `{albums}` as placeholders, and then demand every translation use the
+ * English nouns.
+ */
+function placeholdersIn(value: string): Set<string> {
+  const found = new Set<string>();
+  let depth = 0;
+  for (let i = 0; i < value.length; i++) {
+    if (value[i] === '{') {
+      depth++;
+      if (depth % 2 === 1) {
+        const name = /^\s*(\w+)/.exec(value.slice(i + 1));
+        if (name) found.add(name[1]);
+      }
+    } else if (value[i] === '}') {
+      depth--;
+    }
+  }
+  return found;
+}
+
+/** The plural branches a message declares, e.g. `one` and `other`. */
+const pluralBranchesIn = (value: string) =>
+  /^\{\s*\w+\s*,\s*plural\s*,/.test(value)
+    ? new Set(
+        Array.from(
+          value.matchAll(/(?:^|\s|\})\s*(=\d+|zero|one|two|few|many|other)\s*\{/g),
+          (m) => m[1]
+        )
+      )
+    : null;
 
 /** Rich-text tags, e.g. `<wave>` in the home greeting. */
 const tagsIn = (value: string) => new Set(Array.from(value.matchAll(/<(\w+)>/g), (m) => m[1]));
@@ -75,6 +109,14 @@ describe('interpolations survive translation', () => {
     }
   );
 
+  // ICU requires `other`; without it next-intl throws at render time.
+  it.each(locales)('%s gives every plural an `other` branch', (locale) => {
+    const missing = Object.entries(flat[locale])
+      .filter(([, value]) => pluralBranchesIn(value) && !pluralBranchesIn(value)!.has('other'))
+      .map(([key]) => key);
+    expect(missing).toEqual([]);
+  });
+
   it.each(locales.filter((l) => l !== routing.defaultLocale))(
     '%s keeps every rich-text tag en declares',
     (locale) => {
@@ -116,5 +158,29 @@ describe('gallery labels are not duplicated back into each gallery', () => {
     for (const gallery of galleries) {
       expect(messages[locale][gallery].all, `${locale}.${gallery}.all`).toBeTruthy();
     }
+  });
+});
+
+/*
+  The count badge used to pick between `album` and `albums` with
+  `count === 1`. French takes the singular for 0 ("0 album"), so a filter with
+  no results read wrong there. The plural rules come from the locale now.
+*/
+describe('result counts follow each locale’s plural rules', () => {
+  const noun = (locale: string, count: number) =>
+    createTranslator({ locale, messages: messages[locale], namespace: 'Music' })('count', {
+      count,
+    });
+
+  it('uses the singular for 0 in French and the plural in English', () => {
+    expect(noun('fr', 0)).toBe('album');
+    expect(noun('en', 0)).toBe('albums');
+  });
+
+  it('picks singular and plural by count where the forms differ', () => {
+    expect(noun('de', 1)).toBe('Album');
+    expect(noun('de', 2)).toBe('Alben');
+    expect(noun('es', 1)).toBe('álbum');
+    expect(noun('es', 2)).toBe('álbumes');
   });
 });

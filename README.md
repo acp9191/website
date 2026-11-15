@@ -193,7 +193,7 @@ artist: 'Artist Name'
 cover: 'https://res.cloudinary.com/acp/image/upload/...'
 year: 2024
 genres: ['Rock', 'Alternative']
-spotify: 'spotify:album:...'
+spotify: 'https://open.spotify.com/album/...'
 ---
 
 Your album description here in Markdown.
@@ -210,7 +210,7 @@ director: 'Director Name'
 poster: 'https://res.cloudinary.com/acp/image/upload/...'
 year: 2024
 genres: ['Drama', 'Thriller']
-trailer: 'https://youtube.com/watch?v=...'
+trailer: 'https://www.youtube.com/watch?v=...'
 ---
 
 Your movie review here.

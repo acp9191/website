@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import clsx from 'clsx';
-import { useRevealOnScroll } from '@/src/hooks/useRevealOnScroll';
 import { AnimatedCounter } from '../AnimatedCounter';
 import FilterDropdown, { type FilterValue } from './FilterDropdown';
 import { MediaItem, FilterConfig, FilterState, Translate } from './types';
@@ -32,7 +31,6 @@ export function MobileFilters({
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [subtitleDropdownOpen, setSubtitleDropdownOpen] = useState(false);
   const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
-  const { visible, ref: filtersRef } = useRevealOnScroll();
 
   // The three filters combine; MediaGallery already ANDs them. Clearing the
   // siblings here made that unreachable and silently discarded the user's
@@ -50,16 +48,10 @@ export function MobileFilters({
   };
 
   return (
-    <div ref={filtersRef} className="lg:hidden w-full mb-8">
+    <div className="lg:hidden w-full mb-8">
       <div className="flex flex-col gap-3">
         {/* Count badge */}
-        <div
-          className={clsx('text-center transition-all duration-700 ease-out', {
-            'opacity-100 translate-y-0': visible,
-            'opacity-0 translate-y-4': !visible,
-          })}
-          style={{ transitionDelay: '200ms' }}
-        >
+        <div className="text-center animate-fade-up" style={{ animationDelay: '200ms' }}>
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300">
             <svg
               className="w-4 h-4 text-gray-500 dark:text-gray-400"
@@ -77,17 +69,11 @@ export function MobileFilters({
             </svg>
             <span>
               <AnimatedCounter value={filtered.length} />{' '}
-              {filtered.length === 1 ? t(filterConfig.itemSingular) : t(filterConfig.itemPlural)}
+              {t(filterConfig.countKey, { count: filtered.length })}
             </span>
           </div>
 
-          <div
-            className={clsx('inline-block ml-3 transition-all duration-700 ease-out', {
-              'opacity-100 translate-y-0': visible,
-              'opacity-0 translate-y-4': !visible,
-            })}
-            style={{ transitionDelay: '300ms' }}
-          >
+          <div className="inline-block ml-3 animate-fade-up" style={{ animationDelay: '300ms' }}>
             <button
               onClick={filterState.resetFilters}
               disabled={!filterData.hasActiveFilters}
@@ -142,7 +128,6 @@ export function MobileFilters({
               setSubtitleDropdownOpen(false);
               setYearDropdownOpen(false);
             }}
-            visible={visible}
             delay="400ms"
           />
 
@@ -160,7 +145,6 @@ export function MobileFilters({
               setCategoryDropdownOpen(false);
               setYearDropdownOpen(false);
             }}
-            visible={visible}
             delay="500ms"
           />
 
@@ -178,7 +162,6 @@ export function MobileFilters({
               setCategoryDropdownOpen(false);
               setSubtitleDropdownOpen(false);
             }}
-            visible={visible}
             delay="600ms"
           />
         </div>

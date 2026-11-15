@@ -77,11 +77,11 @@ export default function MediaCard({ item, filterConfig, priority = false }: Medi
 
       <div className="p-4 pt-0 flex flex-col flex-1">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-white">
+          <h2 className="text-lg font-semibold mb-1 text-gray-900 dark:text-white">
             <Link className="hover:underline" href={item.href}>
               {item.title}
             </Link>
-          </h3>
+          </h2>
           <p className="text-sm text-gray-600 dark:text-gray-400">{item.subtitle}</p>
           <div className="mt-2 flex flex-wrap gap-1 text-xs">
             {item.categories.map((category) => (
