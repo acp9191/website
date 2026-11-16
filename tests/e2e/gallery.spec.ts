@@ -31,9 +31,30 @@ test('the first cover is visible before hydration', async ({ page }) => {
   const release = await gateHydration(page);
   await page.goto('/favorites/music', { waitUntil: 'domcontentloaded' });
 
-  const opacity = await effectiveOpacity(page.locator('main .grid img').first());
+  // It still fades in, but on a CSS timer from the first paint: it must finish
+  // while the bundle is held back.
+  const cover = page.locator('main .grid img').first();
+  await expect.poll(() => effectiveOpacity(cover), { timeout: 3000 }).toBe(1);
   release();
-  expect(opacity).toBe(1);
+});
+
+/*
+  Cards in view on load fade in. A view timeline alone cannot do that: a card
+  already in view sits at the end of its range and paints fully opaque, so the
+  first rows need a time-based animation.
+*/
+test('the first row fades in on load', async ({ page }) => {
+  await page.goto('/favorites/music', { waitUntil: 'commit' });
+  const timed = await page
+    .locator('main .grid > div')
+    .first()
+    .evaluate((el) =>
+      el
+        .getAnimations()
+        .filter((a) => a.timeline instanceof DocumentTimeline)
+        .map((a) => (a as CSSAnimation).animationName)
+    );
+  expect(timed).toContain('fadeUp');
 });
 
 test.describe('without JavaScript', () => {

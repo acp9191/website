@@ -95,8 +95,11 @@ This is a Next.js 16 personal website featuring a multilingual media gallery sys
   - `useListbox`: Keyboard, focus and dismissal behaviour for the filter dropdowns
 - Entrance animations are CSS only, never an IntersectionObserver that hides
   content until hydration: `animate-slide-up` (transform only, for LCP
-  images), `animate-fade-up` (text, filters) and `.reveal-on-scroll` (gallery
-  cards, a scroll-driven `view()` timeline that falls back to plainly visible).
+  images), `animate-fade-up` (text, filters, and the first six gallery cards)
+  and `.reveal-on-scroll` (later cards, a scroll-driven `view()` timeline that
+  falls back to plainly visible). A view timeline cannot fade the cards in view
+  on load — they start at the end of their range — hence the split. The grid is
+  keyed on the filters so a filter change remounts it and replays the fade.
   Observers held the headshots, the gallery `<h1>` and the priority covers at
   opacity 0 until the bundle ran, and showed nothing without JavaScript
   (`gallery.spec.ts`, `header.spec.ts`)
@@ -289,7 +292,8 @@ CI builds in its own step.
   hydration, the mobile menu survives the height-only resizes a mobile address
   bar causes, and the About headshot (its LCP element) is visible before any
   JavaScript runs.
-- `gallery.spec.ts` — the first cover is visible before hydration and every
+- `gallery.spec.ts` — the first cover finishes fading in before hydration, the
+  first row fades in on a timer rather than painting opaque, every
   card appears without JavaScript, a filter change is announced with the final
   count, card titles are `<h2>`, the home alt text is translated, and every
   page in every locale has its own meta description.

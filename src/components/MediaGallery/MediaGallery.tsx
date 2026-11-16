@@ -93,7 +93,12 @@ export default function MediaGallery({
             tGallery={tGallery}
           />
 
-          <MediaGalleryGrid items={filtered} filterConfig={filterConfig} />
+          {/* Remounting on a filter change restarts the cards' entrance animations. */}
+          <MediaGalleryGrid
+            key={`${filterState.selectedCategory}|${filterState.selectedSubtitle}|${filterState.selectedYear}`}
+            items={filtered}
+            filterConfig={filterConfig}
+          />
         </div>
       </div>
 
