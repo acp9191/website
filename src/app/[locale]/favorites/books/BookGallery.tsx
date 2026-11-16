@@ -22,8 +22,7 @@ export default function BookGallery({ books }: { books: ContentEntry[] }) {
 
   const filterConfig: FilterConfig = {
     subtitleLabel: 'author',
-    itemSingular: 'book',
-    itemPlural: 'books',
+    countKey: 'count',
     aspectRatio: 'auto',
   };
 

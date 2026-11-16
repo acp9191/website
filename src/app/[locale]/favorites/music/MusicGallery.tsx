@@ -31,8 +31,7 @@ export default function MusicGallery({ albums }: { albums: ContentEntry[] }) {
   // Configure filters for music
   const filterConfig: FilterConfig = {
     subtitleLabel: 'artist',
-    itemSingular: 'album',
-    itemPlural: 'albums',
+    countKey: 'count',
     aspectRatio: 'square', // Album covers are typically square
   };
 

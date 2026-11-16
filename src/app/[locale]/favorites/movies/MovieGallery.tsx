@@ -30,8 +30,7 @@ export default function MovieGallery({ movies }: { movies: ContentEntry[] }) {
 
   const filterConfig: FilterConfig = {
     subtitleLabel: 'director',
-    itemSingular: 'movie',
-    itemPlural: 'movies',
+    countKey: 'count',
     aspectRatio: 'auto',
   };
 

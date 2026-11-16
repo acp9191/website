@@ -8,7 +8,6 @@ import { MediaGalleryFilters } from './MediaGalleryFilters';
 import { MediaGalleryGrid } from './MediaGalleryGrid';
 import { ScrollToTopButton } from './ScrollToTopButton';
 import { useMediaGalleryFilters } from './hooks/useMediaGalleryFilters';
-import { useRevealOnScroll } from '@/src/hooks/useRevealOnScroll';
 import { useScrolledPast } from '@/src/hooks/useScrolledPast';
 
 interface MediaGalleryProps {
@@ -31,7 +30,6 @@ export default function MediaGallery({
 
   // Custom hooks
   const filterState = useMediaGalleryFilters();
-  const { visible: headerVisible, ref: headerRef } = useRevealOnScroll();
 
   // Memoised because this component also re-renders on scroll, when the
   // scroll-to-top button crosses its threshold, and that has nothing to do
@@ -65,12 +63,18 @@ export default function MediaGallery({
   return (
     <div className="max-w-7xl mx-auto">
       <div className="min-h-dvh">
-        <MediaGalleryHeader
-          ref={headerRef}
-          visible={headerVisible}
-          title={t('title')}
-          subtitle={t('subtitle')}
-        />
+        <MediaGalleryHeader title={t('title')} subtitle={t('subtitle')} />
+
+        {/*
+          Announces the result count when a filter changes it. The visible
+          badges can't do this: there are two (desktop and mobile), and their
+          AnimatedCounter steps through every intermediate number. A live
+          region is silent about its initial content, so this speaks only on a
+          change, and only the final count.
+        */}
+        <p className="sr-only" aria-live="polite" aria-atomic="true">
+          {filtered.length} {t(filterConfig.countKey, { count: filtered.length })}
+        </p>
 
         {/*
           One grid for both breakpoints. MediaGalleryFilters renders the
@@ -89,8 +93,7 @@ export default function MediaGallery({
             tGallery={tGallery}
           />
 
-          {/* Remounting on filter change resets the grid's reveal state without
-              an effect that would cascade an extra render. */}
+          {/* Remounting on a filter change restarts the cards' entrance animations. */}
           <MediaGalleryGrid
             key={`${filterState.selectedCategory}|${filterState.selectedSubtitle}|${filterState.selectedYear}`}
             items={filtered}

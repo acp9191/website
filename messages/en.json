@@ -1,7 +1,8 @@
 {
   "Home": {
     "title": "Hi <wave>👋</wave> I'm Avery",
-    "description": "I'm a software engineer who loves good tools, good music, and clean code."
+    "description": "I'm a software engineer who loves good tools, good music, and clean code.",
+    "imageAlt": "Avery Peterson headshot"
   },
   "Header": {
     "title": "Avery Peterson",
@@ -39,8 +40,7 @@
     "title": "🎬 Favorite Movies",
     "subtitle": "Worthy of a rewatch in any season",
     "director": "Director",
-    "movie": "movie",
-    "movies": "movies",
+    "count": "{count, plural, one {movie} other {movies}}",
     "all": "All",
     "coverAlt": "{title} movie poster",
     "watchTrailer": "Watch Trailer"
@@ -49,8 +49,7 @@
     "title": "🎧 Favorite Albums",
     "subtitle": "A personal canon of lasting favorites",
     "artist": "Artist",
-    "album": "album",
-    "albums": "albums",
+    "count": "{count, plural, one {album} other {albums}}",
     "all": "All",
     "coverAlt": "{title} album cover",
     "listenOnSpotify": "Listen on Spotify"
@@ -59,8 +58,7 @@
     "title": "📚 Favorite Books",
     "subtitle": "Stories that have stuck with me",
     "author": "Author",
-    "book": "book",
-    "books": "books",
+    "count": "{count, plural, one {book} other {books}}",
     "all": "All",
     "coverAlt": "{title} book cover"
   },

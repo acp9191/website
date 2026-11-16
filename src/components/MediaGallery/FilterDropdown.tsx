@@ -48,7 +48,7 @@ interface FilterDropdownProps {
   setIsOpen: (isOpen: boolean) => void;
   /** Called just before this dropdown opens, so siblings can close themselves. */
   onOpen?: () => void;
-  visible: boolean;
+  /** Animation delay for the fade-in, staggering the dropdowns. */
   delay: string;
   variant?: FilterDropdownVariant;
 }
@@ -63,7 +63,6 @@ export default function FilterDropdown({
   isOpen,
   setIsOpen,
   onOpen,
-  visible,
   delay,
   variant = 'sidebar',
 }: FilterDropdownProps) {
@@ -92,13 +91,11 @@ export default function FilterDropdown({
   return (
     <div
       ref={containerRef}
-      className={clsx('relative transition-all duration-700 ease-out', {
+      className={clsx('relative animate-fade-up', {
         'w-full sm:flex-1': variant === 'bar',
-        'opacity-100 translate-y-0': visible,
-        'opacity-0 translate-y-4': !visible,
         'z-50': isOpen, // Higher z-index when dropdown is open
       })}
-      style={{ transitionDelay: delay }}
+      style={{ animationDelay: delay }}
     >
       {styles.showLabel && (
         <label

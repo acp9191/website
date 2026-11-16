@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
-import { useRevealOnScroll } from '@/src/hooks/useRevealOnScroll';
 import { AnimatedCounter } from '../AnimatedCounter';
 import FilterDropdown, { FilterValue } from './FilterDropdown';
 import { MediaItem, FilterConfig, FilterState, Translate } from './types';
@@ -29,7 +28,6 @@ export function DesktopFilters({
   t,
   tGallery,
 }: DesktopFiltersProps) {
-  const { visible: sidebarVisible, ref: sidebarVisibilityRef } = useRevealOnScroll();
   const [sidebarSticky, setSidebarSticky] = useState(false);
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [subtitleDropdownOpen, setSubtitleDropdownOpen] = useState(false);
@@ -38,9 +36,7 @@ export function DesktopFilters({
   const sidebarSentinelRef = useRef<HTMLDivElement>(null);
 
   /*
-    The sticky sentinel is a genuinely different observer from the reveal one:
-    it toggles both ways as the sentinel crosses the header offset, rather than
-    latching once, so it stays here rather than moving into useRevealOnScroll.
+    The sticky sentinel toggles both ways as it crosses the header offset.
   */
   useEffect(() => {
     const sentinel = sidebarSentinelRef.current;
@@ -79,7 +75,6 @@ export function DesktopFilters({
 
   return (
     <div className="hidden lg:block w-72 flex-shrink-0">
-      <div ref={sidebarVisibilityRef} className="h-0" />
       <div ref={sidebarSentinelRef} className="h-0" />
 
       <div
@@ -89,26 +84,14 @@ export function DesktopFilters({
         })}
       >
         <div
-          className={clsx(
-            'bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm transition-all duration-700 ease-out',
-            {
-              'opacity-100 translate-x-0': sidebarVisible,
-              'opacity-0 -translate-x-8': !sidebarVisible,
-            }
-          )}
-          style={{ transitionDelay: '300ms' }}
+          className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm animate-fade-up"
+          style={{ animationDelay: '300ms' }}
         >
           {/* Count Badge */}
           <div className="mb-6">
             <div
-              className={clsx(
-                'inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gray-100 dark:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 w-full justify-center transition-all duration-700 ease-out',
-                {
-                  'opacity-100 translate-y-0': sidebarVisible,
-                  'opacity-0 translate-y-4': !sidebarVisible,
-                }
-              )}
-              style={{ transitionDelay: '400ms' }}
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gray-100 dark:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 w-full justify-center animate-fade-up"
+              style={{ animationDelay: '400ms' }}
             >
               <svg
                 className="w-4 h-4 text-gray-500 dark:text-gray-400"
@@ -126,7 +109,7 @@ export function DesktopFilters({
               </svg>
               <span>
                 <AnimatedCounter value={filtered.length} />{' '}
-                {filtered.length === 1 ? t(filterConfig.itemSingular) : t(filterConfig.itemPlural)}
+                {t(filterConfig.countKey, { count: filtered.length })}
               </span>
             </div>
           </div>
@@ -142,7 +125,6 @@ export function DesktopFilters({
               onSelect={handleCategorySelect}
               isOpen={categoryDropdownOpen}
               setIsOpen={setCategoryDropdownOpen}
-              visible={sidebarVisible}
               delay="600ms"
             />
 
@@ -155,7 +137,6 @@ export function DesktopFilters({
               onSelect={handleSubtitleSelect}
               isOpen={subtitleDropdownOpen}
               setIsOpen={setSubtitleDropdownOpen}
-              visible={sidebarVisible}
               delay="700ms"
             />
 
@@ -168,18 +149,11 @@ export function DesktopFilters({
               onSelect={handleYearSelect}
               isOpen={yearDropdownOpen}
               setIsOpen={setYearDropdownOpen}
-              visible={sidebarVisible}
               delay="800ms"
             />
 
             {/* Reset Button */}
-            <div
-              className={clsx('transition-all duration-700 ease-out mt-6', {
-                'opacity-100 translate-y-0': sidebarVisible,
-                'opacity-0 translate-y-4': !sidebarVisible,
-              })}
-              style={{ transitionDelay: '900ms' }}
-            >
+            <div className="mt-6 animate-fade-up" style={{ animationDelay: '900ms' }}>
               <button
                 onClick={filterState.resetFilters}
                 disabled={!filterData.hasActiveFilters}
